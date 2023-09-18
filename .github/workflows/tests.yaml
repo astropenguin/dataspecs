@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  job:
+    name: Test (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
+      PYTHON_DIRS: "dataspecs"
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install poetry && poetry install
+      - run: black --check ${PYTHON_DIRS}
+      - run: pyright ${PYTHON_DIRS}
+      - run: mypy ${PYTHON_DIRS}
