@@ -8,9 +8,11 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
+typing-extensions = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9"
+ipython = "^8.15"
 mypy = "^1.5"
 pyright = "^1.1"
 pytest = "^7.4"
