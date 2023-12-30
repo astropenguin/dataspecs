@@ -1,10 +1,10 @@
-__all__ = ["Category", "core"]
+__all__ = ["Category", "typing"]
 __version__ = "0.0.1"
 
 
 # submodules
-from . import core
+from . import typing
 
 
 # aliases
-from .core import Category
+from .typing import Category

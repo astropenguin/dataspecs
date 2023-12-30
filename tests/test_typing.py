@@ -3,7 +3,7 @@ from enum import auto
 
 
 # dependencies
-from dataspecs.core import Category
+from dataspecs.typing import Category
 
 
 # test data
