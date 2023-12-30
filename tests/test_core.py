@@ -13,7 +13,7 @@ class Test(Category):
 
 
 def test_category() -> None:
-    assert Test.MEMBER_1 == "member_1"
-    assert Test.MEMBER_2 == "member_2"
+    assert Test.MEMBER_1 == str("member_1")
+    assert Test.MEMBER_2 == str("member_2")
     assert Test("member_1") is Test.MEMBER_1
     assert Test("member_2") is Test.MEMBER_2

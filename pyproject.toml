@@ -14,6 +14,7 @@ python = ">=3.9, <3.13"
 [tool.poetry.group.dev.dependencies]
 black = "^23.11"
 ipython = "^8.18"
+mypy = "^1.8"
 myst-parser = "^2.0"
 pydata-sphinx-theme = "^0.14"
 pyright = "^1.1"
