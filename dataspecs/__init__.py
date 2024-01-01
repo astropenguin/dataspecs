@@ -1,4 +1,10 @@
-__all__ = ["Category", "typing"]
+__all__ = [
+    # submodules
+    "typing",
+    # aliases
+    "SpecType",
+    "is_specclass",
+]
 __version__ = "0.0.1"
 
 
@@ -7,4 +13,4 @@ from . import typing
 
 
 # aliases
-from .typing import Category
+from .typing import *
