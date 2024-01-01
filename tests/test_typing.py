@@ -5,11 +5,11 @@ from typing import Annotated as Ann
 
 
 # dependencies
-from dataspecs.typing import SpecType, is_specclass
+from dataspecs.typing import Use as Use_, is_specclass
 
 
 # test data
-class Type(SpecType):
+class Use(Use_):
     A = auto()
     B = auto()
     C = auto()
@@ -17,28 +17,28 @@ class Type(SpecType):
 
 @dataclass
 class SpecClass1:
-    a: Ann[int, Type.A]
+    a: Ann[int, Use.A]
 
 
 @dataclass
 class SpecClass2:
-    b: Ann[int, Type.B]
-    c: Ann[int, Type.C]
+    b: Ann[int, Use.B]
+    c: Ann[int, Use.C]
 
 
 @dataclass
 class SpecClass3:
-    a: Ann[int, Type.A, SpecClass2(1, 1)]
+    a: Ann[int, Use.A, SpecClass2(1, 1)]
 
 
-def test_spectype_conversion() -> None:
-    assert Type.A == str("a")
-    assert Type("a") is Type.A
+def test_use_comparison() -> None:
+    assert Use.A == str("a")
+    assert Use("a") is Use.A
 
 
-def test_spectype_annotates() -> None:
-    assert SpecType.annotates(Ann[int, Type.A])
-    assert Type.annotates(Ann[int, Type.A])
+def test_use_annotation() -> None:
+    assert Use.annotates(Ann[int, Use.A])
+    assert Use.annotates(Ann[int, Use.A])
 
 
 def test_is_specclass() -> None:

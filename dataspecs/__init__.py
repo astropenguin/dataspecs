@@ -2,7 +2,7 @@ __all__ = [
     # submodules
     "typing",
     # aliases
-    "SpecType",
+    "Use",
     "is_specclass",
 ]
 __version__ = "0.0.1"
