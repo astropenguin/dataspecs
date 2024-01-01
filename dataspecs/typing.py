@@ -36,19 +36,19 @@ def is_specclass(obj: Any) -> bool:
     if not is_dataclass(obj):
         return False
 
-    return any(has_spectype(f.type) for f in fields(obj))
+    return any(has_spechint(f.type) for f in fields(obj))
 
 
-def get_spectype(hint: Any) -> Optional[Any]:
-    """Get the first spec type in a type hint if it exists."""
+def get_spechint(hint: Any) -> Optional[Any]:
+    """Get the first spec hint in a type hint if it exists."""
     for tp in walk(hint):
         if SpecType.annotates(tp):
             return tp
 
 
-def has_spectype(hint: Any) -> bool:
-    """Check if a type hint contains any spec type."""
-    return get_spectype(hint) is not None
+def has_spechint(hint: Any) -> bool:
+    """Check if a type hint contains any spec hint."""
+    return get_spechint(hint) is not None
 
 
 def walk(hint: Any, *, self: bool = True) -> Iterable[Any]:
