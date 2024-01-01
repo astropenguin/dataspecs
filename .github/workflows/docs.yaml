@@ -1,0 +1,26 @@
+name: Docs
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  job:
+    name: GitHub Pages
+    runs-on: ubuntu-latest
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
+      PUBLISH_DIR: ./docs/_build
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - run: pip install poetry==1.7.1 && poetry install
+      - run: docs/build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          force_orphan: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${PUBLISH_DIR}
