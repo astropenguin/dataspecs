@@ -18,13 +18,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.9", "3.10", "3.11"]
+        python: ["3.9", "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
-      - run: pip install poetry && poetry install
+      - uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.7.1"
+      - run: poetry install
       - run: black --check ${PYTHON_DIRS}
       - run: pyright ${PYTHON_DIRS}
       - run: mypy ${PYTHON_DIRS}
+      - run: docs/build
