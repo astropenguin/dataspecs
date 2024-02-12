@@ -1,16 +1,20 @@
 {
     "name": "dataspecs",
-    "image":"python:3.11",
-    "onCreateCommand": "pip install poetry==1.6.1",
-    "postCreateCommand": "poetry install",
+    "image": "python:3.12",
+    "runArgs": [
+        "--name=dataspecs"
+    ],
     "containerEnv": {
         "POETRY_VIRTUALENVS_CREATE": "false"
     },
+    "onCreateCommand": "pip install poetry==1.7.1",
+    "postCreateCommand": "poetry install",
     "customizations": {
         "vscode": {
             "extensions": [
                 "github.vscode-pull-request-github",
                 "mhutchie.git-graph",
+                "ms-python.black-formatter",
                 "ms-python.python",
                 "streetsidesoftware.code-spell-checker",
                 "tamasfe.even-better-toml"
@@ -18,12 +22,12 @@
             "settings": {
                 "files.insertFinalNewline": true,
                 "files.trimTrailingWhitespace": true,
-                "python.formatting.provider": "black",
-                "python.languageServer": "Pylance",
                 "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter",
                     "editor.formatOnSave": true,
                     "editor.insertSpaces": true,
-                    "editor.tabSize": 4
+                    "editor.tabSize": 4,
+                    "python.languageServer": "Pylance"
                 }
             }
         }
