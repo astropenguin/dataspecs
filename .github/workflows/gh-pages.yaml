@@ -1,4 +1,4 @@
-name: PyPI
+name: GitHub Pages
 
 on:
   release:
@@ -7,10 +7,10 @@ on:
 
 jobs:
   job:
-    name: PyPI
+    name: GitHub Pages
     runs-on: ubuntu-latest
     env:
-      POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+      POETRY_VIRTUALENVS_CREATE: false
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -19,4 +19,10 @@ jobs:
       - uses: abatilo/actions-poetry@v2
         with:
           poetry-version: "1.7.1"
-      - run: poetry publish --build
+      - run: poetry install
+      - run: docs/build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          force_orphan: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_build
