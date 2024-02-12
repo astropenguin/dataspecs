@@ -3,14 +3,18 @@ name = "dataspecs"
 version = "0.0.1"
 description = "Data specifications definable in data classes"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
+documentation = "https://astropenguin.github.io/dataspecs/"
+homepage = "https://github.com/astropenguin/dataspecs/"
+keywords = ["dataclasses", "specifications", "typing"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9, <3.13"
+typing-extensions = "^4.1"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.9"
+black = "^24.1"
 mypy = "^1.5"
 pyright = "^1.1"
 pytest = "^7.4"
