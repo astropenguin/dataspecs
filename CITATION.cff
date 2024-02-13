@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+
+title: "dataspecs"
+abstract: "Data specifications defined in data classes"
+version: 0.0.2
+date-released: 2024-02-13
+license: "MIT"
+doi: "10.5281/zenodo.10652375"
+url: "https://github.com/astropenguin/xarray-units/"
+authors:
+  - given-names: "Akio"
+    family-names: "Taniguchi"
+    affiliation: "Nagoya University"
+    orcid: "https://orcid.org/0000-0002-9695-6183"
