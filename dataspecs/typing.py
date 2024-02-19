@@ -70,9 +70,9 @@ def get_first(tp: Any) -> Any:
     return get_args(tp)[0] if is_union(tp) else tp
 
 
-def get_literals(tp: Any) -> list[Any]:
+def get_literals(tp: Any) -> Any:
     """Return literals if a type is a literal type."""
-    return list(get_args(tp)) if is_literal(tp) else []
+    return list(get_args(tp)) if is_literal(tp) else tp
 
 
 def get_subscriptions(tp: Any) -> list[Any]:
