@@ -3,6 +3,7 @@ __all__ = [
     "specs",
     "typing",
     # aliases
+    "DataClass",
     "Tag",
 ]
 __version__ = "0.0.2"
@@ -14,4 +15,4 @@ from . import typing
 
 
 # aliases
-from .typing import Tag
+from .typing import DataClass, Tag

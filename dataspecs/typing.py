@@ -1,8 +1,16 @@
-__all__ = ["Tag"]
+__all__ = ["DataClass", "Tag"]
 
 
 # standard library
+from dataclasses import Field
 from enum import Enum
+from typing import Any, ClassVar, Protocol
+
+
+class DataClass(Protocol):
+    """Type hint for any dataclass object."""
+
+    __dataclass_fields__: ClassVar[dict[str, Field[Any]]]
 
 
 class Tag(str, Enum):
