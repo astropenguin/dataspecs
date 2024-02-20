@@ -2,14 +2,13 @@ __all__ = ["DataClass", "Tag"]
 
 
 # standard library
-import types
 from dataclasses import Field, is_dataclass
 from enum import Enum
 from typing import Annotated, Any, ClassVar, Literal, Protocol, Union
 
 
 # dependencies
-from typing_extensions import get_args, get_origin
+from typing_extensions import TypeGuard, get_args, get_origin
 
 
 class DataClass(Protocol):
@@ -42,12 +41,14 @@ def is_literal(tp: Any) -> bool:
     return get_origin(tp) is Literal
 
 
+def is_tag(obj: Any) -> TypeGuard[TagBase]:
+    """Check if an object is a specification tag."""
+    return isinstance(obj, TagBase)
+
+
 def is_union(tp: Any) -> bool:
-    """Check if a type is a union of types."""
-    if UnionType := getattr(types, "UnionType", None):
-        return get_origin(tp) is Union or isinstance(tp, UnionType)
-    else:
-        return get_origin(tp) is Union
+    """Check if a type is a union type."""
+    return get_origin(Union[tp]) is Union  # type: ignore
 
 
 def get_annotated(tp: Any) -> Any:
@@ -55,14 +56,14 @@ def get_annotated(tp: Any) -> Any:
     return get_args(tp)[0] if is_annotated(tp) else tp
 
 
-def get_annotations(tp: Any) -> list[Any]:
+def get_annotations(tp: Any) -> tuple[Any, ...]:
     """Return annotations of a type if they exist."""
-    return list(get_args(tp))[1:] if is_annotated(tp) else []
+    return get_args(tp)[1:] if is_annotated(tp) else ()
 
 
-def get_dataclasses(tp: Any) -> list[DataClass]:
+def get_dataclasses(tp: Any) -> tuple[DataClass, ...]:
     """Return dataclass objects that annotate a type."""
-    return [ann for ann in get_annotations(tp) if is_dataclass(ann)]
+    return tuple(filter(is_dataclass, get_annotations(tp)))
 
 
 def get_first(tp: Any) -> Any:
@@ -72,14 +73,14 @@ def get_first(tp: Any) -> Any:
 
 def get_literals(tp: Any) -> Any:
     """Return literals if a type is a literal type."""
-    return list(get_args(tp)) if is_literal(tp) else tp
+    return get_args(tp) if is_literal(tp) else tp
 
 
-def get_subscriptions(tp: Any) -> list[Any]:
+def get_subscriptions(tp: Any) -> tuple[Any, ...]:
     """Return subscriptions of a type if they exist."""
-    return list(get_args(get_annotated(tp)))
+    return get_args(get_annotated(tp))
 
 
-def get_tags(tp: Any) -> list[Tag]:
+def get_tags(tp: Any) -> tuple[TagBase, ...]:
     """Return tags that annotate a type."""
-    return [ann for ann in get_annotations(tp) if isinstance(ann, Tag)]
+    return tuple(filter(is_tag, get_annotations(tp)))
