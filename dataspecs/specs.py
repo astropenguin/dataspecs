@@ -55,17 +55,34 @@ class Specs(list[Spec]):
 
     @classmethod
     def from_dataclass(cls, dc: DataClass) -> "Specs":
-        """Create data specifications from a dataclass object."""
+        """Create data specifications from a dataclass object.
+
+        Args:
+            dc: Dataclass object to be parsed.
+
+        Returns:
+            Data specification created from ``dc``.
+
+        """
         return from_dataclass(dc)
 
 
-def from_dataclass(dc: DataClass, root: str = ROOT) -> Specs:
-    """Create data specifications from a dataclass object."""
+def from_dataclass(dc: DataClass, parent: str = ROOT) -> Specs:
+    """Create data specifications from a dataclass object.
+
+    Args:
+        dc: Dataclass object to be parsed.
+        parent: Identifier of the parent.
+
+    Returns:
+        Data specifications created from ``dc``.
+
+    """
     specs = Specs()
 
     for f in fields(dc):
         spec = Spec(
-            id=(id_ := f"{root}.{f.name}"),
+            id=(id_ := f"{parent}.{f.name}"),
             type=(annotated := get_annotated(f.type)),
             data=getattr(dc, f.name, f.default),
             tags=list(get_tags(f.type)),
@@ -81,13 +98,22 @@ def from_dataclass(dc: DataClass, root: str = ROOT) -> Specs:
     return specs
 
 
-def from_typehint(hint: Any, root: str = ROOT) -> Specs:
-    """Create data specifications from a type hint."""
+def from_typehint(hint: Any, parent: str = ROOT) -> Specs:
+    """Create data specifications from a type hint.
+
+    Args:
+        hint: Type hint to be parsed.
+        parent: Identifier of the parent.
+
+    Returns:
+        Data specifications created from ``hint``.
+
+    """
     specs = Specs()
 
     for name, type_ in enumerate(get_subscriptions(hint)):
         spec = Spec(
-            id=(id_ := f"{root}.{name}"),
+            id=(id_ := f"{parent}.{name}"),
             type=Any,
             data=(annotated := get_annotated(type_)),
             tags=list(get_tags(type_)),
