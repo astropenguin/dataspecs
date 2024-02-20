@@ -21,26 +21,6 @@ class TagBase(Enum):
     """Base enum for specification tags."""
 
 
-def is_annotated(tp: Any) -> bool:
-    """Check if a type is annotated."""
-    return get_origin(tp) is Annotated
-
-
-def is_literal(tp: Any) -> bool:
-    """Check if a type is a literal type."""
-    return get_origin(tp) is Literal
-
-
-def is_tag(obj: Any) -> TypeGuard[TagBase]:
-    """Check if an object is a specification tag."""
-    return isinstance(obj, TagBase)
-
-
-def is_union(tp: Any) -> bool:
-    """Check if a type is a union type."""
-    return get_origin(Union[tp]) is Union  # type: ignore
-
-
 def get_annotated(tp: Any) -> Any:
     """Return annotated type of a type if it exists."""
     return get_args(tp)[0] if is_annotated(tp) else tp
@@ -74,3 +54,23 @@ def get_subscriptions(tp: Any) -> tuple[Any, ...]:
 def get_tags(tp: Any) -> tuple[TagBase, ...]:
     """Return tags that annotate a type."""
     return tuple(filter(is_tag, get_annotations(tp)))
+
+
+def is_annotated(tp: Any) -> bool:
+    """Check if a type is annotated."""
+    return get_origin(tp) is Annotated
+
+
+def is_literal(tp: Any) -> bool:
+    """Check if a type is a literal type."""
+    return get_origin(tp) is Literal
+
+
+def is_tag(obj: Any) -> TypeGuard[TagBase]:
+    """Check if an object is a specification tag."""
+    return isinstance(obj, TagBase)
+
+
+def is_union(tp: Any) -> bool:
+    """Check if a type is a union type."""
+    return get_origin(Union[tp]) is Union  # type: ignore
