@@ -4,7 +4,7 @@ __all__ = [
     "typing",
     # aliases
     "DataClass",
-    "Tag",
+    "TagBase",
 ]
 __version__ = "0.0.2"
 
@@ -15,4 +15,4 @@ from . import typing
 
 
 # aliases
-from .typing import DataClass, Tag
+from .typing import *
