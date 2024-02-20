@@ -2,12 +2,23 @@ __all__ = ["Spec", "Specs"]
 
 
 # standard library
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from typing import Any
 
 
 # dependencies
-from .typing import TagBase
+from .typing import (
+    DataClass,
+    TagBase,
+    get_annotated,
+    get_dataclasses,
+    get_subscriptions,
+    get_tags,
+)
+
+
+# constants
+ROOT = "root"
 
 
 @dataclass
@@ -42,5 +53,51 @@ class Spec:
 class Specs(list[Spec]):
     """Data specifications."""
 
-    pass
+    @classmethod
+    def from_dataclass(cls, dc: DataClass) -> "Specs":
+        """Create data specifications from a dataclass object."""
+        return from_dataclass(dc)
 
+
+def from_dataclass(dc: DataClass, root: str = ROOT) -> Specs:
+    """Create data specifications from a dataclass object."""
+    specs = Specs()
+
+    for f in fields(dc):
+        spec = Spec(
+            id=(id_ := f"{root}.{f.name}"),
+            type=(annotated := get_annotated(f.type)),
+            data=getattr(dc, f.name, f.default),
+            tags=list(get_tags(f.type)),
+            origin=dc,
+        )
+
+        specs.append(spec)
+        specs.extend(from_typehint(annotated, id_))
+
+        for dc_ in get_dataclasses(f.type):
+            specs.extend(from_dataclass(dc_, id_))
+
+    return specs
+
+
+def from_typehint(hint: Any, root: str = ROOT) -> Specs:
+    """Create data specifications from a type hint."""
+    specs = Specs()
+
+    for name, type_ in enumerate(get_subscriptions(hint)):
+        spec = Spec(
+            id=(id_ := f"{root}.{name}"),
+            type=Any,
+            data=(annotated := get_annotated(type_)),
+            tags=list(get_tags(type_)),
+            origin=hint,
+        )
+
+        specs.append(spec)
+        specs.extend(from_typehint(annotated, id_))
+
+        for dc_ in get_dataclasses(type_):
+            specs.extend(from_dataclass(dc_, id_))
+
+    return specs
