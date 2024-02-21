@@ -28,7 +28,7 @@ class Spec:
 
     Args:
         id: Identifier of the specification.
-        type: Type (hint) of the specification.
+        type: Type hint of the specification.
         data: Data of the specification.
         tags: Tags of the specification.
         origin: Origin of the specification.
@@ -39,7 +39,7 @@ class Spec:
     """Identifier of the specification."""
 
     type: Any
-    """Type (hint) of the specification."""
+    """Type hint of the specification."""
 
     data: Any
     """Data of the specification."""
