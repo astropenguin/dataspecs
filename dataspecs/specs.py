@@ -7,6 +7,7 @@ from typing import Any
 
 
 # dependencies
+from typing_extensions import Self
 from .typing import (
     DataClass,
     TagBase,
@@ -54,76 +55,63 @@ class Specs(list[Spec]):
     """Data specifications."""
 
     @classmethod
-    def from_dataclass(cls, dc: DataClass) -> "Specs":
+    def from_dataclass(cls, dc: DataClass, parent: str = ROOT) -> Self:
         """Create data specifications from a dataclass object.
 
         Args:
             dc: Dataclass object to be parsed.
+            parent: Identifier of the parent.
 
         Returns:
-            Data specification created from ``dc``.
+            Data specifications created from ``dc``.
 
         """
-        return from_dataclass(dc)
+        specs = cls()
 
+        for f in fields(dc):
+            spec = Spec(
+                id=(id_ := f"{parent}.{f.name}"),
+                type=(annotated := get_annotated(f.type)),
+                data=getattr(dc, f.name, f.default),
+                tags=list(get_tags(f.type)),
+                origin=dc,
+            )
 
-def from_dataclass(dc: DataClass, parent: str = ROOT) -> Specs:
-    """Create data specifications from a dataclass object.
+            specs.append(spec)
+            specs.extend(cls.from_typehint(annotated, id_))
 
-    Args:
-        dc: Dataclass object to be parsed.
-        parent: Identifier of the parent.
+            for dc_ in get_dataclasses(f.type):
+                specs.extend(cls.from_dataclass(dc_, id_))
 
-    Returns:
-        Data specifications created from ``dc``.
+        return specs
 
-    """
-    specs = Specs()
+    @classmethod
+    def from_typehint(cls, hint: Any, parent: str = ROOT) -> Self:
+        """Create data specifications from a type hint.
 
-    for f in fields(dc):
-        spec = Spec(
-            id=(id_ := f"{parent}.{f.name}"),
-            type=(annotated := get_annotated(f.type)),
-            data=getattr(dc, f.name, f.default),
-            tags=list(get_tags(f.type)),
-            origin=dc,
-        )
+        Args:
+            hint: Type hint to be parsed.
+            parent: Identifier of the parent.
 
-        specs.append(spec)
-        specs.extend(from_typehint(annotated, id_))
+        Returns:
+            Data specifications created from ``hint``.
 
-        for dc_ in get_dataclasses(f.type):
-            specs.extend(from_dataclass(dc_, id_))
+        """
+        specs = cls()
 
-    return specs
+        for name, type_ in enumerate(get_subscriptions(hint)):
+            spec = Spec(
+                id=(id_ := f"{parent}.{name}"),
+                type=Any,
+                data=(annotated := get_annotated(type_)),
+                tags=list(get_tags(type_)),
+                origin=hint,
+            )
 
+            specs.append(spec)
+            specs.extend(cls.from_typehint(annotated, id_))
 
-def from_typehint(hint: Any, parent: str = ROOT) -> Specs:
-    """Create data specifications from a type hint.
+            for dc_ in get_dataclasses(type_):
+                specs.extend(cls.from_dataclass(dc_, id_))
 
-    Args:
-        hint: Type hint to be parsed.
-        parent: Identifier of the parent.
-
-    Returns:
-        Data specifications created from ``hint``.
-
-    """
-    specs = Specs()
-
-    for name, type_ in enumerate(get_subscriptions(hint)):
-        spec = Spec(
-            id=(id_ := f"{parent}.{name}"),
-            type=Any,
-            data=(annotated := get_annotated(type_)),
-            tags=list(get_tags(type_)),
-            origin=hint,
-        )
-
-        specs.append(spec)
-        specs.extend(from_typehint(annotated, id_))
-
-        for dc_ in get_dataclasses(type_):
-            specs.extend(from_dataclass(dc_, id_))
-
-    return specs
+        return specs
