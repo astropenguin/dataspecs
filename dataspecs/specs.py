@@ -116,3 +116,12 @@ class Specs(list[Spec]):
                 specs.extend(cls.from_dataclass(dc_, id_))
 
         return specs
+
+    def children(self, parent: Spec) -> Self:
+        """Select specifications that are children of the parent."""
+        cls = type(self)
+        return cls([spec for spec in self if is_child(spec, parent)])
+
+def is_child(spec: Spec, parent: Spec) -> bool:
+    """Check if a specification is a child of the parent."""
+    return (spec.id != parent.id) and spec.id.is_relative_to(parent.id)
