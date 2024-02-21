@@ -25,7 +25,9 @@ class ID(PurePosixPath):
 
 
 class TagBase(Enum):
-    """Base enum for specification tags."""
+    """Tag base for data specifications."""
+
+    pass
 
 
 def get_annotated(hint: Any) -> Any:
