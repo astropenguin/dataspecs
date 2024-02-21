@@ -122,6 +122,17 @@ class Specs(list[Spec]):
         cls = type(self)
         return cls([spec for spec in self if is_child(spec, parent)])
 
+    def members(self, group: TagBase) -> Self:
+        """Select specifications that are members of the tag group."""
+        cls = type(self)
+        return cls([spec for spec in self if is_member(spec, group)])
+
+
 def is_child(spec: Spec, parent: Spec) -> bool:
     """Check if a specification is a child of the parent."""
     return (spec.id != parent.id) and spec.id.is_relative_to(parent.id)
+
+
+def is_member(spec: Spec, group: TagBase) -> bool:
+    """Check if a specification is a member of the tag group."""
+    return any(tag is group for tag in spec.tags)
