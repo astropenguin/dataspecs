@@ -73,4 +73,4 @@ def is_tag(obj: Any) -> TypeGuard[TagBase]:
 
 def is_union(hint: Any) -> bool:
     """Check if a type hint is a union type."""
-    return get_origin(Union[hint]) is Union  # type: ignore
+    return get_origin(Union[hint]) is Union
