@@ -29,9 +29,9 @@ class Spec:
 
     Args:
         id: Identifier of the specification.
+        tags: Tags of the specification.
         type: Type hint of the specification.
         data: Data of the specification.
-        tags: Tags of the specification.
         origin: Origin of the specification.
 
     """
@@ -39,16 +39,16 @@ class Spec:
     id: ID
     """Identifier of the specification."""
 
+    tags: list[TagBase]
+    """Tags of the specification."""
+
     type: Any
     """Type hint of the specification."""
 
     data: Any
     """Data of the specification."""
 
-    tags: list[TagBase] = field(default_factory=list)
-    """Tags of the specification."""
-
-    origin: Any = field(default=None, repr=False)
+    origin: Any = field(repr=False)
     """Origin of the specification."""
 
 
