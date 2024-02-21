@@ -4,6 +4,7 @@ __all__ = ["DataClass", "TagBase"]
 # standard library
 from dataclasses import Field, is_dataclass
 from enum import Enum
+from pathlib import PurePosixPath
 from typing import Annotated, Any, ClassVar, Literal, Protocol, Union
 
 
@@ -15,6 +16,12 @@ class DataClass(Protocol):
     """Type hint for any dataclass object."""
 
     __dataclass_fields__: ClassVar[dict[str, Field[Any]]]
+
+
+class ID(PurePosixPath):
+    """Identifier for data specifications."""
+
+    pass
 
 
 class TagBase(Enum):

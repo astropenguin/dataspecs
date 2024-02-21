@@ -9,6 +9,7 @@ from typing import Any
 # dependencies
 from typing_extensions import Self
 from .typing import (
+    ID,
     DataClass,
     TagBase,
     get_annotated,
@@ -19,7 +20,7 @@ from .typing import (
 
 
 # constants
-ROOT = "root"
+ROOT = ID("/")
 
 
 @dataclass
@@ -35,7 +36,7 @@ class Spec:
 
     """
 
-    id: str
+    id: ID
     """Identifier of the specification."""
 
     type: Any
@@ -55,7 +56,7 @@ class Specs(list[Spec]):
     """Data specifications."""
 
     @classmethod
-    def from_dataclass(cls, dc: DataClass, parent: str = ROOT) -> Self:
+    def from_dataclass(cls, dc: DataClass, parent: ID = ROOT) -> Self:
         """Create data specifications from a dataclass object.
 
         Args:
@@ -70,7 +71,7 @@ class Specs(list[Spec]):
 
         for f in fields(dc):
             spec = Spec(
-                id=(id_ := f"{parent}.{f.name}"),
+                id=(id_ := parent / f.name),
                 type=(annotated := get_annotated(f.type)),
                 data=getattr(dc, f.name, f.default),
                 tags=list(get_tags(f.type)),
@@ -86,7 +87,7 @@ class Specs(list[Spec]):
         return specs
 
     @classmethod
-    def from_typehint(cls, hint: Any, parent: str = ROOT) -> Self:
+    def from_typehint(cls, hint: Any, parent: ID = ROOT) -> Self:
         """Create data specifications from a type hint.
 
         Args:
@@ -101,7 +102,7 @@ class Specs(list[Spec]):
 
         for name, type_ in enumerate(get_subscriptions(hint)):
             spec = Spec(
-                id=(id_ := f"{parent}.{name}"),
+                id=(id_ := parent / str(name)),
                 type=Any,
                 data=(annotated := get_annotated(type_)),
                 tags=list(get_tags(type_)),
