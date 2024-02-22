@@ -42,10 +42,10 @@ class Spec:
     tags: list[TagBase]
     """Tags of the specification."""
 
-    type: Any
+    type: Any = field(repr=False)
     """Type hint of the specification."""
 
-    data: Any
+    data: Any = field(repr=False)
     """Data of the specification."""
 
     origin: Any = field(repr=False)
