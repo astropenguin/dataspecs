@@ -5,7 +5,7 @@ __all__ = ["DataClass", "TagBase"]
 from dataclasses import Field, is_dataclass
 from enum import Enum
 from pathlib import PurePosixPath
-from typing import Annotated, Any, ClassVar, Literal, Protocol, Union
+from typing import Annotated, Any, ClassVar, Protocol, Union
 
 
 # dependencies
@@ -50,11 +50,6 @@ def get_first(hint: Any) -> Any:
     return get_args(hint)[0] if is_union(hint) else hint
 
 
-def get_literals(hint: Any) -> Any:
-    """Return literals if a type hint is a literal type."""
-    return get_args(hint) if is_literal(hint) else hint
-
-
 def get_subscriptions(hint: Any) -> tuple[Any, ...]:
     """Return subscriptions of a type hint if they exist."""
     return get_args(get_annotated(hint))
@@ -68,11 +63,6 @@ def get_tags(hint: Any) -> tuple[TagBase, ...]:
 def is_annotated(hint: Any) -> bool:
     """Check if a type hint is annotated."""
     return get_origin(hint) is Annotated
-
-
-def is_literal(hint: Any) -> bool:
-    """Check if a type hint is a literal type."""
-    return get_origin(hint) is Literal
 
 
 def is_tag(obj: Any) -> TypeGuard[TagBase]:
