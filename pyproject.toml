@@ -28,7 +28,6 @@ strict = true
 
 [tool.pyright]
 typeCheckingMode = "strict"
-reportInvalidTypeArguments = "warning"
 
 [build-system]
 requires = ["poetry-core"]

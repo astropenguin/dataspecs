@@ -67,11 +67,6 @@ def get_dataclasses(hint: Any) -> tuple[DataClass, ...]:
     return tuple(filter(is_dataclass, get_annotations(hint)))
 
 
-def get_first(hint: Any) -> Any:
-    """Return the first type if a type hint is a union type."""
-    return get_args(hint)[0] if is_union(hint) else hint
-
-
 def get_subscriptions(hint: Any) -> tuple[Any, ...]:
     """Return subscriptions of a type hint if they exist."""
     return get_args(get_annotated(hint))
@@ -90,8 +85,3 @@ def is_annotated(hint: Any) -> bool:
 def is_tag(obj: Any) -> TypeGuard[TagBase]:
     """Check if an object is a specification tag."""
     return isinstance(obj, TagBase)
-
-
-def is_union(hint: Any) -> bool:
-    """Check if a type hint is a union type."""
-    return get_origin(Union[hint]) is Union
