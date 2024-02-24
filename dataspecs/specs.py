@@ -3,8 +3,6 @@ __all__ = ["Spec", "Specs"]
 
 # standard library
 from dataclasses import dataclass, field, fields
-from os import PathLike, fspath
-from pathlib import PurePosixPath
 from typing import Any, Union
 
 
@@ -12,6 +10,7 @@ from typing import Any, Union
 from typing_extensions import Self
 from .typing import (
     DataClass,
+    ID,
     TagBase,
     get_annotated,
     get_dataclasses,
@@ -20,35 +19,8 @@ from .typing import (
 )
 
 
-# type hints
-StrPath = Union[str, PathLike[str]]
-
-
 # constants
 ROOT = ID("/")
-
-
-class ID(PurePosixPath):
-    """Identifier (ID)."""
-
-    def __init__(self, *segments: StrPath) -> None:
-        """Create an ID from path segments."""
-        super().__init__(*segments)
-
-        if not self.root:
-            raise ValueError("ID must start with the root.")
-
-    def is_child(self, other: StrPath) -> bool:
-        """Check if the ID is a child of other ID."""
-        return self.match(f"{other}/*")
-
-    def is_parent(self, other: StrPath) -> bool:
-        """Check if the ID is the parent of other ID."""
-        return type(self)(other).match(f"{self}/*")
-
-    def matches(self, pattern: StrPath) -> bool:
-        """Check if the ID matches a pattern."""
-        return self.match(fspath(pattern))
 
 
 @dataclass

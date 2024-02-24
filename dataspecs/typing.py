@@ -4,6 +4,8 @@ __all__ = ["DataClass", "TagBase"]
 # standard library
 from dataclasses import Field, is_dataclass
 from enum import Enum
+from os import PathLike, fspath
+from pathlib import PurePosixPath
 from typing import Annotated, Any, ClassVar, Protocol, Union
 
 
@@ -11,10 +13,37 @@ from typing import Annotated, Any, ClassVar, Protocol, Union
 from typing_extensions import TypeGuard, get_args, get_origin
 
 
+# type hints
+StrPath = Union[str, PathLike[str]]
+
+
 class DataClass(Protocol):
     """Type hint for any dataclass object."""
 
     __dataclass_fields__: ClassVar[dict[str, Field[Any]]]
+
+
+class ID(PurePosixPath):
+    """Identifier (ID) for data specifications."""
+
+    def __init__(self, *segments: StrPath) -> None:
+        """Create an ID from path segments."""
+        super().__init__(*segments)
+
+        if not self.root:
+            raise ValueError("ID must start with the root.")
+
+    def is_child(self, other: StrPath) -> bool:
+        """Check if the ID is a child of other ID."""
+        return self.match(f"{other}/*")
+
+    def is_parent(self, other: StrPath) -> bool:
+        """Check if the ID is the parent of other ID."""
+        return type(self)(other).match(f"{self}/*")
+
+    def matches(self, pattern: StrPath) -> bool:
+        """Check if the ID matches a pattern."""
+        return self.match(fspath(pattern))
 
 
 class TagBase(Enum):
