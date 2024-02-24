@@ -53,31 +53,43 @@ class ID(PurePosixPath):
 
 @dataclass
 class Spec:
-    """Data specification.
+    """Data specification (data spec).
 
     Args:
-        id: Identifier of the specification.
-        tags: Tags of the specification.
-        type: Type hint of the specification.
-        data: Data of the specification.
-        origin: Origin of the specification.
+        id: ID of the data spec.
+        tags: Tags of the data spec.
+        type: Type hint of the data spec.
+        data: Data of the data spec.
+        origin: Origin of the data spec.
 
     """
 
     id: ID
-    """Identifier of the specification."""
+    """ID of the data spec."""
 
     tags: list[TagBase]
-    """Tags of the specification."""
+    """Tags of the data spec."""
 
     type: Any = field(repr=False)
-    """Type hint of the specification."""
+    """Type hint of the data spec."""
 
     data: Any = field(repr=False)
-    """Data of the specification."""
+    """Data of the data spec."""
 
     origin: Any = field(repr=False)
-    """Origin of the specification."""
+    """Origin of the data spec."""
+
+    def is_child(self, other: Self) -> bool:
+        """Check if the data spec is a child of other one."""
+        return self.id.is_child(other.id)
+
+    def is_parent(self, other: Self) -> bool:
+        """Check if the data spec is the parent of other one."""
+        return self.id.is_parent(other.id)
+
+    def matches(self, pattern: StrPath) -> bool:
+        """Check if the data spec matches a pattern."""
+        return self.id.matches(pattern)
 
 
 class Specs(list[Spec]):
