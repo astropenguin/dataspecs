@@ -26,17 +26,14 @@ GLOB_REPLS = r".*", r"[^/]*"
 class ID(PurePosixPath):
     """Identifier (ID) for data specifications.
 
-    It is based on ``PurePosixPath`` but an ID requires that
-    (1) each path segment of it must be either an identifier
-    of Python or a digit and (2) it must start with the root.
+    It is based on ``PurePosixPath``, however,
+    the difference is an ID must start with the root (``/``).
 
     Args:
         *segments: Path segments to create an ID.
 
     Raises:
-        ValueError: Raised if (1) ID does not start with
-            the root or (2) Each path segment is not neither
-            an identifier of Python nor a digit.
+        ValueError: Raised if it does not start with the root.
 
     """
 
@@ -45,13 +42,6 @@ class ID(PurePosixPath):
 
         if not self.root:
             raise ValueError("ID must start with the root.")
-
-        for part in self.parts[1:]:
-            if not (part.isidentifier() or part.isdigit()):
-                raise ValueError(
-                    "Each path segment must be either"
-                    "an identifier of Python or a digit."
-                )
 
     def matches(self, pattern: StrPath) -> bool:
         """Check if the ID matches a pattern.
