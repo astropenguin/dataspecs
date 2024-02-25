@@ -1,4 +1,4 @@
-__all__ = ["DataClass", "ID", "TagBase"]
+__all__ = ["ID", "ROOT", "DataClass", "TagBase"]
 
 
 # standard library
@@ -21,12 +21,6 @@ StrPath = Union[str, PathLike[str]]
 # constants
 GLOB_PATTERNS = r"\*\*()|\*([^\*]|$)"
 GLOB_REPLS = r".*", r"[^/]*"
-
-
-class DataClass(Protocol):
-    """Type hint for any dataclass object."""
-
-    __dataclass_fields__: ClassVar[dict[str, Field[Any]]]
 
 
 class ID(PurePosixPath):
@@ -52,7 +46,7 @@ class ID(PurePosixPath):
         if not self.root:
             raise ValueError("ID must start with the root.")
 
-        for part in self.parts:
+        for part in self.parts[1:]:
             if not (part.isidentifier() or part.isdigit()):
                 raise ValueError(
                     "Each path segment must be either"
@@ -80,6 +74,17 @@ class ID(PurePosixPath):
 
         converted = sub(GLOB_PATTERNS, repl, fspath(pattern))
         return bool(fullmatch(converted, fspath(self)))
+
+
+ROOT = ID("/")
+"""Root ID."""
+
+
+# type hints
+class DataClass(Protocol):
+    """Type hint for any dataclass object."""
+
+    __dataclass_fields__: ClassVar[dict[str, Field[Any]]]
 
 
 class TagBase(Enum):

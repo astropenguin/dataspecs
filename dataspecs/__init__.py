@@ -3,8 +3,9 @@ __all__ = [
     "specs",
     "typing",
     # aliases
-    "DataClass",
     "ID",
+    "ROOT",
+    "DataClass",
     "Spec",
     "Specs",
     "TagBase",
