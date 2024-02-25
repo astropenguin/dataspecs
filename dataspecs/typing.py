@@ -19,7 +19,7 @@ StrPath = Union[str, PathLike[str]]
 
 
 # constants
-GLOB_PATTERNS = r"\*\*()|\*([^\*]|$)"
+GLOB_PATTERN = r"\*\*()|\*([^\*]|$)"
 GLOB_REPLS = r".*", r"[^/]*"
 
 
@@ -72,7 +72,7 @@ class ID(PurePosixPath):
             index = cast(int, match.lastindex)
             return GLOB_REPLS[index - 1] + match.group(index)
 
-        converted = sub(GLOB_PATTERNS, repl, fspath(pattern))
+        converted = sub(GLOB_PATTERN, repl, fspath(pattern))
         return bool(fullmatch(converted, fspath(self)))
 
 
