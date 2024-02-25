@@ -1,4 +1,4 @@
-__all__ = ["DataClass", "TagBase"]
+__all__ = ["DataClass", "ID", "TagBase"]
 
 
 # standard library
@@ -6,7 +6,8 @@ from dataclasses import Field, is_dataclass
 from enum import Enum
 from os import PathLike, fspath
 from pathlib import PurePosixPath
-from typing import Annotated, Any, ClassVar, Protocol, Union
+from re import Match, fullmatch, sub
+from typing import Annotated, Any, ClassVar, Protocol, Union, cast
 
 
 # dependencies
@@ -17,6 +18,11 @@ from typing_extensions import TypeGuard, get_args, get_origin
 StrPath = Union[str, PathLike[str]]
 
 
+# constants
+GLOB_PATTERNS = r"\*\*()|\*([^\*]|$)"
+GLOB_REPLS = r".*", r"[^/]*"
+
+
 class DataClass(Protocol):
     """Type hint for any dataclass object."""
 
@@ -24,26 +30,56 @@ class DataClass(Protocol):
 
 
 class ID(PurePosixPath):
-    """Identifier (ID) for data specifications."""
+    """Identifier (ID) for data specifications.
+
+    It is based on ``PurePosixPath`` but an ID requires that
+    (1) each path segment of it must be either an identifier
+    of Python or a digit and (2) it must start with the root.
+
+    Args:
+        *segments: Path segments to create an ID.
+
+    Raises:
+        ValueError: Raised if (1) ID does not start with
+            the root or (2) Each path segment is not neither
+            an identifier of Python nor a digit.
+
+    """
 
     def __init__(self, *segments: StrPath) -> None:
-        """Create an ID from path segments."""
         super().__init__(*segments)
 
         if not self.root:
             raise ValueError("ID must start with the root.")
 
-    def is_child(self, other: StrPath) -> bool:
-        """Check if the ID is a child of other ID."""
-        return self.match(f"{other}/*")
-
-    def is_parent(self, other: StrPath) -> bool:
-        """Check if the ID is the parent of other ID."""
-        return type(self)(other).match(f"{self}/*")
+        for part in self.parts:
+            if not (part.isidentifier() or part.isdigit()):
+                raise ValueError(
+                    "Each path segment must be either"
+                    "an identifier of Python or a digit."
+                )
 
     def matches(self, pattern: StrPath) -> bool:
-        """Check if the ID matches a pattern."""
-        return self.match(fspath(pattern))
+        """Check if the ID matches a pattern.
+
+        Unlike ``ID.match``, it also accepts double-wildcards
+        (``**``) for recursively matching the path segments.
+
+        Args:
+            pattern: Pattern string or path-like object.
+
+        Returns:
+            ``True`` if the pattern matches the ID.
+            ``False`` otherwise.
+
+        """
+
+        def repl(match: Match[str]) -> str:
+            index = cast(int, match.lastindex)
+            return GLOB_REPLS[index - 1] + match.group(index)
+
+        converted = sub(GLOB_PATTERNS, repl, fspath(pattern))
+        return bool(fullmatch(converted, fspath(self)))
 
 
 class TagBase(Enum):

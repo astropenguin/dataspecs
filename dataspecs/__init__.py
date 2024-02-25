@@ -4,6 +4,7 @@ __all__ = [
     "typing",
     # aliases
     "DataClass",
+    "ID",
     "Spec",
     "Specs",
     "TagBase",
