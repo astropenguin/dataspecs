@@ -51,18 +51,6 @@ class Spec:
     origin: Any = field(repr=False)
     """Origin of the data spec."""
 
-    def is_child(self, other: Self) -> bool:
-        """Check if the data spec is a child of other one."""
-        return self.id.is_child(other.id)
-
-    def is_parent(self, other: Self) -> bool:
-        """Check if the data spec is the parent of other one."""
-        return self.id.is_parent(other.id)
-
-    def matches(self, pattern: StrPath) -> bool:
-        """Check if the data spec matches a pattern."""
-        return self.id.matches(pattern)
-
 
 class Specs(list[Spec]):
     """Data specifications."""
