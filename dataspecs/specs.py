@@ -3,24 +3,22 @@ __all__ = ["Spec", "Specs"]
 
 # standard library
 from dataclasses import dataclass, field, fields
-from typing import Any, Union
+from typing import Any
 
 
 # dependencies
 from typing_extensions import Self
 from .typing import (
-    DataClass,
     ID,
+    ROOT,
+    DataClass,
+    StrPath,
     TagBase,
     get_annotated,
     get_dataclasses,
     get_subscriptions,
     get_tags,
 )
-
-
-# constants
-ROOT = ID("/")
 
 
 @dataclass
@@ -53,25 +51,25 @@ class Spec:
 
 
 class Specs(list[Spec]):
-    """Data specifications."""
+    """Data specifications (data specs)."""
 
     @classmethod
-    def from_dataclass(cls, dc: DataClass, parent: ID = ROOT) -> Self:
-        """Create data specifications from a dataclass object.
+    def from_dataclass(cls, dc: DataClass, parent: StrPath = ROOT) -> Self:
+        """Create data specs from a dataclass object.
 
         Args:
             dc: Dataclass object to be parsed.
-            parent: Identifier of the parent.
+            parent: ID of the parent data spec.
 
         Returns:
-            Data specifications created from ``dc``.
+            Data specs created from the dataclass object.
 
         """
         specs = cls()
 
         for f in fields(dc):
             spec = Spec(
-                id=(id_ := parent / f.name),
+                id=(id_ := ID(parent) / f.name),
                 type=(annotated := get_annotated(f.type)),
                 data=getattr(dc, f.name, f.default),
                 tags=list(get_tags(f.type)),
@@ -87,22 +85,22 @@ class Specs(list[Spec]):
         return specs
 
     @classmethod
-    def from_typehint(cls, hint: Any, parent: ID = ROOT) -> Self:
-        """Create data specifications from a type hint.
+    def from_typehint(cls, hint: Any, parent: StrPath = ROOT) -> Self:
+        """Create data specs from a type hint.
 
         Args:
             hint: Type hint to be parsed.
-            parent: Identifier of the parent.
+            parent: ID of the parent data spec.
 
         Returns:
-            Data specifications created from ``hint``.
+            Data specs created from the type hint.
 
         """
         specs = cls()
 
         for name, type_ in enumerate(get_subscriptions(hint)):
             spec = Spec(
-                id=(id_ := parent / str(name)),
+                id=(id_ := ID(parent) / str(name)),
                 type=Any,
                 data=(annotated := get_annotated(type_)),
                 tags=list(get_tags(type_)),
@@ -116,23 +114,3 @@ class Specs(list[Spec]):
                 specs.extend(cls.from_dataclass(dc_, id_))
 
         return specs
-
-    def children(self, parent: Spec) -> Self:
-        """Select specifications that are children of the parent."""
-        cls = type(self)
-        return cls([spec for spec in self if is_child(spec, parent)])
-
-    def members(self, group: TagBase) -> Self:
-        """Select specifications that are members of the tag group."""
-        cls = type(self)
-        return cls([spec for spec in self if is_member(spec, group)])
-
-
-def is_child(spec: Spec, parent: Spec) -> bool:
-    """Check if a specification is a child of the parent."""
-    return (spec.id != parent.id) and spec.id.is_relative_to(parent.id)
-
-
-def is_member(spec: Spec, group: TagBase) -> bool:
-    """Check if a specification is a member of the tag group."""
-    return any(tag is group for tag in spec.tags)
