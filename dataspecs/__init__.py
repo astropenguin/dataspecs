@@ -5,7 +5,6 @@ __all__ = [
     # aliases
     "ID",
     "ROOT",
-    "DataClass",
     "Spec",
     "Specs",
     "TagBase",

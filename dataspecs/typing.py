@@ -1,4 +1,4 @@
-__all__ = ["ID", "ROOT", "DataClass", "TagBase"]
+__all__ = ["ID", "ROOT", "TagBase"]
 
 
 # standard library
