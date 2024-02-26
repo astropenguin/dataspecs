@@ -23,7 +23,7 @@ from .typing import (
 )
 
 
-@dataclass
+@dataclass(frozen=True)
 class Spec:
     """Data specification (data spec).
 
@@ -39,7 +39,7 @@ class Spec:
     id: ID
     """ID of the data spec."""
 
-    tags: list[TagBase]
+    tags: tuple[TagBase, ...]
     """Tags of the data spec."""
 
     type: Any = field(repr=False)
@@ -74,7 +74,7 @@ class Specs(list[Spec]):
                 id=(id_ := ID(parent) / f.name),
                 type=(annotated := get_annotated(f.type)),
                 data=getattr(dc, f.name, f.default),
-                tags=list(get_tags(f.type)),
+                tags=get_tags(f.type),
                 origin=dc,
             )
 
@@ -105,7 +105,7 @@ class Specs(list[Spec]):
                 id=(id_ := ID(parent) / str(name)),
                 type=Any,
                 data=(annotated := get_annotated(type_)),
-                tags=list(get_tags(type_)),
+                tags=get_tags(type_),
                 origin=hint,
             )
 
