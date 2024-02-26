@@ -3,7 +3,7 @@ __all__ = ["Spec", "Specs"]
 
 # standard library
 from dataclasses import dataclass, field, fields
-from typing import Any, SupportsIndex, overload
+from typing import Any, Optional, SupportsIndex, overload
 
 
 # dependencies
@@ -54,6 +54,16 @@ class Spec:
 
 class Specs(list[Spec]):
     """Data specifications (data specs)."""
+
+    @property
+    def first(self) -> Optional[Spec]:
+        """Return the first data spec if it exists (None otherwise)."""
+        return self[0] if len(self) else None
+
+    @property
+    def last(self) -> Optional[Spec]:
+        """Return the last data spec if it exists (None otherwise)."""
+        return self[-1] if len(self) else None
 
     @classmethod
     def from_dataclass(cls, dc: DataClass, /, parent: StrPath = ROOT) -> Self:
