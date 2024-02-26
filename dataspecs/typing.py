@@ -78,18 +78,18 @@ class DataClass(Protocol):
 
 
 class TagBase(Enum):
-    """Tag base for data specifications.
+    """Base enum of tag for data specs.
 
-    Since ``TagBase`` itself has no members,
+    Since ``TagBase`` itself cannot have any members,
     users should create their own tags by inheriting it::
 
-            from enum import auto
-            from dataspecs import TagBase
+        from enum import auto
+        from dataspecs import TagBase
 
-            class Tag(TagBase):
-                ATTR = auto()
-                DATA = auto()
-                NAME = auto()
+        class Tag(TagBase):
+            ATTR = auto()
+            DATA = auto()
+            NAME = auto()
 
     """
 
