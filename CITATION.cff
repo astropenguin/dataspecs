@@ -7,7 +7,7 @@ version: 0.0.2
 date-released: 2024-02-13
 license: "MIT"
 doi: "10.5281/zenodo.10652375"
-url: "https://github.com/astropenguin/xarray-units/"
+url: "https://github.com/astropenguin/dataspecs/"
 authors:
   - given-names: "Akio"
     family-names: "Taniguchi"
