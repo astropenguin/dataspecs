@@ -113,6 +113,11 @@ def is_annotated(hint: Any) -> bool:
     return get_origin(hint) is Annotated
 
 
+def is_strpath(obj: Any) -> TypeGuard[StrPath]:
+    """Check if an object is a string or a string path."""
+    return isinstance(obj, (str, PathLike))
+
+
 def is_tag(obj: Any) -> TypeGuard[TagBase]:
     """Check if an object is a specification tag."""
     return isinstance(obj, TagBase)
