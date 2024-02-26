@@ -57,12 +57,12 @@ class Specs(list[Spec]):
 
     @property
     def first(self) -> Optional[Spec]:
-        """Return the first data spec if it exists (None otherwise)."""
+        """Return the first data spec if it exists (``None`` otherwise)."""
         return self[0] if len(self) else None
 
     @property
     def last(self) -> Optional[Spec]:
-        """Return the last data spec if it exists (None otherwise)."""
+        """Return the last data spec if it exists (``None`` otherwise)."""
         return self[-1] if len(self) else None
 
     @classmethod

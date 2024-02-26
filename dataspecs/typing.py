@@ -24,7 +24,7 @@ GLOB_REPLS = r".*", r"[^/]*"
 
 
 class ID(PurePosixPath):
-    """Identifier (ID) for data specifications.
+    """Identifier (ID) for data specs.
 
     It is based on ``PurePosixPath``, however,
     the difference is an ID must start with the root (``/``).
@@ -78,7 +78,20 @@ class DataClass(Protocol):
 
 
 class TagBase(Enum):
-    """Tag base for data specifications."""
+    """Tag base for data specifications.
+
+    Since ``TagBase`` itself has no members,
+    users should create their own tags by inheriting it::
+
+            from enum import auto
+            from dataspecs import TagBase
+
+            class Tag(TagBase):
+                ATTR = auto()
+                DATA = auto()
+                NAME = auto()
+
+    """
 
     pass
 
