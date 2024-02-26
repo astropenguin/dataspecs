@@ -56,7 +56,7 @@ class Specs(list[Spec]):
     """Data specifications (data specs)."""
 
     @classmethod
-    def from_dataclass(cls, dc: DataClass, parent: StrPath = ROOT) -> Self:
+    def from_dataclass(cls, dc: DataClass, /, parent: StrPath = ROOT) -> Self:
         """Create data specs from a dataclass object.
 
         Args:
@@ -87,7 +87,7 @@ class Specs(list[Spec]):
         return specs
 
     @classmethod
-    def from_typehint(cls, hint: Any, parent: StrPath = ROOT) -> Self:
+    def from_typehint(cls, hint: Any, /, parent: StrPath = ROOT) -> Self:
         """Create data specs from a type hint.
 
         Args:

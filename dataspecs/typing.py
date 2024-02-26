@@ -43,7 +43,7 @@ class ID(PurePosixPath):
         if not self.root:
             raise ValueError("ID must start with the root.")
 
-    def matches(self, pattern: StrPath) -> bool:
+    def matches(self, pattern: StrPath, /) -> bool:
         """Check if the ID matches a pattern.
 
         Unlike ``ID.match``, it also accepts double-wildcards
@@ -83,41 +83,41 @@ class TagBase(Enum):
     pass
 
 
-def get_annotated(hint: Any) -> Any:
+def get_annotated(hint: Any, /) -> Any:
     """Return annotated type of a type hint if it exists."""
     return get_args(hint)[0] if is_annotated(hint) else hint
 
 
-def get_annotations(hint: Any) -> tuple[Any, ...]:
+def get_annotations(hint: Any, /) -> tuple[Any, ...]:
     """Return annotations of a type hint if they exist."""
     return get_args(hint)[1:] if is_annotated(hint) else ()
 
 
-def get_dataclasses(hint: Any) -> tuple[DataClass, ...]:
+def get_dataclasses(hint: Any, /) -> tuple[DataClass, ...]:
     """Return dataclass objects that annotate a type hint."""
     return tuple(filter(is_dataclass, get_annotations(hint)))
 
 
-def get_subscriptions(hint: Any) -> tuple[Any, ...]:
+def get_subscriptions(hint: Any, /) -> tuple[Any, ...]:
     """Return subscriptions of a type hint if they exist."""
     return get_args(get_annotated(hint))
 
 
-def get_tags(hint: Any) -> tuple[TagBase, ...]:
+def get_tags(hint: Any, /) -> tuple[TagBase, ...]:
     """Return tags that annotate a type hint."""
     return tuple(filter(is_tag, get_annotations(hint)))
 
 
-def is_annotated(hint: Any) -> bool:
+def is_annotated(hint: Any, /) -> bool:
     """Check if a type hint is annotated."""
     return get_origin(hint) is Annotated
 
 
-def is_strpath(obj: Any) -> TypeGuard[StrPath]:
+def is_strpath(obj: Any, /) -> TypeGuard[StrPath]:
     """Check if an object is a string or a string path."""
     return isinstance(obj, (str, PathLike))
 
 
-def is_tag(obj: Any) -> TypeGuard[TagBase]:
+def is_tag(obj: Any, /) -> TypeGuard[TagBase]:
     """Check if an object is a specification tag."""
     return isinstance(obj, TagBase)
