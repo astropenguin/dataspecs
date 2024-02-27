@@ -68,7 +68,7 @@ class Specs(list[Spec]):
     @classmethod
     def from_dataclass(
         cls,
-        dc: DataClass,
+        obj: DataClass,
         /,
         *,
         parent: StrPath = ROOT,
@@ -77,7 +77,7 @@ class Specs(list[Spec]):
         """Create data specs from a dataclass object.
 
         Args:
-            dc: Dataclass object to be parsed.
+            obj: Dataclass object to be parsed.
             parent: Path of the parent data spec.
             tagged_only: Whether to add only tagged data specs.
 
@@ -87,32 +87,32 @@ class Specs(list[Spec]):
         """
         specs = cls()
 
-        for f in fields(dc):
+        for f in fields(obj):
             if not (tags := get_tags(f.type)) and tagged_only:
                 continue
 
-            spec = Spec(
-                id=(id_ := ID(parent) / f.name),
-                type=(annotated := get_annotated(f.type)),
-                data=getattr(dc, f.name, f.default),
-                tags=tags,
-                origin=dc,
+            specs.append(
+                Spec(
+                    id=(id := ID(parent) / f.name),
+                    type=(hint := get_annotated(f.type)),
+                    data=getattr(obj, f.name, f.default),
+                    tags=tags,
+                    origin=obj,
+                )
             )
-
-            specs.append(spec)
             specs.extend(
                 cls.from_typehint(
-                    annotated,
-                    parent=id_,
+                    hint,
+                    parent=id,
                     tagged_only=tagged_only,
                 )
             )
 
-            for dc_ in get_dataclasses(f.type):
+            for dc in get_dataclasses(f.type):
                 specs.extend(
                     cls.from_dataclass(
-                        dc_,
-                        parent=id_,
+                        dc,
+                        parent=id,
                         tagged_only=tagged_only,
                     )
                 )
@@ -122,7 +122,7 @@ class Specs(list[Spec]):
     @classmethod
     def from_typehint(
         cls,
-        hint: Any,
+        obj: Any,
         /,
         *,
         parent: StrPath = ROOT,
@@ -131,7 +131,7 @@ class Specs(list[Spec]):
         """Create data specs from a type hint.
 
         Args:
-            hint: Type hint to be parsed.
+            obj: Type hint to be parsed.
             parent: Path of the parent data spec.
             tagged_only: Whether to add only tagged data specs.
 
@@ -141,32 +141,32 @@ class Specs(list[Spec]):
         """
         specs = cls()
 
-        for name, type_ in enumerate(get_subscriptions(hint)):
-            if not (tags := get_tags(type_)) and tagged_only:
+        for name, type in enumerate(get_subscriptions(obj)):
+            if not (tags := get_tags(type)) and tagged_only:
                 continue
 
-            spec = Spec(
-                id=(id_ := ID(parent) / str(name)),
-                type=Any,
-                data=(annotated := get_annotated(type_)),
-                tags=tags,
-                origin=hint,
+            specs.append(
+                Spec(
+                    id=(id := ID(parent) / str(name)),
+                    type=Any,
+                    data=(hint := get_annotated(type)),
+                    tags=tags,
+                    origin=obj,
+                )
             )
-
-            specs.append(spec)
             specs.extend(
                 cls.from_typehint(
-                    annotated,
-                    parent=id_,
+                    hint,
+                    parent=id,
                     tagged_only=tagged_only,
                 )
             )
 
-            for dc_ in get_dataclasses(type_):
+            for dc in get_dataclasses(type):
                 specs.extend(
                     cls.from_dataclass(
-                        dc_,
-                        parent=id_,
+                        dc,
+                        parent=id,
                         tagged_only=tagged_only,
                     )
                 )
