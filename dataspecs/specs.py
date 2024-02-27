@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from os import fspath
 from pathlib import PurePosixPath
 from re import Match, compile, fullmatch
-from typing import Any, Optional, SupportsIndex, cast, overload
+from typing import Any, Optional, SupportsIndex, TypeVar, cast, overload
 
 
 # dependencies
@@ -17,6 +17,10 @@ from .typing import StrPath, TagBase, is_strpath, is_tag
 # constants
 GLOB_PATTERN = compile(r"\*\*()|\*([^\*]|$)")
 GLOB_REPLS = r".*", r"[^/]*"
+
+
+# type hints
+TSpec = TypeVar("TSpec", bound="Spec")
 
 
 class ID(PurePosixPath):
@@ -95,16 +99,16 @@ class Spec:
     """Origin of the data spec."""
 
 
-class Specs(list[Spec]):
+class Specs(list[TSpec]):
     """Data specifications (data specs)."""
 
     @property
-    def first(self) -> Optional[Spec]:
+    def first(self) -> Optional[TSpec]:
         """Return the first data spec if it exists (``None`` otherwise)."""
         return self[0] if len(self) else None
 
     @property
-    def last(self) -> Optional[Spec]:
+    def last(self) -> Optional[TSpec]:
         """Return the last data spec if it exists (``None`` otherwise)."""
         return self[-1] if len(self) else None
 
@@ -115,7 +119,7 @@ class Specs(list[Spec]):
     def __getitem__(self, index: StrPath, /) -> Self: ...
 
     @overload
-    def __getitem__(self, index: SupportsIndex, /) -> Spec: ...
+    def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
 
     @overload
     def __getitem__(self, index: slice, /) -> Self: ...
