@@ -1,14 +1,69 @@
-__all__ = ["Spec", "Specs"]
+__all__ = ["ID", "ROOT", "Spec", "Specs"]
 
 
 # standard library
 from dataclasses import dataclass, field
-from typing import Any, Optional, SupportsIndex, overload
+from os import fspath
+from pathlib import PurePosixPath
+from re import Match, compile, fullmatch
+from typing import Any, Optional, SupportsIndex, cast, overload
 
 
 # dependencies
 from typing_extensions import Self
-from .typing import ID, StrPath, TagBase, is_strpath, is_tag
+from .typing import StrPath, TagBase, is_strpath, is_tag
+
+
+# constants
+GLOB_PATTERN = compile(r"\*\*()|\*([^\*]|$)")
+GLOB_REPLS = r".*", r"[^/]*"
+
+
+class ID(PurePosixPath):
+    """Identifier (ID) for data specs.
+
+    It is based on ``PurePosixPath``, however,
+    the difference is an ID must start with the root (``/``).
+
+    Args:
+        *segments: Path segments to create an ID.
+
+    Raises:
+        ValueError: Raised if it does not start with the root.
+
+    """
+
+    def __init__(self, *segments: StrPath) -> None:
+        super().__init__(*segments)
+
+        if not self.root:
+            raise ValueError("ID must start with the root.")
+
+    def matches(self, path_pattern: StrPath, /) -> bool:
+        """Check if the ID matches a path pattern.
+
+        Unlike ``ID.match``, it also accepts double-wildcards
+        (``**``) for recursively matching the path segments.
+
+        Args:
+            path_pattern: Path pattern for matching.
+
+        Returns:
+            ``True`` if the path pattern matches the ID.
+            ``False`` otherwise.
+
+        """
+
+        def repl(match: Match[str]) -> str:
+            index = cast(int, match.lastindex)
+            return GLOB_REPLS[index - 1] + match.group(index)
+
+        regex = GLOB_PATTERN.sub(repl, fspath(path_pattern))
+        return bool(fullmatch(regex, fspath(self)))
+
+
+ROOT = ID("/")
+"""Root ID."""
 
 
 @dataclass(frozen=True)

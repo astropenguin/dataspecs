@@ -7,10 +7,8 @@ from typing import Any
 
 
 # dependencies
-from .specs import Spec, Specs
+from .specs import ID, ROOT, Spec, Specs
 from .typing import (
-    ID,
-    ROOT,
     DataClass,
     StrPath,
     get_annotated,
