@@ -2,25 +2,13 @@ __all__ = ["Spec", "Specs"]
 
 
 # standard library
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field
 from typing import Any, Optional, SupportsIndex, overload
 
 
 # dependencies
 from typing_extensions import Self
-from .typing import (
-    ID,
-    ROOT,
-    DataClass,
-    StrPath,
-    TagBase,
-    get_annotated,
-    get_dataclasses,
-    get_subscriptions,
-    get_tags,
-    is_strpath,
-    is_tag,
-)
+from .typing import ID, StrPath, TagBase, is_strpath, is_tag
 
 
 @dataclass(frozen=True)
@@ -64,114 +52,6 @@ class Specs(list[Spec]):
     def last(self) -> Optional[Spec]:
         """Return the last data spec if it exists (``None`` otherwise)."""
         return self[-1] if len(self) else None
-
-    @classmethod
-    def from_dataclass(
-        cls,
-        obj: DataClass,
-        /,
-        *,
-        parent: StrPath = ROOT,
-        tagged_only: bool = True,
-    ) -> Self:
-        """Create data specs from a dataclass object.
-
-        Args:
-            obj: Dataclass object to be parsed.
-            parent: Path of the parent data spec.
-            tagged_only: Whether to add only tagged data specs.
-
-        Returns:
-            Data specs created from the dataclass object.
-
-        """
-        specs = cls()
-
-        for f in fields(obj):
-            if not (tags := get_tags(f.type)) and tagged_only:
-                continue
-
-            specs.append(
-                Spec(
-                    id=(id := ID(parent) / f.name),
-                    type=(hint := get_annotated(f.type)),
-                    data=getattr(obj, f.name, f.default),
-                    tags=tags,
-                    origin=obj,
-                )
-            )
-            specs.extend(
-                cls.from_typehint(
-                    hint,
-                    parent=id,
-                    tagged_only=tagged_only,
-                )
-            )
-
-            for dc in get_dataclasses(f.type):
-                specs.extend(
-                    cls.from_dataclass(
-                        dc,
-                        parent=id,
-                        tagged_only=tagged_only,
-                    )
-                )
-
-        return specs
-
-    @classmethod
-    def from_typehint(
-        cls,
-        obj: Any,
-        /,
-        *,
-        parent: StrPath = ROOT,
-        tagged_only: bool = True,
-    ) -> Self:
-        """Create data specs from a type hint.
-
-        Args:
-            obj: Type hint to be parsed.
-            parent: Path of the parent data spec.
-            tagged_only: Whether to add only tagged data specs.
-
-        Returns:
-            Data specs created from the type hint.
-
-        """
-        specs = cls()
-
-        for name, type in enumerate(get_subscriptions(obj)):
-            if not (tags := get_tags(type)) and tagged_only:
-                continue
-
-            specs.append(
-                Spec(
-                    id=(id := ID(parent) / str(name)),
-                    type=Any,
-                    data=(hint := get_annotated(type)),
-                    tags=tags,
-                    origin=obj,
-                )
-            )
-            specs.extend(
-                cls.from_typehint(
-                    hint,
-                    parent=id,
-                    tagged_only=tagged_only,
-                )
-            )
-
-            for dc in get_dataclasses(type):
-                specs.extend(
-                    cls.from_dataclass(
-                        dc,
-                        parent=id,
-                        tagged_only=tagged_only,
-                    )
-                )
-
-        return specs
 
     @overload
     def __getitem__(self, index: TagBase, /) -> Self: ...

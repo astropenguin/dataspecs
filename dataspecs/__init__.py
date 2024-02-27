@@ -9,6 +9,8 @@ __all__ = [
     "Spec",
     "Specs",
     "TagBase",
+    "from_dataclass",
+    "from_typehint",
 ]
 __version__ = "0.0.2"
 
@@ -20,5 +22,6 @@ from . import typing
 
 
 # aliases
+from .api import *
 from .specs import *
 from .typing import *
