@@ -41,34 +41,34 @@ class TagBase(Enum):
     pass
 
 
-def get_annotated(hint: Any, /) -> Any:
+def get_annotated(obj: Any, /) -> Any:
     """Return annotated type of a type hint if it exists."""
-    return get_args(hint)[0] if is_annotated(hint) else hint
+    return get_args(obj)[0] if is_annotated(obj) else obj
 
 
-def get_annotations(hint: Any, /) -> tuple[Any, ...]:
+def get_annotations(obj: Any, /) -> tuple[Any, ...]:
     """Return annotations of a type hint if they exist."""
-    return get_args(hint)[1:] if is_annotated(hint) else ()
+    return get_args(obj)[1:] if is_annotated(obj) else ()
 
 
-def get_dataclasses(hint: Any, /) -> tuple[DataClass, ...]:
+def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
     """Return dataclass objects that annotate a type hint."""
-    return tuple(filter(is_dataclass, get_annotations(hint)))
+    return tuple(filter(is_dataclass, get_annotations(obj)))
 
 
-def get_subscriptions(hint: Any, /) -> tuple[Any, ...]:
+def get_subscriptions(obj: Any, /) -> tuple[Any, ...]:
     """Return subscriptions of a type hint if they exist."""
-    return get_args(get_annotated(hint))
+    return get_args(get_annotated(obj))
 
 
-def get_tags(hint: Any, /) -> tuple[TagBase, ...]:
+def get_tags(obj: Any, /) -> tuple[TagBase, ...]:
     """Return tags that annotate a type hint."""
-    return tuple(filter(is_tag, get_annotations(hint)))
+    return tuple(filter(is_tag, get_annotations(obj)))
 
 
-def is_annotated(hint: Any, /) -> bool:
+def is_annotated(obj: Any, /) -> bool:
     """Check if a type hint is annotated."""
-    return get_origin(hint) is Annotated
+    return get_origin(obj) is Annotated
 
 
 def is_strpath(obj: Any, /) -> TypeGuard[StrPath]:
