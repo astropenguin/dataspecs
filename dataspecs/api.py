@@ -27,7 +27,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    parent: StrPath = ROOT,
+    parent_id: StrPath = ROOT,
     tagged_only: bool = True,
 ) -> Specs[Spec]: ...
 
@@ -37,7 +37,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    parent: StrPath = ROOT,
+    parent_id: StrPath = ROOT,
     tagged_only: bool = True,
     spec_factory: Callable[..., TSpec],
 ) -> Specs[TSpec]: ...
@@ -47,7 +47,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    parent: StrPath = ROOT,
+    parent_id: StrPath = ROOT,
     tagged_only: bool = True,
     spec_factory: Any = Spec,
 ) -> Any:
@@ -55,7 +55,7 @@ def from_dataclass(
 
     Args:
         obj: Dataclass object to be parsed.
-        parent: Path of the parent data spec.
+        parent_id: ID of the parent data spec.
         tagged_only: Whether to add only tagged data specs.
         spec_factory: Factory for creating each data spec.
 
@@ -71,7 +71,7 @@ def from_dataclass(
 
         specs.append(
             spec_factory(
-                id=(id := ID(parent) / f.name),
+                id=(id := ID(parent_id) / f.name),
                 type=(hint := get_annotated(f.type)),
                 data=getattr(obj, f.name, f.default),
                 tags=tags,
@@ -81,7 +81,7 @@ def from_dataclass(
         specs.extend(
             from_typehint(
                 hint,
-                parent=id,
+                parent_id=id,
                 tagged_only=tagged_only,
                 spec_factory=spec_factory,
             )
@@ -91,7 +91,7 @@ def from_dataclass(
             specs.extend(
                 from_dataclass(
                     dc,
-                    parent=id,
+                    parent_id=id,
                     tagged_only=tagged_only,
                     spec_factory=spec_factory,
                 )
@@ -105,7 +105,7 @@ def from_typehint(
     obj: DataClass,
     /,
     *,
-    parent: StrPath = ROOT,
+    parent_id: StrPath = ROOT,
     tagged_only: bool = True,
 ) -> Specs[Spec]: ...
 
@@ -115,7 +115,7 @@ def from_typehint(
     obj: DataClass,
     /,
     *,
-    parent: StrPath = ROOT,
+    parent_id: StrPath = ROOT,
     tagged_only: bool = True,
     spec_factory: Callable[..., TSpec],
 ) -> Specs[TSpec]: ...
@@ -125,7 +125,7 @@ def from_typehint(
     obj: DataClass,
     /,
     *,
-    parent: StrPath = ROOT,
+    parent_id: StrPath = ROOT,
     tagged_only: bool = True,
     spec_factory: Any = Spec,
 ) -> Any:
@@ -133,7 +133,7 @@ def from_typehint(
 
     Args:
         obj: Type hint to be parsed.
-        parent: Path of the parent data spec.
+        parent_id: ID of the parent data spec.
         tagged_only: Whether to add only tagged data specs.
         spec_factory: Factory for creating each data spec.
 
@@ -149,7 +149,7 @@ def from_typehint(
 
         specs.append(
             spec_factory(
-                id=(id := ID(parent) / str(name)),
+                id=(id := ID(parent_id) / str(name)),
                 type=Any,
                 data=(hint := get_annotated(type)),
                 tags=tags,
@@ -159,7 +159,7 @@ def from_typehint(
         specs.extend(
             from_typehint(
                 hint,
-                parent=id,
+                parent_id=id,
                 tagged_only=tagged_only,
                 spec_factory=spec_factory,
             )
@@ -169,7 +169,7 @@ def from_typehint(
             specs.extend(
                 from_dataclass(
                     dc,
-                    parent=id,
+                    parent_id=id,
                     tagged_only=tagged_only,
                     spec_factory=spec_factory,
                 )
