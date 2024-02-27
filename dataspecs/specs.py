@@ -119,10 +119,10 @@ class Specs(list[TSpec]):
     def __getitem__(self, index: StrPath, /) -> Self: ...
 
     @overload
-    def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
+    def __getitem__(self, index: slice, /) -> Self: ...
 
     @overload
-    def __getitem__(self, index: slice, /) -> Self: ...
+    def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
 
     def __getitem__(self, index: Any, /) -> Any:
         """Select data specs with given index.
@@ -151,7 +151,10 @@ class Specs(list[TSpec]):
         if is_strpath(index):
             return cls([spec for spec in self if spec.id.matches(index)])
 
-        if isinstance(index, (SupportsIndex, slice)):
+        if isinstance(index, slice):
+            return cls(super().__getitem__(index))
+
+        if isinstance(index, SupportsIndex):
             return super().__getitem__(index)
 
         raise TypeError(f"Index type {type(index)!r} is not supported.")
