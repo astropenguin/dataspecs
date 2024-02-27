@@ -5,6 +5,8 @@ copyright = "2023-2024 Akio Taniguchi"
 
 # general configuration
 add_module_names = False
+autodoc_default_options = {"special-members": "__getitem__"}
+autodoc_member_order = "bysource"
 autodoc_typehints = "both"
 autodoc_typehints_format = "short"
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
