@@ -66,12 +66,20 @@ class Specs(list[Spec]):
         return self[-1] if len(self) else None
 
     @classmethod
-    def from_dataclass(cls, dc: DataClass, /, parent: StrPath = ROOT) -> Self:
+    def from_dataclass(
+        cls,
+        dc: DataClass,
+        /,
+        *,
+        parent: StrPath = ROOT,
+        tagged_only: bool = True,
+    ) -> Self:
         """Create data specs from a dataclass object.
 
         Args:
             dc: Dataclass object to be parsed.
-            parent: ID of the parent data spec.
+            parent: Path of the parent data spec.
+            tagged_only: Whether to add only tagged data specs.
 
         Returns:
             Data specs created from the dataclass object.
@@ -80,29 +88,52 @@ class Specs(list[Spec]):
         specs = cls()
 
         for f in fields(dc):
+            if not (tags := get_tags(f.type)) and tagged_only:
+                continue
+
             spec = Spec(
                 id=(id_ := ID(parent) / f.name),
                 type=(annotated := get_annotated(f.type)),
                 data=getattr(dc, f.name, f.default),
-                tags=get_tags(f.type),
+                tags=tags,
                 origin=dc,
             )
 
             specs.append(spec)
-            specs.extend(cls.from_typehint(annotated, id_))
+            specs.extend(
+                cls.from_typehint(
+                    annotated,
+                    parent=id_,
+                    tagged_only=tagged_only,
+                )
+            )
 
             for dc_ in get_dataclasses(f.type):
-                specs.extend(cls.from_dataclass(dc_, id_))
+                specs.extend(
+                    cls.from_dataclass(
+                        dc_,
+                        parent=id_,
+                        tagged_only=tagged_only,
+                    )
+                )
 
         return specs
 
     @classmethod
-    def from_typehint(cls, hint: Any, /, parent: StrPath = ROOT) -> Self:
+    def from_typehint(
+        cls,
+        hint: Any,
+        /,
+        *,
+        parent: StrPath = ROOT,
+        tagged_only: bool = True,
+    ) -> Self:
         """Create data specs from a type hint.
 
         Args:
             hint: Type hint to be parsed.
-            parent: ID of the parent data spec.
+            parent: Path of the parent data spec.
+            tagged_only: Whether to add only tagged data specs.
 
         Returns:
             Data specs created from the type hint.
@@ -111,19 +142,34 @@ class Specs(list[Spec]):
         specs = cls()
 
         for name, type_ in enumerate(get_subscriptions(hint)):
+            if not (tags := get_tags(type_)) and tagged_only:
+                continue
+
             spec = Spec(
                 id=(id_ := ID(parent) / str(name)),
                 type=Any,
                 data=(annotated := get_annotated(type_)),
-                tags=get_tags(type_),
+                tags=tags,
                 origin=hint,
             )
 
             specs.append(spec)
-            specs.extend(cls.from_typehint(annotated, id_))
+            specs.extend(
+                cls.from_typehint(
+                    annotated,
+                    parent=id_,
+                    tagged_only=tagged_only,
+                )
+            )
 
             for dc_ in get_dataclasses(type_):
-                specs.extend(cls.from_dataclass(dc_, id_))
+                specs.extend(
+                    cls.from_dataclass(
+                        dc_,
+                        parent=id_,
+                        tagged_only=tagged_only,
+                    )
+                )
 
         return specs
 
