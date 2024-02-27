@@ -112,6 +112,11 @@ class Specs(list[TSpec]):
         """Return the last data spec if it exists (``None`` otherwise)."""
         return self[-1] if len(self) else None
 
+    @property
+    def unique(self) -> Optional[TSpec]:
+        """Return the data spec if it is unique (``None`` otherwise)."""
+        return self[0] if len(self) == 1 else None
+
     @overload
     def __getitem__(self, index: TagBase, /) -> Self: ...
 
