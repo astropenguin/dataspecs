@@ -2,6 +2,7 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 
 
 # standard library
+from collections import UserList
 from dataclasses import dataclass, field
 from os import fspath
 from pathlib import PurePosixPath
@@ -100,7 +101,7 @@ class Spec:
     """Origin of the data spec."""
 
 
-class Specs(list[TSpec]):
+class Specs(UserList[TSpec]):
     """Data specifications (data specs)."""
 
     @property
@@ -149,28 +150,17 @@ class Specs(list[TSpec]):
         Returns:
             Selected data specs with given index.
 
-        Raises:
-            TypeError: Raised if the index type is not supported.
-
         """
-        cls = type(self)
-
         if index is None:
-            return cls(self)  # shallow copy
+            return self.copy()  # shallow copy
 
         if is_tag(index):
-            return cls([spec for spec in self if (index in spec.tags)])
+            return type(self)(spec for spec in self if (index in spec.tags))
 
         if is_strpath(index):
-            return cls([spec for spec in self if spec.id.matches(index)])
+            return type(self)(spec for spec in self if spec.id.matches(index))
 
-        if isinstance(index, SupportsIndex):
-            return super().__getitem__(index)
-
-        if isinstance(index, slice):
-            return cls(super().__getitem__(index))
-
-        raise TypeError(f"Index type {type(index)!r} is not supported.")
+        return super().__getitem__(index)
 
     def __sub__(self, removed: list[TSpec], /) -> Self:
         """Return data specs with given ones removed.
@@ -182,4 +172,4 @@ class Specs(list[TSpec]):
             Data specs with given data specs removed.
 
         """
-        return type(self)([spec for spec in self if (spec not in removed)])
+        return type(self)(spec for spec in self if (spec not in removed))

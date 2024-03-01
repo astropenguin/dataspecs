@@ -29,6 +29,7 @@ strict = true
 [tool.pyright]
 typeCheckingMode = "strict"
 reportIncompatibleMethodOverride = "warning"
+reportUnknownVariableType = "warning"
 
 [build-system]
 requires = ["poetry-core"]
