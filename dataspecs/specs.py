@@ -5,7 +5,7 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 from dataclasses import dataclass, field
 from os import fspath
 from pathlib import PurePosixPath
-from re import Match, compile, fullmatch
+from re import Match, compile, escape, fullmatch
 from typing import Any, Optional, SupportsIndex, TypeVar, cast, overload
 
 
@@ -15,7 +15,7 @@ from .typing import StrPath, TagBase, is_strpath, is_tag
 
 
 # constants
-GLOB_PATTERN = compile(r"\*\*()|\*([^\*]|$)")
+GLOB_PATTERN = compile(r"\\\*\\\*()|\\\*([^\\\*]|$)")
 GLOB_REPLS = r".*", r"[^/]*"
 
 
@@ -62,7 +62,7 @@ class ID(PurePosixPath):
             index = cast(int, match.lastindex)
             return GLOB_REPLS[index - 1] + match.group(index)
 
-        regex = GLOB_PATTERN.sub(repl, fspath(path_pattern))
+        regex = GLOB_PATTERN.sub(repl, escape(fspath(path_pattern)))
         return bool(fullmatch(regex, fspath(self)))
 
 
