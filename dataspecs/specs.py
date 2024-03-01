@@ -3,6 +3,7 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 
 # standard library
 from collections import UserList
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from os import fspath
 from pathlib import PurePosixPath
@@ -162,7 +163,7 @@ class Specs(UserList[TSpec]):
 
         return super().__getitem__(index)
 
-    def __sub__(self, removed: list[TSpec], /) -> Self:
+    def __sub__(self, removed: Iterable[TSpec], /) -> Self:
         """Return data specs with given ones removed.
 
         Args:
