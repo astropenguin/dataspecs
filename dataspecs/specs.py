@@ -159,7 +159,7 @@ class Specs(list[TSpec]):
             return cls(self)  # shallow copy
 
         if is_tag(index):
-            return cls([spec for spec in self if index in spec.tags])
+            return cls([spec for spec in self if (index in spec.tags)])
 
         if is_strpath(index):
             return cls([spec for spec in self if spec.id.matches(index)])
@@ -171,3 +171,15 @@ class Specs(list[TSpec]):
             return cls(super().__getitem__(index))
 
         raise TypeError(f"Index type {type(index)!r} is not supported.")
+
+    def __sub__(self, removed: list[TSpec], /) -> Self:
+        """Return data specs with given ones removed.
+
+        Args:
+            removed: Data specs to be removed.
+
+        Returns:
+            Data specs with given data specs removed.
+
+        """
+        return type(self)([spec for spec in self if (spec not in removed)])
