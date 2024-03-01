@@ -15,8 +15,8 @@ from .typing import StrPath, TagBase, is_strpath, is_tag
 
 
 # constants
-GLOB_PATTERN = compile(r"\\\*\\\*()|\\\*([^\\\*]|$)")
-GLOB_REPLS = r".*", r"[^/]*"
+GLOB_PATTERN = compile(r"\\\*\\\*()|\\\*([^\\\*]|$)|\\\?()")
+GLOB_REPLS = r".*", r"[^/]*", r"[/_]"
 
 
 # type hints
@@ -47,7 +47,8 @@ class ID(PurePosixPath):
         """Check if the ID matches a path pattern.
 
         Unlike ``ID.match``, it also accepts double-wildcards
-        (``**``) for recursively matching the path segments.
+        (``**``) for recursively matching the path segments
+        and question mark (``?``) for matching ``/`` or ``_``.
 
         Args:
             path_pattern: Path pattern for matching.
