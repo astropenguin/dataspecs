@@ -45,10 +45,11 @@ class ID(PurePosixPath):
         if not self.root:
             raise ValueError("ID must start with the root.")
 
-    def matches(self, path_pattern: StrPath, /) -> bool:
+    def match(self, path_pattern: StrPath, /) -> bool:
         """Check if the ID matches a path pattern.
 
-        Unlike ``ID.match``, it also accepts double-wildcards
+        Unlike original ``PurePosixPath.match``, it always performs
+        case-sensitive matching. It also accepts double-wildcards
         (``**``) for recursively matching the path segments
         and question mark (``?``) for matching ``/`` or ``_``.
 
@@ -159,7 +160,7 @@ class Specs(UserList[TSpec]):
             return type(self)(spec for spec in self if (index in spec.tags))
 
         if is_strpath(index):
-            return type(self)(spec for spec in self if spec.id.matches(index))
+            return type(self)(spec for spec in self if spec.id.match(index))
 
         return super().__getitem__(index)
 
