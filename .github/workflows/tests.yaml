@@ -31,4 +31,5 @@ jobs:
       - run: black --check ${PYTHON_DIRS}
       - run: pyright ${PYTHON_DIRS}
       - run: mypy ${PYTHON_DIRS}
+      - run: pytest -v
       - run: docs/build
