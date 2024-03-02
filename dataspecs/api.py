@@ -63,7 +63,7 @@ def from_dataclass(
         Data specs created from the dataclass object.
 
     """
-    specs: list[Any] = []
+    specs: Specs[Any] = Specs()
 
     for f in fields(obj):
         if not (tags := get_tags(f.type)) and tagged_only:
@@ -97,7 +97,7 @@ def from_dataclass(
                 )
             )
 
-    return Specs(specs)
+    return specs
 
 
 @overload
@@ -141,7 +141,7 @@ def from_typehint(
         Data specs created from the type hint.
 
     """
-    specs: list[Any] = []
+    specs: Specs[Any] = Specs()
 
     for name, type in enumerate(get_subscriptions(obj)):
         if not (tags := get_tags(type)) and tagged_only:
@@ -175,4 +175,4 @@ def from_typehint(
                 )
             )
 
-    return Specs(specs)
+    return specs
