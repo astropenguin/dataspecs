@@ -19,6 +19,7 @@ from .typing import StrPath, TagBase, is_strpath, is_tag
 # constants
 GLOB_PATTERN = compile(r"\\\*\\\*()|\\\*([^\\\*]|$)|\\\?()")
 GLOB_REPLS = r".*", r"[^/]*", r"[/_]"
+ROOT_PATH = "/"
 
 
 # type hints
@@ -42,7 +43,7 @@ class ID(PurePosixPath):
     def __init__(self, *segments: StrPath) -> None:
         super().__init__(*segments)
 
-        if not self.root:
+        if self.root != ROOT_PATH:
             raise ValueError("ID must start with the root.")
 
     def match(self, path_pattern: StrPath, /) -> bool:
