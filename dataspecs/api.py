@@ -71,7 +71,7 @@ def from_dataclass(
 
         specs.append(
             spec_factory(
-                id=(id := ID(parent_id) / f.name),
+                id=(child_id := ID(parent_id) / f.name),
                 type=(hint := get_annotated(f.type)),
                 data=getattr(obj, f.name, f.default),
                 tags=tags,
@@ -81,7 +81,7 @@ def from_dataclass(
         specs.extend(
             from_typehint(
                 hint,
-                parent_id=id,
+                parent_id=child_id,
                 tagged_only=tagged_only,
                 spec_factory=spec_factory,
             )
@@ -91,7 +91,7 @@ def from_dataclass(
             specs.extend(
                 from_dataclass(
                     dc,
-                    parent_id=id,
+                    parent_id=child_id,
                     tagged_only=tagged_only,
                     spec_factory=spec_factory,
                 )
@@ -143,15 +143,15 @@ def from_typehint(
     """
     specs: Specs[Any] = Specs()
 
-    for name, type in enumerate(get_subscriptions(obj)):
-        if not (tags := get_tags(type)) and tagged_only:
+    for name, type_ in enumerate(get_subscriptions(obj)):
+        if not (tags := get_tags(type_)) and tagged_only:
             continue
 
         specs.append(
             spec_factory(
-                id=(id := ID(parent_id) / str(name)),
+                id=(child_id := ID(parent_id) / str(name)),
                 type=Any,
-                data=(hint := get_annotated(type)),
+                data=(hint := get_annotated(type_)),
                 tags=tags,
                 origin=obj,
             )
@@ -159,17 +159,17 @@ def from_typehint(
         specs.extend(
             from_typehint(
                 hint,
-                parent_id=id,
+                parent_id=child_id,
                 tagged_only=tagged_only,
                 spec_factory=spec_factory,
             )
         )
 
-        for dc in get_dataclasses(type):
+        for dc in get_dataclasses(type_):
             specs.extend(
                 from_dataclass(
                     dc,
-                    parent_id=id,
+                    parent_id=child_id,
                     tagged_only=tagged_only,
                     spec_factory=spec_factory,
                 )
