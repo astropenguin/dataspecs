@@ -40,11 +40,13 @@ class ID(PurePosixPath):
 
     """
 
-    def __init__(self, *segments: StrPath) -> None:
-        super().__init__(*segments)
-
-        if self.root != ROOT_PATH:
+    # Implementation of __new__ is essential because PurePosixPath
+    # does not implement __init__ prior to Python 3.12.
+    def __new__(cls, *segments: StrPath) -> Self:
+        if PurePosixPath(*segments).root != ROOT_PATH:
             raise ValueError("ID must start with the root.")
+
+        return super().__new__(cls, *segments)
 
     def match(self, path_pattern: StrPath, /) -> bool:
         """Check if the ID matches a path pattern.
