@@ -11,5 +11,5 @@ Data specifications defined in data classes
 ## Installation
 
 ```shell
-pip install dataspecs==0.0.2
+pip install dataspecs==0.1.0
 ```
