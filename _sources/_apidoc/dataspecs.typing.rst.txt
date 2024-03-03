@@ -1,0 +1,7 @@
+dataspecs.typing module
+=======================
+
+.. automodule:: dataspecs.typing
+   :members:
+   :undoc-members:
+   :show-inheritance:

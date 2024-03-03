@@ -1,0 +1,7 @@
+dataspecs.specs module
+======================
+
+.. automodule:: dataspecs.specs
+   :members:
+   :undoc-members:
+   :show-inheritance:
