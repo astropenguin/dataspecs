@@ -22,15 +22,15 @@ class Tag(TagBase):
 
 
 specs = [
-    Spec(ID("/aaa"), (Tag.DATA,), None, None, None),
-    Spec(ID("/aaa/name"), (Tag.NAME,), None, None, None),
-    Spec(ID("/aaa/units"), (Tag.UNITS,), None, None, None),
-    Spec(ID("/bbb"), (Tag.DATA,), None, None, None),
-    Spec(ID("/bbb/name"), (Tag.NAME,), None, None, None),
-    Spec(ID("/bbb/units"), (Tag.UNITS,), None, None, None),
-    Spec(ID("/ccc"), (), None, None, None),
-    Spec(ID("/aaa_units"), (Tag.REPL,), None, None, None),
-    Spec(ID("/bbb_units"), (Tag.REPL,), None, None, None),
+    Spec(ID("/aaa"), (Tag.DATA,), None),
+    Spec(ID("/aaa/name"), (Tag.NAME,), None),
+    Spec(ID("/aaa/units"), (Tag.UNITS,), None),
+    Spec(ID("/bbb"), (Tag.DATA,), None),
+    Spec(ID("/bbb/name"), (Tag.NAME,), None),
+    Spec(ID("/bbb/units"), (Tag.UNITS,), None),
+    Spec(ID("/ccc"), (), None),
+    Spec(ID("/aaa_units"), (Tag.REPL,), None),
+    Spec(ID("/bbb_units"), (Tag.REPL,), None),
 ]
 
 data_id_init: TestData = [

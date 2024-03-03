@@ -72,9 +72,9 @@ def from_dataclass(
         specs.append(
             spec_factory(
                 id=(child_id := ID(parent_id) / field.name),
-                type=field.type,
-                data=getattr(obj, field.name, field.default),
                 tags=tags,
+                data=getattr(obj, field.name, field.default),
+                type=field.type,
                 origin=obj,
             )
         )
@@ -140,9 +140,8 @@ def from_typehint(
         specs.append(
             spec_factory(
                 id=(child_id := ID(parent_id) / str(name)),
-                type=Any,
-                data=get_annotated(type_),
                 tags=tags,
+                data=get_annotated(type_),
                 origin=obj,
             )
         )

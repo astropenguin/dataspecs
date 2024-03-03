@@ -84,8 +84,8 @@ class Spec:
     Args:
         id: ID of the data spec.
         tags: Tags of the data spec.
-        type: Type hint of the data spec.
         data: Data of the data spec.
+        type: Type hint of the data spec.
         origin: Origin of the data spec.
 
     """
@@ -96,13 +96,13 @@ class Spec:
     tags: tuple[TagBase, ...]
     """Tags of the data spec."""
 
-    type: Any = field(repr=False)
-    """Type hint of the data spec."""
-
-    data: Any = field(repr=False)
+    data: Any
     """Data of the data spec."""
 
-    origin: Any = field(repr=False)
+    type: Any = field(default=Any, repr=False)
+    """Type hint of the data spec."""
+
+    origin: Any = field(default=None, repr=False)
     """Origin of the data spec."""
 
 
