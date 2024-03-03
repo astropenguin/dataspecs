@@ -12,7 +12,7 @@ __all__ = [
     "from_dataclass",
     "from_typehint",
 ]
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 
 
 # submodules
