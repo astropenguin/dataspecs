@@ -165,7 +165,7 @@ class Specs(UserList[TSpec]):
         if is_strpath(index):
             return type(self)(spec for spec in self if spec.id.match(index))
 
-        return super().__getitem__(index)
+        return super().__getitem__(index)  # type: ignore
 
     def __sub__(self, removed: Iterable[TSpec], /) -> Self:
         """Return data specs with given ones removed.

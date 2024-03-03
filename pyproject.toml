@@ -25,11 +25,11 @@ sphinx = "^7.2"
 
 [tool.mypy]
 strict = true
+disable_error_code = ["override", "unused-ignore"]
 
 [tool.pyright]
 typeCheckingMode = "strict"
 reportIncompatibleMethodOverride = "warning"
-reportUnknownVariableType = "warning"
 
 [build-system]
 requires = ["poetry-core"]
