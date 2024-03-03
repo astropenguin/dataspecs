@@ -65,44 +65,34 @@ def from_dataclass(
     """
     specs: Specs[Any] = Specs()
 
-    for f in fields(obj):
-        if not (tags := get_tags(f.type)) and tagged_only:
+    for field in fields(obj):
+        if not (tags := get_tags(field.type)) and tagged_only:
             continue
 
         specs.append(
             spec_factory(
-                id=(child_id := ID(parent_id) / f.name),
-                type=(hint := get_annotated(f.type)),
-                data=getattr(obj, f.name, f.default),
+                id=(child_id := ID(parent_id) / field.name),
+                type=field.type,
+                data=getattr(obj, field.name, field.default),
                 tags=tags,
                 origin=obj,
             )
         )
         specs.extend(
             from_typehint(
-                hint,
+                field.type,
                 parent_id=child_id,
                 tagged_only=tagged_only,
                 spec_factory=spec_factory,
             )
         )
 
-        for dc in get_dataclasses(f.type):
-            specs.extend(
-                from_dataclass(
-                    dc,
-                    parent_id=child_id,
-                    tagged_only=tagged_only,
-                    spec_factory=spec_factory,
-                )
-            )
-
     return specs
 
 
 @overload
 def from_typehint(
-    obj: DataClass,
+    obj: Any,
     /,
     *,
     parent_id: StrPath = ROOT,
@@ -112,7 +102,7 @@ def from_typehint(
 
 @overload
 def from_typehint(
-    obj: DataClass,
+    obj: Any,
     /,
     *,
     parent_id: StrPath = ROOT,
@@ -122,7 +112,7 @@ def from_typehint(
 
 
 def from_typehint(
-    obj: DataClass,
+    obj: Any,
     /,
     *,
     parent_id: StrPath = ROOT,
@@ -151,28 +141,28 @@ def from_typehint(
             spec_factory(
                 id=(child_id := ID(parent_id) / str(name)),
                 type=Any,
-                data=(hint := get_annotated(type_)),
+                data=get_annotated(type_),
                 tags=tags,
                 origin=obj,
             )
         )
         specs.extend(
             from_typehint(
-                hint,
+                type_,
                 parent_id=child_id,
                 tagged_only=tagged_only,
                 spec_factory=spec_factory,
             )
         )
 
-        for dc in get_dataclasses(type_):
-            specs.extend(
-                from_dataclass(
-                    dc,
-                    parent_id=child_id,
-                    tagged_only=tagged_only,
-                    spec_factory=spec_factory,
-                )
+    for dataclass in get_dataclasses(obj):
+        specs.extend(
+            from_dataclass(
+                dataclass,
+                parent_id=parent_id,
+                tagged_only=tagged_only,
+                spec_factory=spec_factory,
             )
+        )
 
     return specs
