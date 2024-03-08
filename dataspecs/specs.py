@@ -17,8 +17,8 @@ from .typing import StrPath, TagBase, is_strpath, is_tag
 
 
 # constants
-GLOB_PATTERN = compile(r"\\\*\\\*()|\\\*([^\\\*]|$)|\\\?()")
-GLOB_REPLS = r".*", r"[^/]*", r"[/_]"
+GLOB_PATTERN = compile(r"\\\*\\\*()|\\\*([^\\\*]|$)")
+GLOB_REPLS = r".*", r"[^/]*"
 ROOT_PATH = "/"
 
 
@@ -53,8 +53,7 @@ class ID(PurePosixPath):
 
         Unlike original ``PurePosixPath.match``, it always performs
         case-sensitive matching. It also accepts double-wildcards
-        (``**``) for recursively matching the path segments
-        and question mark (``?``) for matching ``/`` or ``_``.
+        (``**``) for recursively matching the path segments.
 
         Args:
             path_pattern: Path pattern for matching.
