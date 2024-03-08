@@ -18,7 +18,6 @@ class Tag(TagBase):
     DATA = auto()
     NAME = auto()
     UNITS = auto()
-    REPL = auto()
 
 
 specs = [
@@ -29,8 +28,6 @@ specs = [
     Spec(ID("/bbb/name"), (Tag.NAME,), None),
     Spec(ID("/bbb/units"), (Tag.UNITS,), None),
     Spec(ID("/ccc"), (), None),
-    Spec(ID("/aaa_units"), (Tag.REPL,), None),
-    Spec(ID("/bbb_units"), (Tag.REPL,), None),
 ]
 
 data_id_init: TestData = [
@@ -65,10 +62,6 @@ data_id_match: TestData = [
     ("/aaa/bbb", "aaa/*", False),
     ("/aaa/bbb", "*/bbb", False),
     ("/aaa/bbb", "aaa/bbb", False),
-    #
-    ("/aaa/bbb", "/aaa?bbb", True),
-    ("/aaa_bbb", "/aaa?bbb", True),
-    ("/aaa*bbb", "/aaa?bbb", False),
 ]
 
 data_specs_first: TestData = [
@@ -98,24 +91,21 @@ data_specs_getitem: TestData = [
     (Tag.DATA, [specs[0], specs[3]]),
     (Tag.NAME, [specs[1], specs[4]]),
     (Tag.UNITS, [specs[2], specs[5]]),
-    (Tag.REPL, [specs[7], specs[8]]),
     #
     ("/*", [specs[0], specs[3], *specs[6:]]),
     ("/**", specs),
     ("/*/*", [*specs[1:3], *specs[4:6]]),
     ("/aaa", specs[0:1]),
     ("/aaa/*", specs[1:3]),
-    ("/aaa**", [*specs[0:3], specs[7]]),
+    ("/aaa**", specs[0:3]),
     ("/bbb", specs[3:4]),
     ("/bbb/*", specs[4:6]),
-    ("/bbb**", [*specs[3:6], specs[8]]),
+    ("/bbb**", specs[3:6]),
     ("/ccc", specs[6:7]),
     ("/ccc/*", []),
     ("/ccc**", specs[6:7]),
     ("/*/name", [specs[1], specs[4]]),
     ("/*/units", [specs[2], specs[5]]),
-    ("/aaa?units", [specs[2], specs[7]]),
-    ("/bbb?units", [specs[5], specs[8]]),
     #
     (slice(None, None), specs),
     (slice(0, 2), specs[0:2]),
