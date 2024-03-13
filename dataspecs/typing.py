@@ -66,7 +66,7 @@ def get_first(obj: Any, /, ignore_annotations: bool = False) -> Any:
 
 def get_subscriptions(obj: Any, /) -> tuple[Any, ...]:
     """Return subscriptions of a type hint if they exist."""
-    return get_args(get_first(get_annotated(obj)))
+    return get_args(get_annotated(obj))
 
 
 def get_tags(obj: Any, /) -> tuple[TagBase, ...]:
