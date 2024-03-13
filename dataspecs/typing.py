@@ -56,9 +56,12 @@ def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
     return tuple(filter(is_dataclass, get_annotations(obj)))
 
 
-def get_first(obj: Any, /) -> Any:
+def get_first(obj: Any, /, ignore_annotations: bool = False) -> Any:
     """Return the first type if a type hint is a union type."""
-    return get_args(obj)[0] if is_union(obj) else obj
+    if ignore_annotations and is_union(annotated := get_annotated(obj)):
+        return get_first(get_args(annotated)[0], ignore_annotations)
+    else:
+        return get_args(obj)[0] if is_union(obj) else obj
 
 
 def get_subscriptions(obj: Any, /) -> tuple[Any, ...]:
