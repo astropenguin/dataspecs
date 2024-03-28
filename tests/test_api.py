@@ -152,10 +152,7 @@ specs = Specs(
 
 
 def test_from_dataclass() -> None:
-    weather = Weather([10, 20], [30, 40])
-
-    assert from_dataclass(weather, tagged_only=False) == specs
-    assert from_dataclass(weather, tagged_only=True) == specs[:-1]
+    assert from_dataclass(Weather([10, 20], [30, 40])) == specs
 
 
 def test_from_typehint() -> None:
