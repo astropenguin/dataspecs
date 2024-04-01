@@ -12,7 +12,7 @@ from dataspecs.typing import (
     get_annotations,
     get_dataclasses,
     get_first,
-    get_subscriptions,
+    get_subtypes,
     get_tags,
     is_annotated,
     is_strpath,
@@ -68,7 +68,7 @@ data_get_first: TestData = [
     (int, int),
 ]
 
-data_get_subscriptions: TestData = [
+data_get_subtypes: TestData = [
     (Ann[dict[str, int], "ann"], (str, int)),
     (dict[str, int], (str, int)),
     (Ann[list[int], "ann"], (int,)),
@@ -130,9 +130,9 @@ def test_get_first(tester: Any, expected: Any) -> None:
     assert get_first(tester) == expected
 
 
-# @mark.parametrize("tester, expected", data_get_subscriptions)
-# def test_get_subscriptions(tester: Any, expected: Any) -> None:
-#     assert get_subscriptions(tester) == expected
+@mark.parametrize("tester, expected", data_get_subtypes)
+def test_get_subtypes(tester: Any, expected: Any) -> None:
+    assert get_subtypes(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_get_tags)

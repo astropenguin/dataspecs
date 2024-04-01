@@ -13,7 +13,7 @@ from .typing import (
     StrPath,
     get_annotated,
     get_dataclasses,
-    get_subscriptions,
+    get_subtypes,
     get_tags,
 )
 
@@ -121,18 +121,18 @@ def from_typehint(
     """
     specs: Specs[Any] = Specs()
 
-    for name, type_ in enumerate(get_subscriptions(obj)):
+    for name, st in enumerate(get_subtypes(obj)):
         specs.append(
             spec_factory(
                 id=(child_id := ID(parent_id) / str(name)),
-                tags=get_tags(type_),
-                data=get_annotated(type_),
+                tags=get_tags(st),
+                data=get_annotated(st),
                 origin=obj,
             )
         )
         specs.extend(
             from_typehint(
-                type_,
+                st,
                 parent_id=child_id,
                 spec_factory=spec_factory,
             )
