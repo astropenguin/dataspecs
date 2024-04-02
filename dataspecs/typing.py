@@ -57,7 +57,7 @@ def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
 
 
 def get_first(obj: Any, /) -> Any:
-    """Return the first type if a type hint is a union type."""
+    """Return the first type if a type hint is a union of types."""
     return get_args(obj)[0] if is_union(obj) else obj
 
 
@@ -87,5 +87,5 @@ def is_tag(obj: Any, /) -> TypeGuard[TagBase]:
 
 
 def is_union(obj: Any, /) -> bool:
-    """Check if a type hint is a union type."""
+    """Check if a type hint is a union of types."""
     return get_origin(Union[obj]) is Union  # type: ignore
