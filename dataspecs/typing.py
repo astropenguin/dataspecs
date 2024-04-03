@@ -58,7 +58,13 @@ def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
 
 def get_first(obj: Any, /) -> Any:
     """Return the first type if a type hint is a union of types."""
-    return get_args(obj)[0] if is_union(obj) else obj
+    if is_union(obj):
+        return get_first(get_args(obj)[0])
+    elif is_annotated(obj):
+        annotated, *annotations = get_args(obj)
+        return Annotated[get_first(annotated), *annotations]
+    else:
+        return obj
 
 
 def get_subtypes(obj: Any) -> tuple[Any, ...]:
