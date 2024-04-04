@@ -25,7 +25,7 @@ class DataClass(Protocol):
 class TagBase(Enum):
     """Base enum of tag for data specs.
 
-    Since ``TagBase`` itself cannot have any members,
+    Since ``TagBase`` itself does not have any members,
     users should create their own tags by inheriting it::
 
         from enum import auto
@@ -57,7 +57,7 @@ def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
 
 
 def get_first(obj: Any, /) -> Any:
-    """Return the first type if a type hint is a union of types."""
+    """Return the first type if a type hint is a union type."""
     if is_union(obj):
         return get_first(get_args(obj)[0])
     elif is_annotated(obj):
@@ -93,5 +93,5 @@ def is_tag(obj: Any, /) -> TypeGuard[TagBase]:
 
 
 def is_union(obj: Any, /) -> bool:
-    """Check if a type hint is a union of types."""
+    """Check if a type hint is a union type."""
     return get_origin(Union[obj]) is Union  # type: ignore
