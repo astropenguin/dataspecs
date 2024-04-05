@@ -79,8 +79,8 @@ def from_dataclass(
             spec_factory(
                 id=(child_id := ID(parent_id) / field.name),
                 tags=get_tags(reftype),
+                type=get_annotated(reftype),
                 data=getattr(obj, field.name, field.default),
-                type=field.type,
                 origin=obj,
             )
         )
@@ -152,8 +152,7 @@ def from_typehint(
             spec_factory(
                 id=(child_id := ID(parent_id) / str(name)),
                 tags=get_tags(subtype),
-                data=get_annotated(subtype),
-                origin=obj,
+                type=get_annotated(subtype),
             )
         )
         specs.extend(

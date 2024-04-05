@@ -12,8 +12,8 @@ from typing import Any, Optional, SupportsIndex, TypeVar, cast, overload
 
 
 # dependencies
-from typing_extensions import Self
-from .typing import StrPath, TagBase, is_strpath, is_tag
+from typing_extensions import Self, TypeAlias
+from .typing import DataClass, StrPath, TagBase, is_strpath, is_tag
 
 
 # constants
@@ -83,9 +83,9 @@ class Spec:
     Args:
         id: ID of the data spec.
         tags: Tags of the data spec.
-        data: Data of the data spec.
-        type: Type hint of the data spec.
-        origin: Origin of the data spec.
+        type: Type hint for the data of the data spec.
+        data: Default or final data of the data spec.
+        origin: Original dataclass object of the data spec.
 
     """
 
@@ -95,14 +95,14 @@ class Spec:
     tags: tuple[TagBase, ...]
     """Tags of the data spec."""
 
-    data: Any
-    """Data of the data spec."""
+    type: TypeAlias
+    """Type hint for the data of the data spec."""
 
-    type: Any = field(default=Any, repr=False)
-    """Type hint of the data spec."""
+    data: Optional[Any] = field(default=None)
+    """Default or final data of the data spec."""
 
-    origin: Any = field(default=None, repr=False)
-    """Origin of the data spec."""
+    origin: Optional[DataClass] = field(default=None, repr=False)
+    """Original dataclass object of the data spec."""
 
 
 class Specs(UserList[TSpec]):
