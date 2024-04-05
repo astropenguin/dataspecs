@@ -72,7 +72,7 @@ class ID(PurePosixPath):
         return bool(fullmatch(regex, fspath(self)))
 
 
-ROOT = ID("/")
+ROOT = ID(ROOT_PATH)
 """Root ID."""
 
 
