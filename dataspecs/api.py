@@ -79,7 +79,7 @@ def from_dataclass(
             spec_factory(
                 id=(child_id := ID(parent_id) / field.name),
                 tags=get_tags(reftype),
-                type=get_annotated(reftype),
+                type=field.type,
                 data=getattr(obj, field.name, field.default),
                 origin=obj,
             )
@@ -145,9 +145,8 @@ def from_typehint(
 
     """
     specs: Specs[Any] = Specs()
-    reftype = get_first(obj) if first_only else obj
 
-    for name, subtype in enumerate(get_subtypes(reftype)):
+    for name, subtype in enumerate(get_subtypes(obj)):
         specs.append(
             spec_factory(
                 id=(child_id := ID(parent_id) / str(name)),
