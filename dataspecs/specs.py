@@ -12,7 +12,7 @@ from typing import Any, Optional, SupportsIndex, TypeVar, cast, overload
 
 
 # dependencies
-from typing_extensions import Self, TypeAlias
+from typing_extensions import Self
 from .typing import DataClass, StrPath, TagBase, is_strpath, is_tag
 
 
@@ -95,10 +95,10 @@ class Spec:
     tags: tuple[TagBase, ...]
     """Tags of the data spec."""
 
-    type: TypeAlias
+    type: Any
     """Type hint for the data of the data spec."""
 
-    data: Optional[Any] = field(default=None)
+    data: Optional[Any] = None
     """Default or final data of the data spec."""
 
     origin: Optional[DataClass] = field(default=None, repr=False)
