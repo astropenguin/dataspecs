@@ -5,7 +5,7 @@ copyright = "2023-2024 Akio Taniguchi"
 
 # general configuration
 add_module_names = False
-autodoc_default_options = {"special-members": "__getitem__"}
+autodoc_default_options = {"special-members": "__getitem__, __sub__"}
 autodoc_member_order = "bysource"
 autodoc_typehints = "both"
 autodoc_typehints_format = "short"
