@@ -61,7 +61,7 @@ def get_first(obj: Any, /) -> Any:
     return get_args(obj)[0] if is_union(obj) else obj
 
 
-def get_subtypes(obj: Any) -> tuple[Any, ...]:
+def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
     """Return subtypes of a type hint if they exist."""
     return get_args(get_annotated(obj))
 
