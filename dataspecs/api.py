@@ -11,9 +11,10 @@ from .specs import ID, ROOT, Spec, Specs
 from .typing import (
     DataClass,
     StrPath,
-    get_annotated,
     get_dataclasses,
-    get_subscriptions,
+    get_final,
+    get_first,
+    get_subtypes,
     get_tags,
 )
 
@@ -28,7 +29,9 @@ def from_dataclass(
     /,
     *,
     parent_id: StrPath = ROOT,
+    first_only: bool = True,
     tagged_only: bool = True,
+    type_only: bool = True,
 ) -> Specs[Spec]: ...
 
 
@@ -38,7 +41,9 @@ def from_dataclass(
     /,
     *,
     parent_id: StrPath = ROOT,
+    first_only: bool = True,
     tagged_only: bool = True,
+    type_only: bool = True,
     spec_factory: Callable[..., TSpec],
 ) -> Specs[TSpec]: ...
 
@@ -48,7 +53,9 @@ def from_dataclass(
     /,
     *,
     parent_id: StrPath = ROOT,
+    first_only: bool = True,
     tagged_only: bool = True,
+    type_only: bool = True,
     spec_factory: Any = Spec,
 ) -> Any:
     """Create data specs from a dataclass object.
@@ -56,7 +63,12 @@ def from_dataclass(
     Args:
         obj: Dataclass object to be parsed.
         parent_id: ID of the parent data spec.
-        tagged_only: Whether to add only tagged data specs.
+        first_only: If ``True`` and a type hint is a union of types,
+            parse the first type only instead of the whole type hint.
+        tagged_only: If ``True``, drop leaf (i.e. terminal) and
+            adjacent superior data specs that do not have any tags.
+        type_only: If ``True``, each data spec type contains
+            a type hint with all annotation removed.
         spec_factory: Factory for creating each data spec.
 
     Returns:
@@ -66,28 +78,29 @@ def from_dataclass(
     specs: Specs[Any] = Specs()
 
     for field in fields(obj):
-        if not (tags := get_tags(field.type)) and tagged_only:
-            continue
+        reftype = get_first(field.type) if first_only else field.type
 
         specs.append(
             spec_factory(
                 id=(child_id := ID(parent_id) / field.name),
-                tags=tags,
+                tags=get_tags(reftype),
+                type=get_final(field.type, type_only),
                 data=getattr(obj, field.name, field.default),
-                type=field.type,
                 origin=obj,
             )
         )
         specs.extend(
             from_typehint(
-                field.type,
+                reftype,
                 parent_id=child_id,
+                first_only=first_only,
                 tagged_only=tagged_only,
+                type_only=type_only,
                 spec_factory=spec_factory,
             )
         )
 
-    return specs
+    return drop_leaves(specs) if tagged_only else specs
 
 
 @overload
@@ -96,7 +109,9 @@ def from_typehint(
     /,
     *,
     parent_id: StrPath = ROOT,
+    first_only: bool = True,
     tagged_only: bool = True,
+    type_only: bool = True,
 ) -> Specs[Spec]: ...
 
 
@@ -106,7 +121,9 @@ def from_typehint(
     /,
     *,
     parent_id: StrPath = ROOT,
+    first_only: bool = True,
     tagged_only: bool = True,
+    type_only: bool = True,
     spec_factory: Callable[..., TSpec],
 ) -> Specs[TSpec]: ...
 
@@ -116,7 +133,9 @@ def from_typehint(
     /,
     *,
     parent_id: StrPath = ROOT,
+    first_only: bool = True,
     tagged_only: bool = True,
+    type_only: bool = True,
     spec_factory: Any = Spec,
 ) -> Any:
     """Create data specs from a type hint.
@@ -124,7 +143,12 @@ def from_typehint(
     Args:
         obj: Type hint to be parsed.
         parent_id: ID of the parent data spec.
-        tagged_only: Whether to add only tagged data specs.
+        first_only: If ``True`` and a type hint is a union of types,
+            parse the first type only instead of the whole type hint.
+        tagged_only: If ``True``, drop leaf (i.e. terminal) and
+            adjacent superior data specs that do not have any tags.
+        type_only: If ``True``, each data spec type contains
+            a type hint with all annotation removed.
         spec_factory: Factory for creating each data spec.
 
     Returns:
@@ -133,23 +157,21 @@ def from_typehint(
     """
     specs: Specs[Any] = Specs()
 
-    for name, type_ in enumerate(get_subscriptions(obj)):
-        if not (tags := get_tags(type_)) and tagged_only:
-            continue
-
+    for name, subtype in enumerate(get_subtypes(obj)):
         specs.append(
             spec_factory(
                 id=(child_id := ID(parent_id) / str(name)),
-                tags=tags,
-                data=get_annotated(type_),
-                origin=obj,
+                tags=get_tags(subtype),
+                type=get_final(subtype, type_only),
             )
         )
         specs.extend(
             from_typehint(
-                type_,
+                subtype,
                 parent_id=child_id,
+                first_only=first_only,
                 tagged_only=tagged_only,
+                type_only=type_only,
                 spec_factory=spec_factory,
             )
         )
@@ -159,9 +181,22 @@ def from_typehint(
             from_dataclass(
                 dataclass,
                 parent_id=parent_id,
+                first_only=first_only,
                 tagged_only=tagged_only,
+                type_only=type_only,
                 spec_factory=spec_factory,
             )
         )
 
-    return specs
+    return drop_leaves(specs) if tagged_only else specs
+
+
+def drop_leaves(specs: Specs[TSpec], /) -> Specs[TSpec]:
+    """Drop leaf specs that do not have any tags."""
+    dropped = specs.copy()
+
+    for spec in specs:
+        if not spec.tags and not specs[spec.id / "**"]:
+            dropped.remove(spec)
+
+    return dropped

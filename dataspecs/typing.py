@@ -9,7 +9,7 @@ from typing import Annotated, Any, ClassVar, Protocol, Union
 
 
 # dependencies
-from typing_extensions import TypeGuard, get_args, get_origin
+from typing_extensions import TypeGuard, get_args, get_origin, get_type_hints
 
 
 # type hints
@@ -25,7 +25,7 @@ class DataClass(Protocol):
 class TagBase(Enum):
     """Base enum of tag for data specs.
 
-    Since ``TagBase`` itself cannot have any members,
+    Since ``TagBase`` itself does not have any members,
     users should create their own tags by inheriting it::
 
         from enum import auto
@@ -56,14 +56,23 @@ def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
     return tuple(filter(is_dataclass, get_annotations(obj)))
 
 
+def get_final(obj: Any, /, type_only: bool = True) -> Any:
+    """Return the type hint with forward references resolved."""
+
+    class _:
+        __annotations__ = dict(obj=obj)
+
+    return get_type_hints(_, include_extras=not type_only)["obj"]
+
+
 def get_first(obj: Any, /) -> Any:
     """Return the first type if a type hint is a union type."""
     return get_args(obj)[0] if is_union(obj) else obj
 
 
-def get_subscriptions(obj: Any, /) -> tuple[Any, ...]:
-    """Return subscriptions of a type hint if they exist."""
-    return get_args(get_first(get_annotated(obj)))
+def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
+    """Return subtypes of a type hint if they exist."""
+    return get_args(get_annotated(obj))
 
 
 def get_tags(obj: Any, /) -> tuple[TagBase, ...]:

@@ -1,11 +1,11 @@
 # standard library
 from dataclasses import dataclass
 from enum import auto
-from typing import Annotated as Ann, Any, TypeVar
+from typing import Annotated as Ann, TypeVar, Union
 
 
 # dependencies
-from dataspecs.api import from_dataclass, from_typehint
+from dataspecs.api import from_dataclass
 from dataspecs.specs import ID, Spec, Specs
 from dataspecs.typing import TagBase
 
@@ -33,138 +33,248 @@ class Quantity:
 
 @dataclass(frozen=True)
 class Weather:
-    temp: Ann[Data[float], Quantity("Temperature", "K")]
-    humid: Ann[Data[float], Quantity("Humidity", "%")]
+    temp: Union[Ann[Data[float], Quantity("Temperature", "K")], float] = 0.0
+    humid: Union[Ann[Data[float], Quantity("Humidity", "%")], float] = 0.0
     lon: Ann[Attr[float], Quantity("Longitude", "deg")] = 0.0
     lat: Ann[Attr[float], Quantity("Latitude", "deg")] = 0.0
     memo: str = "Observed in Tokyo"
 
 
-specs = Specs(
+specs_simple = Specs(
     [
         Spec(
             id=ID("/temp"),
             tags=(Tag.DATA,),
+            type=Union[list[float], float],
             data=[10, 20],
-            type=Ann[Data[float], Quantity("Temperature", "K")],
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
             id=ID("/temp/0"),
             tags=(Tag.DTYPE,),
-            data=float,
-            type=Any,
-            origin=Ann[Data[float], Quantity("Temperature", "K")],
+            type=float,
         ),
         Spec(
             id=ID("/temp/name"),
             tags=(Tag.NAME,),
+            type=str,
             data="Temperature",
-            type=Ann[str, Tag.NAME],
-            origin=Quantity(name="Temperature", units="K"),
+            origin=Quantity("Temperature", "K"),
         ),
         Spec(
             id=ID("/temp/units"),
             tags=(Tag.UNITS,),
+            type=str,
             data="K",
-            type=Ann[str, Tag.UNITS],
-            origin=Quantity(name="Temperature", units="K"),
+            origin=Quantity("Temperature", "K"),
         ),
         Spec(
             id=ID("/humid"),
             tags=(Tag.DATA,),
+            type=Union[list[float], float],
             data=[30, 40],
-            type=Ann[Data[float], Quantity("Humidity", "%")],
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
             id=ID("/humid/0"),
             tags=(Tag.DTYPE,),
-            data=float,
-            type=Any,
-            origin=Ann[Data[float], Quantity("Humidity", "%")],
+            type=float,
         ),
         Spec(
             id=ID("/humid/name"),
             tags=(Tag.NAME,),
+            type=str,
             data="Humidity",
-            type=Ann[str, Tag.NAME],
-            origin=Quantity(name="Humidity", units="%"),
+            origin=Quantity("Humidity", "%"),
         ),
         Spec(
             id=ID("/humid/units"),
             tags=(Tag.UNITS,),
+            type=str,
             data="%",
-            type=Ann[str, Tag.UNITS],
-            origin=Quantity(name="Humidity", units="%"),
+            origin=Quantity("Humidity", "%"),
         ),
         Spec(
             id=ID("/lon"),
             tags=(Tag.ATTR,),
+            type=float,
             data=0.0,
-            type=Ann[Attr[float], Quantity("Longitude", "deg")],
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
             id=ID("/lon/name"),
             tags=(Tag.NAME,),
+            type=str,
             data="Longitude",
-            type=Ann[str, Tag.NAME],
             origin=Quantity("Longitude", "deg"),
         ),
         Spec(
             id=ID("/lon/units"),
             tags=(Tag.UNITS,),
+            type=str,
             data="deg",
-            type=Ann[str, Tag.UNITS],
             origin=Quantity("Longitude", "deg"),
         ),
         Spec(
             id=ID("/lat"),
             tags=(Tag.ATTR,),
+            type=float,
             data=0.0,
-            type=Ann[Attr[float], Quantity("Latitude", "deg")],
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
             id=ID("/lat/name"),
             tags=(Tag.NAME,),
+            type=str,
             data="Latitude",
-            type=Ann[str, Tag.NAME],
             origin=Quantity("Latitude", "deg"),
         ),
         Spec(
             id=ID("/lat/units"),
             tags=(Tag.UNITS,),
+            type=str,
             data="deg",
-            type=Ann[str, Tag.UNITS],
+            origin=Quantity("Latitude", "deg"),
+        ),
+    ]
+)
+
+
+specs_full = Specs(
+    [
+        Spec(
+            id=ID("/temp"),
+            tags=(),
+            type=Union[list[float], float],
+            data=[10, 20],
+            origin=Weather([10, 20], [30, 40]),
+        ),
+        Spec(
+            id=ID("/temp/0"),
+            tags=(Tag.DATA,),
+            type=list[float],
+        ),
+        Spec(
+            id=ID("/temp/0/0"),
+            tags=(Tag.DTYPE,),
+            type=float,
+        ),
+        Spec(
+            id=ID("/temp/0/name"),
+            tags=(Tag.NAME,),
+            type=str,
+            data="Temperature",
+            origin=Quantity("Temperature", "K"),
+        ),
+        Spec(
+            id=ID("/temp/0/units"),
+            tags=(Tag.UNITS,),
+            type=str,
+            data="K",
+            origin=Quantity("Temperature", "K"),
+        ),
+        Spec(
+            id=ID("/temp/1"),
+            tags=(),
+            type=float,
+        ),
+        #
+        Spec(
+            id=ID("/humid"),
+            tags=(),
+            type=Union[list[float], float],
+            data=[30, 40],
+            origin=Weather([10, 20], [30, 40]),
+        ),
+        Spec(
+            id=ID("/humid/0"),
+            tags=(Tag.DATA,),
+            type=list[float],
+        ),
+        Spec(
+            id=ID("/humid/0/0"),
+            tags=(Tag.DTYPE,),
+            type=float,
+        ),
+        Spec(
+            id=ID("/humid/0/name"),
+            tags=(Tag.NAME,),
+            type=str,
+            data="Humidity",
+            origin=Quantity("Humidity", "%"),
+        ),
+        Spec(
+            id=ID("/humid/0/units"),
+            tags=(Tag.UNITS,),
+            type=str,
+            data="%",
+            origin=Quantity("Humidity", "%"),
+        ),
+        Spec(
+            id=ID("/humid/1"),
+            tags=(),
+            type=float,
+        ),
+        Spec(
+            id=ID("/lon"),
+            tags=(Tag.ATTR,),
+            type=float,
+            data=0.0,
+            origin=Weather([10, 20], [30, 40]),
+        ),
+        Spec(
+            id=ID("/lon/name"),
+            tags=(Tag.NAME,),
+            type=str,
+            data="Longitude",
+            origin=Quantity("Longitude", "deg"),
+        ),
+        Spec(
+            id=ID("/lon/units"),
+            tags=(Tag.UNITS,),
+            type=str,
+            data="deg",
+            origin=Quantity("Longitude", "deg"),
+        ),
+        Spec(
+            id=ID("/lat"),
+            tags=(Tag.ATTR,),
+            type=float,
+            data=0.0,
+            origin=Weather([10, 20], [30, 40]),
+        ),
+        Spec(
+            id=ID("/lat/name"),
+            tags=(Tag.NAME,),
+            type=str,
+            data="Latitude",
+            origin=Quantity("Latitude", "deg"),
+        ),
+        Spec(
+            id=ID("/lat/units"),
+            tags=(Tag.UNITS,),
+            type=str,
+            data="deg",
             origin=Quantity("Latitude", "deg"),
         ),
         Spec(
             id=ID("/memo"),
             tags=(),
-            data="Observed in Tokyo",
             type=str,
+            data="Observed in Tokyo",
             origin=Weather([10, 20], [30, 40]),
         ),
     ]
 )
 
 
-def test_from_dataclass() -> None:
+def test_from_dataclass_simple() -> None:
     weather = Weather([10, 20], [30, 40])
+    specs = from_dataclass(weather, first_only=True, tagged_only=True)
+    assert specs == specs_simple
 
-    assert from_dataclass(weather, tagged_only=False) == specs
-    assert from_dataclass(weather, tagged_only=True) == specs[:-1]
 
-
-def test_from_typehint() -> None:
-    hint_temp = Ann[Data[float], Quantity("Temperature", "K")]
-    hint_humid = Ann[Data[float], Quantity("Humidity", "%")]
-    hint_lon = Ann[Attr[float], Quantity("Longitude", "deg")]
-    hint_lat = Ann[Attr[float], Quantity("Latitude", "deg")]
-
-    assert from_typehint(hint_temp, parent_id="/temp") == specs[1:4]
-    assert from_typehint(hint_humid, parent_id="/humid") == specs[5:8]
-    assert from_typehint(hint_lon, parent_id="/lon") == specs[9:11]
-    assert from_typehint(hint_lat, parent_id="/lat") == specs[12:14]
+def test_from_dataclass_full() -> None:
+    weather = Weather([10, 20], [30, 40])
+    specs = from_dataclass(weather, first_only=False, tagged_only=False)
+    assert specs == specs_full

@@ -12,7 +12,7 @@ from dataspecs.typing import (
     get_annotations,
     get_dataclasses,
     get_first,
-    get_subscriptions,
+    get_subtypes,
     get_tags,
     is_annotated,
     is_strpath,
@@ -68,18 +68,12 @@ data_get_first: TestData = [
     (int, int),
 ]
 
-data_get_subscriptions: TestData = [
-    (Ann[Union[dict[str, int], None], "ann"], (str, int)),
+data_get_subtypes: TestData = [
     (Ann[dict[str, int], "ann"], (str, int)),
-    (Union[dict[str, int], None], (str, int)),
     (dict[str, int], (str, int)),
-    (Ann[Union[list[int], None], "ann"], (int,)),
     (Ann[list[int], "ann"], (int,)),
-    (Union[list[int], None], (int,)),
     (list[int], (int,)),
-    (Ann[Union[int, None], "ann"], ()),
     (Ann[int, "ann"], ()),
-    (Union[int, None], ()),
     (int, ()),
 ]
 
@@ -136,9 +130,9 @@ def test_get_first(tester: Any, expected: Any) -> None:
     assert get_first(tester) == expected
 
 
-@mark.parametrize("tester, expected", data_get_subscriptions)
-def test_get_subscriptions(tester: Any, expected: Any) -> None:
-    assert get_subscriptions(tester) == expected
+@mark.parametrize("tester, expected", data_get_subtypes)
+def test_get_subtypes(tester: Any, expected: Any) -> None:
+    assert get_subtypes(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_get_tags)
