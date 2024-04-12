@@ -5,9 +5,9 @@ from typing import Annotated as Ann, TypeVar, Union
 
 
 # dependencies
-from dataspecs.api import from_dataclass
-from dataspecs.specs import ID, Spec, Specs
-from dataspecs.typing import TagBase
+from dataspecs.core.api import from_dataclass
+from dataspecs.core.specs import ID, Spec, Specs
+from dataspecs.core.typing import TagBase
 
 
 # type hints

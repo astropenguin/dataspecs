@@ -6,7 +6,7 @@ from typing import Annotated as Ann, Any, Union
 
 
 # dependencies
-from dataspecs.typing import (
+from dataspecs.core.typing import (
     TagBase,
     get_annotated,
     get_annotations,
