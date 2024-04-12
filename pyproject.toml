@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "dataspecs"
 version = "0.2.0"
-description = "Data specifications defined in data classes"
+description = "Data specifications by data classes"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
 documentation = "https://astropenguin.github.io/dataspecs/"
 homepage = "https://github.com/astropenguin/dataspecs/"
