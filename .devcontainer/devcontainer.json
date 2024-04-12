@@ -7,7 +7,7 @@
     "containerEnv": {
         "POETRY_VIRTUALENVS_CREATE": "false"
     },
-    "onCreateCommand": "pip install poetry==1.7.1",
+    "onCreateCommand": "pip install poetry==1.8.2",
     "postCreateCommand": "poetry install",
     "customizations": {
         "vscode": {

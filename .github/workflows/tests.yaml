@@ -26,7 +26,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - uses: abatilo/actions-poetry@v2
         with:
-          poetry-version: "1.7.1"
+          poetry-version: "1.8.2"
       - run: poetry install
       - run: black --check ${PYTHON_DIRS}
       - run: pyright ${PYTHON_DIRS}
