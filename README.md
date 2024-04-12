@@ -6,10 +6,10 @@
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.10652375-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.10652375)
 [![Tests](https://img.shields.io/github/actions/workflow/status/astropenguin/dataspecs/tests.yaml?label=Tests&style=flat-square)](https://github.com/astropenguin/dataspecs/actions)
 
-Data specifications defined in data classes
+Data specifications by data classes
 
 ## Installation
 
 ```shell
-pip install dataspecs==0.1.0
+pip install dataspecs==0.2.0
 ```
