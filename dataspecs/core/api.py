@@ -11,6 +11,7 @@ from .specs import ID, ROOT, Spec, Specs
 from .typing import (
     DataClass,
     StrPath,
+    get_annotated,
     get_dataclasses,
     get_final,
     get_first,
@@ -157,7 +158,7 @@ def from_typehint(
     """
     specs: Specs[Any] = Specs()
 
-    for name, subtype in enumerate(get_subtypes(obj)):
+    for name, subtype in enumerate(get_subtypes(get_annotated(obj))):
         specs.append(
             spec_factory(
                 id=(child_id := ID(parent_id) / str(name)),
