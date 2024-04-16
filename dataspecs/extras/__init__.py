@@ -1,5 +1,5 @@
-__all__ = ["replace"]
+__all__ = ["replacement"]
 
 
 # submodules
-from . import replace
+from . import replacement
