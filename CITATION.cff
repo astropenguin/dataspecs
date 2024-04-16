@@ -18,11 +18,11 @@ identifiers:
     value: 10.5281/zenodo.10652375
 repository-code: 'https://github.com/astropenguin/dataspecs/'
 url: 'https://astropenguin.github.io/dataspecs/'
-abstract: Data specifications defined in data classes
+abstract: Data specifications by data classes
 keywords:
   - python
-  - data-specification
   - dataclasses
+  - specification
   - typing
 license: MIT
 version: 0.3.0
