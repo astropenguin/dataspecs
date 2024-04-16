@@ -119,6 +119,10 @@ class Specs(UserList[TSpec]):
         """Return the data spec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
 
+    def replace(self, old: TSpec, new: TSpec, /) -> Self:
+        """Return data specs with old data spec replaced by new one."""
+        return type(self)(new if spec == old else spec for spec in self)
+
     @overload
     def __getitem__(self, index: None, /) -> Self: ...
 
