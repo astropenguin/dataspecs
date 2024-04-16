@@ -2,10 +2,11 @@ __all__ = ["TagBase"]
 
 
 # standard library
+import types
 from dataclasses import Field, is_dataclass
 from enum import Enum
 from os import PathLike
-from typing import Annotated, Any, ClassVar, Protocol, Union
+from typing import Annotated, Any, ClassVar, Literal, Protocol, Union
 
 
 # dependencies
@@ -72,7 +73,7 @@ def get_first(obj: Any, /) -> Any:
 
 def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
     """Return subtypes of a type hint if they exist."""
-    return get_args(get_annotated(obj))
+    return get_args(obj) if not is_literal(obj) else ()
 
 
 def get_tags(obj: Any, /) -> tuple[TagBase, ...]:
@@ -83,6 +84,11 @@ def get_tags(obj: Any, /) -> tuple[TagBase, ...]:
 def is_annotated(obj: Any, /) -> bool:
     """Check if a type hint is annotated."""
     return get_origin(obj) is Annotated
+
+
+def is_literal(obj: Any, /) -> bool:
+    """Check if a type hint is a literal type."""
+    return get_origin(obj) is Literal
 
 
 def is_strpath(obj: Any, /) -> TypeGuard[StrPath]:
@@ -97,4 +103,11 @@ def is_tag(obj: Any, /) -> TypeGuard[TagBase]:
 
 def is_union(obj: Any, /) -> bool:
     """Check if a type hint is a union type."""
-    return get_origin(Union[obj]) is Union  # type: ignore
+    if get_origin(obj) is Union:
+        return True
+
+    # Only for Python >= 3.10
+    if UnionType := getattr(types, "UnionType", None):
+        return isinstance(obj, UnionType)
+
+    return False

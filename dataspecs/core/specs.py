@@ -4,7 +4,7 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 # standard library
 from collections import UserList
 from collections.abc import Iterable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from os import fspath
 from pathlib import PurePosixPath
 from re import Match, compile, escape, fullmatch
@@ -13,7 +13,7 @@ from typing import Any, Optional, SupportsIndex, TypeVar, cast, overload
 
 # dependencies
 from typing_extensions import Self
-from .typing import DataClass, StrPath, TagBase, is_strpath, is_tag
+from .typing import StrPath, TagBase, is_strpath, is_tag
 
 
 # constants
@@ -85,7 +85,6 @@ class Spec:
         tags: Tags of the data spec.
         type: Type hint for the data of the data spec.
         data: Default or final data of the data spec.
-        origin: Original dataclass object of the data spec.
 
     """
 
@@ -100,9 +99,6 @@ class Spec:
 
     data: Optional[Any] = None
     """Default or final data of the data spec."""
-
-    origin: Optional[DataClass] = field(default=None, repr=False)
-    """Original dataclass object of the data spec."""
 
 
 class Specs(UserList[TSpec]):
@@ -122,6 +118,10 @@ class Specs(UserList[TSpec]):
     def unique(self) -> Optional[TSpec]:
         """Return the data spec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
+
+    def replace(self, old: TSpec, new: TSpec, /) -> Self:
+        """Return data specs with old data spec replaced by new one."""
+        return type(self)(new if spec == old else spec for spec in self)
 
     @overload
     def __getitem__(self, index: None, /) -> Self: ...

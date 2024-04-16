@@ -1,8 +1,7 @@
 __all__ = [
-    # submodules
-    "api",
-    "specs",
-    "typing",
+    # subpackages
+    "core",
+    "extras",
     # aliases
     "ID",
     "ROOT",
@@ -15,13 +14,12 @@ __all__ = [
 __version__ = "0.2.0"
 
 
-# submodules
-from . import api
-from . import specs
-from . import typing
+# subpackages
+from . import core
+from . import extras
 
 
 # aliases
-from .api import *
-from .specs import *
-from .typing import *
+from .core.api import *
+from .core.specs import *
+from .core.typing import *

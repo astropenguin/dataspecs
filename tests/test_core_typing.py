@@ -2,11 +2,11 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
-from typing import Annotated as Ann, Any, Union
+from typing import Annotated as Ann, Any, Literal, Optional, Union
 
 
 # dependencies
-from dataspecs.typing import (
+from dataspecs.core.typing import (
     TagBase,
     get_annotated,
     get_annotations,
@@ -15,6 +15,7 @@ from dataspecs.typing import (
     get_subtypes,
     get_tags,
     is_annotated,
+    is_literal,
     is_strpath,
     is_tag,
     is_union,
@@ -62,18 +63,16 @@ data_get_dataclasses: TestData = [
 ]
 
 data_get_first: TestData = [
-    (Ann[Union[int, None], "ann"], Ann[Union[int, None], "ann"]),
     (Union[int, None], int),
-    (Ann[int, "ann"], Ann[int, "ann"]),
+    (Optional[int], int),
     (int, int),
 ]
 
 data_get_subtypes: TestData = [
-    (Ann[dict[str, int], "ann"], (str, int)),
+    (Union[str, int], (str, int)),
     (dict[str, int], (str, int)),
-    (Ann[list[int], "ann"], (int,)),
     (list[int], (int,)),
-    (Ann[int, "ann"], ()),
+    (Literal[1], ()),
     (int, ()),
 ]
 
@@ -87,6 +86,11 @@ data_get_tags: TestData = [
 data_is_annotated: TestData = [
     (Ann[int, "ann"], True),
     (int, False),
+]
+
+data_is_literal: TestData = [
+    (Literal[1], True),
+    (1, False),
 ]
 
 data_is_strpath: TestData = [
@@ -143,6 +147,11 @@ def test_get_tags(tester: Any, expected: Any) -> None:
 @mark.parametrize("tester, expected", data_is_annotated)
 def test_is_annotated(tester: Any, expected: bool) -> None:
     assert is_annotated(tester) == expected
+
+
+@mark.parametrize("tester, expected", data_is_literal)
+def test_is_literal(tester: Any, expected: bool) -> None:
+    assert is_literal(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_is_strpath)
