@@ -87,7 +87,6 @@ def from_dataclass(
                 tags=get_tags(reftype),
                 type=get_final(field.type, type_only),
                 data=getattr(obj, field.name, field.default),
-                origin=obj,
             )
         )
         specs.extend(
