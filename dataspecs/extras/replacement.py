@@ -52,7 +52,7 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
 
         for target in new[id.data]:
             changes = {cast(str, of.data): replacer.data}
-            updated = replace_(target, **changes)
+            updated = replace_(target, **changes)  # type: ignore
             new = new.replace(target, updated)
 
     return new
