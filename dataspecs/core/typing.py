@@ -2,6 +2,7 @@ __all__ = ["TagBase"]
 
 
 # standard library
+import types
 from dataclasses import Field, is_dataclass
 from enum import Enum
 from os import PathLike
@@ -102,4 +103,11 @@ def is_tag(obj: Any, /) -> TypeGuard[TagBase]:
 
 def is_union(obj: Any, /) -> bool:
     """Check if a type hint is a union type."""
-    return get_origin(Union[obj]) is Union  # type: ignore
+    if get_origin(obj) is Union:
+        return True
+
+    # Only for Python >= 3.10
+    if UnionType := getattr(types, "UnionType", None):
+        return isinstance(obj, UnionType)
+
+    return False
