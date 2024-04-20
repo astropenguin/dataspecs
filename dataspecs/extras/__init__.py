@@ -3,6 +3,8 @@ __all__ = [
     "formatting",
     "replacing",
     # aliases
+    "Format",
+    "format",
     "Replace",
     "replace",
 ]
@@ -14,4 +16,5 @@ from . import replacing
 
 
 # aliases
+from .formatting import *
 from .replacing import *
