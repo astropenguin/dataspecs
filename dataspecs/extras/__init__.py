@@ -1,15 +1,20 @@
 __all__ = [
     # submodules
-    "replacement",
+    "formatting",
+    "replacing",
     # aliases
+    "Format",
+    "format",
     "Replace",
     "replace",
 ]
 
 
 # submodules
-from . import replacement
+from . import formatting
+from . import replacing
 
 
 # aliases
-from .replacement import *
+from .formatting import *
+from .replacing import *

@@ -1,8 +1,8 @@
-__all__ = ["Replace", "replace"]
+__all__ = ["Format", "format"]
 
 
 # standard library
-from dataclasses import dataclass, replace as replace_
+from dataclasses import dataclass, replace
 from enum import auto
 from typing import Annotated, Any, cast
 
@@ -19,26 +19,26 @@ class Tag(TagBase):
     SKIPIF = auto()
 
 
-@dataclass
-class Replace:
-    """Annotation for replacer specs."""
+@dataclass(frozen=True)
+class Format:
+    """Annotation for formatter specs."""
 
     id: Annotated[StrPath, Tag.ID]
-    """ID of data spec(s) to be replaced."""
+    """ID of data spec(s) to be formatted."""
 
     of: Annotated[str, Tag.OF] = "data"
-    """Name of data spec attribute to be replaced."""
+    """Name of data spec attribute to be formatted."""
 
     skipif: Annotated[Any, Tag.SKIPIF] = None
-    """Sentinel value for skipping replacements."""
+    """Sentinel value for which formatting is skipped."""
 
 
-def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
-    """Replace data spec attributes by replacer specs."""
+def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
+    """Format data spec attributes by formatter specs."""
     new = specs.copy()
 
-    for replacer in specs:
-        options = specs[replacer.id / "*"]
+    for formatter in specs:
+        options = specs[formatter.id / "*"]
 
         if (
             (id := options[Tag.ID].unique) is None
@@ -47,12 +47,13 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
         ):
             continue
 
-        if replacer.data == skipif.data:
+        if formatter.data == skipif.data:
             continue
 
         for target in new[id.data]:
-            changes = {cast(str, of.data): replacer.data}
-            updated = replace_(target, **changes)  # type: ignore
+            attr: str = getattr(target, (name := cast(str, of.data)))
+            changes = {name: attr.format(formatter.data)}
+            updated = replace(target, **changes)  # type: ignore
             new = new.replace(target, updated)
 
     return new
