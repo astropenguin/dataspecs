@@ -19,7 +19,7 @@ class Tag(TagBase):
     SKIPIF = auto()
 
 
-@dataclass
+@dataclass(frozen=True)
 class Replace:
     """Annotation for replacer specs."""
 
@@ -30,7 +30,7 @@ class Replace:
     """Name of data spec attribute to be replaced."""
 
     skipif: Annotated[Any, Tag.SKIPIF] = None
-    """Sentinel value for skipping replacements."""
+    """Sentinel value for which replacing is skipped."""
 
 
 def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
