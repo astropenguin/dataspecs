@@ -21,7 +21,14 @@ class Tag(TagBase):
 
 @dataclass(frozen=True)
 class Format:
-    """Annotation for formatter specs."""
+    """Annotation for formatter specs.
+
+    Args:
+        id: ID of data spec(s) to be formatted.
+        of: Name of data spec attribute to be formatted.
+        skipif: Sentinel value for which formatting is skipped.
+
+    """
 
     id: Annotated[StrPath, Tag.ID]
     """ID of data spec(s) to be formatted."""
