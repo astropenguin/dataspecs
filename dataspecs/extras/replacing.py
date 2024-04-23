@@ -21,7 +21,14 @@ class Tag(TagBase):
 
 @dataclass(frozen=True)
 class Replace:
-    """Annotation for replacer specs."""
+    """Annotation for replacer specs.
+
+    Args:
+        id: ID of data spec(s) to be replaced.
+        of: Name of data spec attribute to be replaced.
+        skipif: Sentinel value for which replacing is skipped.
+
+    """
 
     id: Annotated[StrPath, Tag.ID]
     """ID of data spec(s) to be replaced."""
