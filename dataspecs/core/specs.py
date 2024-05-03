@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from os import fspath
 from pathlib import PurePosixPath
 from re import Match, compile, escape, fullmatch
-from typing import Any, Optional, SupportsIndex, TypeVar, cast, overload
+from typing import Any, Generic, Optional, SupportsIndex, TypeVar, cast, overload
 
 
 # dependencies
@@ -23,7 +23,8 @@ ROOT_PATH = "/"
 
 
 # type hints
-TSpec = TypeVar("TSpec", bound="Spec")
+T = TypeVar("T")
+TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
 class ID(PurePosixPath):
@@ -77,7 +78,7 @@ ROOT = ID(ROOT_PATH)
 
 
 @dataclass(frozen=True)
-class Spec:
+class Spec(Generic[T]):
     """Data specification (data spec).
 
     Args:
@@ -97,7 +98,7 @@ class Spec:
     type: Any
     """Type hint for the data of the data spec."""
 
-    data: Optional[Any] = None
+    data: T
     """Default or final data of the data spec."""
 
 

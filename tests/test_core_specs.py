@@ -21,13 +21,13 @@ class Tag(TagBase):
 
 
 specs = [
-    Spec(ID("/aaa"), (Tag.DATA,), None),
-    Spec(ID("/aaa/name"), (Tag.NAME,), None),
-    Spec(ID("/aaa/units"), (Tag.UNITS,), None),
-    Spec(ID("/bbb"), (Tag.DATA,), None),
-    Spec(ID("/bbb/name"), (Tag.NAME,), None),
-    Spec(ID("/bbb/units"), (Tag.UNITS,), None),
-    Spec(ID("/ccc"), (), None),
+    Spec(ID("/aaa"), (Tag.DATA,), None, None),
+    Spec(ID("/aaa/name"), (Tag.NAME,), None, None),
+    Spec(ID("/aaa/units"), (Tag.UNITS,), None, None),
+    Spec(ID("/bbb"), (Tag.DATA,), None, None),
+    Spec(ID("/bbb/name"), (Tag.NAME,), None, None),
+    Spec(ID("/bbb/units"), (Tag.UNITS,), None, None),
+    Spec(ID("/ccc"), (), None, None),
 ]
 
 data_id_init: TestData = [
@@ -137,17 +137,26 @@ def test_id_match(id: str, tester: str, expected: bool) -> None:
 
 
 @mark.parametrize("tester, expected", data_specs_first)
-def test_specs_first(tester: list[Spec], expected: Optional[Spec]) -> None:
+def test_specs_first(
+    tester: list[Spec[Any]],
+    expected: Optional[Spec[Any]],
+) -> None:
     assert Specs(tester).first == expected
 
 
 @mark.parametrize("tester, expected", data_specs_last)
-def test_specs_last(tester: list[Spec], expected: Optional[Spec]) -> None:
+def test_specs_last(
+    tester: list[Spec[Any]],
+    expected: Optional[Spec[Any]],
+) -> None:
     assert Specs(tester).last == expected
 
 
 @mark.parametrize("tester, expected", data_specs_unique)
-def test_specs_unique(tester: list[Spec], expected: Optional[Spec]) -> None:
+def test_specs_unique(
+    tester: list[Spec[Any]],
+    expected: Optional[Spec[Any]],
+) -> None:
     assert Specs(tester).unique == expected
 
 

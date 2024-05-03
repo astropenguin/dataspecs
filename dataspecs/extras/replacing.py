@@ -57,7 +57,7 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
         if replacer.data == skipif.data:
             continue
 
-        for target in new[id.data]:
+        for target in new[cast(StrPath, id.data)]:
             changes = {cast(str, of.data): replacer.data}
             updated = replace_(target, **changes)  # type: ignore
             new = new.replace(target, updated)

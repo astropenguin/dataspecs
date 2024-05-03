@@ -57,7 +57,7 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
         if formatter.data == skipif.data:
             continue
 
-        for target in new[id.data]:
+        for target in new[cast(StrPath, id.data)]:
             attr: str = getattr(target, (name := cast(str, of.data)))
             changes = {name: attr.format(formatter.data)}
             updated = replace(target, **changes)  # type: ignore
