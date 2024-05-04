@@ -4,7 +4,7 @@ __all__ = ["Format", "format"]
 # standard library
 from dataclasses import dataclass, replace
 from enum import auto
-from typing import Annotated, Any, cast
+from typing import Annotated, Any
 
 
 # dependencies
@@ -57,9 +57,9 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
         if formatter.data == skipif.data:
             continue
 
-        for target in new[cast(StrPath, id.data)]:
-            attr: str = getattr(target, (name := cast(str, of.data)))
-            changes = {name: attr.format(formatter.data)}
+        for target in new[id[str].data]:
+            attr: str = getattr(target, of[str].data)
+            changes = {of[str].data: attr.format(formatter.data)}
             updated = replace(target, **changes)  # type: ignore
             new = new.replace(target, updated)
 
