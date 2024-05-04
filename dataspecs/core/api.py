@@ -20,6 +20,12 @@ from .typing import (
 )
 
 
+# constants
+FIRST_ONLY = "_DATASPECS_FIRST_ONLY"
+TAGGED_ONLY = "_DATASPECS_TAGGED_ONLY"
+TYPE_ONLY = "_DATASPECS_TYPE_ONLY"
+
+
 @overload
 def from_dataclass(
     obj: DataClass,
@@ -61,10 +67,16 @@ def from_dataclass(
         obj: Dataclass object to be parsed.
         first_only: If ``True`` and a type hint is a union of types,
             parse the first type only instead of the whole type hint.
+            Note that if ``obj._DATASPECS_FIRST_ONLY`` exists,
+            it will take precedence regardless of ``first_only``.
         tagged_only: If ``True``, drop leaf (i.e. terminal) and
             adjacent superior data specs that do not have any tags.
+            Note that if ``obj._DATASPECS_TAGGED_ONLY`` exists,
+            it will take precedence regardless of ``tagged_only``.
         type_only: If ``True``, each data spec type contains
             a type hint with all annotation removed.
+            Note that if ``obj._DATASPECS_TYPE_ONLY`` exists,
+            it will take precedence regardless of ``type_only``.
         parent_id: ID of the parent data spec.
         spec_factory: Factory for creating each data spec.
 
@@ -72,6 +84,10 @@ def from_dataclass(
         Data specs created from the dataclass object.
 
     """
+    first_only = getattr(obj, FIRST_ONLY, first_only)
+    tagged_only = getattr(obj, TAGGED_ONLY, tagged_only)
+    type_only = getattr(obj, TYPE_ONLY, type_only)
+
     specs: Specs[Any] = Specs()
 
     for field in fields(obj):
@@ -140,10 +156,16 @@ def from_typehint(
         obj: Type hint to be parsed.
         first_only: If ``True`` and a type hint is a union of types,
             parse the first type only instead of the whole type hint.
+            Note that if ``obj._DATASPECS_FIRST_ONLY`` exists,
+            it will take precedence regardless of ``first_only``.
         tagged_only: If ``True``, drop leaf (i.e. terminal) and
             adjacent superior data specs that do not have any tags.
+            Note that if ``obj._DATASPECS_TAGGED_ONLY`` exists,
+            it will take precedence regardless of ``tagged_only``.
         type_only: If ``True``, each data spec type contains
             a type hint with all annotation removed.
+            Note that if ``obj._DATASPECS_TYPE_ONLY`` exists,
+            it will take precedence regardless of ``type_only``.
         parent_id: ID of the parent data spec.
         spec_factory: Factory for creating each data spec.
 
@@ -151,6 +173,10 @@ def from_typehint(
         Data specs created from the type hint.
 
     """
+    first_only = getattr(obj, FIRST_ONLY, first_only)
+    tagged_only = getattr(obj, TAGGED_ONLY, tagged_only)
+    type_only = getattr(obj, TYPE_ONLY, type_only)
+
     specs: Specs[Any] = Specs()
 
     for name, subtype in enumerate(get_subtypes(get_annotated(obj))):
