@@ -1,0 +1,17 @@
+dataspecs.core package
+======================
+
+.. automodule:: dataspecs.core
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 2
+
+   dataspecs.core.api
+   dataspecs.core.specs
+   dataspecs.core.typing

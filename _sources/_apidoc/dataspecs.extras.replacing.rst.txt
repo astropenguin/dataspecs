@@ -1,0 +1,7 @@
+dataspecs.extras.replacing module
+=================================
+
+.. automodule:: dataspecs.extras.replacing
+   :members:
+   :undoc-members:
+   :show-inheritance:
