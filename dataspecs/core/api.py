@@ -3,11 +3,11 @@ __all__ = ["from_dataclass", "from_typehint"]
 
 # standard library
 from dataclasses import fields
-from typing import Any, Callable, TypeVar, overload
+from typing import Any, Callable, overload
 
 
 # dependencies
-from .specs import ID, ROOT, Spec, Specs
+from .specs import ID, ROOT, Spec, Specs, TSpec
 from .typing import (
     DataClass,
     StrPath,
@@ -20,10 +20,6 @@ from .typing import (
 )
 
 
-# type hints
-TSpec = TypeVar("TSpec", bound=Spec)
-
-
 @overload
 def from_dataclass(
     obj: DataClass,
@@ -33,7 +29,7 @@ def from_dataclass(
     tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
-) -> Specs[Spec]: ...
+) -> Specs[Spec[Any]]: ...
 
 
 @overload
@@ -112,7 +108,7 @@ def from_typehint(
     tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
-) -> Specs[Spec]: ...
+) -> Specs[Spec[Any]]: ...
 
 
 @overload
@@ -163,6 +159,7 @@ def from_typehint(
                 id=(child_id := ID(parent_id) / str(name)),
                 tags=get_tags(subtype),
                 type=get_final(subtype, type_only),
+                data=None,
             )
         )
         specs.extend(

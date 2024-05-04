@@ -4,11 +4,20 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 # standard library
 from collections import UserList
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from os import fspath
 from pathlib import PurePosixPath
 from re import Match, compile, escape, fullmatch
-from typing import Any, Optional, SupportsIndex, TypeVar, cast, overload
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    Optional,
+    SupportsIndex,
+    TypeVar,
+    cast,
+    overload,
+)
 
 
 # dependencies
@@ -23,7 +32,9 @@ ROOT_PATH = "/"
 
 
 # type hints
-TSpec = TypeVar("TSpec", bound="Spec")
+S = TypeVar("S")
+T = TypeVar("T")
+TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
 class ID(PurePosixPath):
@@ -77,7 +88,7 @@ ROOT = ID(ROOT_PATH)
 
 
 @dataclass(frozen=True)
-class Spec:
+class Spec(Generic[T]):
     """Data specification (data spec).
 
     Args:
@@ -97,8 +108,16 @@ class Spec:
     type: Any
     """Type hint for the data of the data spec."""
 
-    data: Optional[Any] = None
+    data: T
     """Default or final data of the data spec."""
+
+    def __call__(self, type: Callable[..., S], /) -> "Spec[S]":
+        """Dynamically cast the data of the data spec."""
+        return replace(self, data=type(self.data))  # type: ignore
+
+    def __getitem__(self, type: Callable[..., S], /) -> "Spec[S]":
+        """Statically cast the data of the data spec."""
+        return self  # type: ignore
 
 
 class Specs(UserList[TSpec]):

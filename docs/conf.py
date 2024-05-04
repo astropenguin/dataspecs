@@ -5,11 +5,17 @@ copyright = "2023-2024 Akio Taniguchi"
 
 # general configuration
 add_module_names = False
-autodoc_default_options = {"special-members": "__getitem__, __sub__"}
+autodoc_default_options = {
+    "special-members": "__call__, __getitem__, __sub__",
+}
 autodoc_member_order = "bysource"
 autodoc_typehints = "both"
 autodoc_typehints_format = "short"
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+]
 extensions = [
     "myst_parser",
     "sphinx.ext.autodoc",

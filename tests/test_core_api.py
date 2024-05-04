@@ -1,7 +1,7 @@
 # standard library
 from dataclasses import dataclass
 from enum import auto
-from typing import Annotated as Ann, TypeVar, Union
+from typing import Annotated as Ann, Any, TypeVar, Union
 
 
 # dependencies
@@ -40,7 +40,7 @@ class Weather:
     memo: str = "Observed in Tokyo"
 
 
-specs_simple = Specs(
+specs_simple: Specs[Spec[Any]] = Specs(
     [
         Spec(
             id=ID("/temp"),
@@ -52,6 +52,7 @@ specs_simple = Specs(
             id=ID("/temp/0"),
             tags=(Tag.DTYPE,),
             type=float,
+            data=None,
         ),
         Spec(
             id=ID("/temp/name"),
@@ -75,6 +76,7 @@ specs_simple = Specs(
             id=ID("/humid/0"),
             tags=(Tag.DTYPE,),
             type=float,
+            data=None,
         ),
         Spec(
             id=ID("/humid/name"),
@@ -128,7 +130,7 @@ specs_simple = Specs(
 )
 
 
-specs_full = Specs(
+specs_full: Specs[Spec[Any]] = Specs(
     [
         Spec(
             id=ID("/temp"),
@@ -140,11 +142,13 @@ specs_full = Specs(
             id=ID("/temp/0"),
             tags=(Tag.DATA,),
             type=list[float],
+            data=None,
         ),
         Spec(
             id=ID("/temp/0/0"),
             tags=(Tag.DTYPE,),
             type=float,
+            data=None,
         ),
         Spec(
             id=ID("/temp/0/name"),
@@ -162,6 +166,7 @@ specs_full = Specs(
             id=ID("/temp/1"),
             tags=(),
             type=float,
+            data=None,
         ),
         #
         Spec(
@@ -174,11 +179,13 @@ specs_full = Specs(
             id=ID("/humid/0"),
             tags=(Tag.DATA,),
             type=list[float],
+            data=None,
         ),
         Spec(
             id=ID("/humid/0/0"),
             tags=(Tag.DTYPE,),
             type=float,
+            data=None,
         ),
         Spec(
             id=ID("/humid/0/name"),
@@ -196,6 +203,7 @@ specs_full = Specs(
             id=ID("/humid/1"),
             tags=(),
             type=float,
+            data=None,
         ),
         Spec(
             id=ID("/lon"),

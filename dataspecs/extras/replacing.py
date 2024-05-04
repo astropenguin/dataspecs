@@ -4,7 +4,7 @@ __all__ = ["Replace", "replace"]
 # standard library
 from dataclasses import dataclass, replace as replace_
 from enum import auto
-from typing import Annotated, Any, cast
+from typing import Annotated, Any
 
 
 # dependencies
@@ -57,8 +57,8 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
         if replacer.data == skipif.data:
             continue
 
-        for target in new[id.data]:
-            changes = {cast(str, of.data): replacer.data}
+        for target in new[id[str].data]:
+            changes = {of[str].data: replacer.data}
             updated = replace_(target, **changes)  # type: ignore
             new = new.replace(target, updated)
 
