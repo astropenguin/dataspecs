@@ -73,7 +73,10 @@ def get_first(obj: Any, /) -> Any:
 
 def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
     """Return subtypes of a type hint if they exist."""
-    return get_args(obj) if not is_literal(obj) else ()
+    if is_literal(annotated := get_annotated(obj)):
+        return ()
+
+    return get_args(annotated)
 
 
 def get_tags(obj: Any, /) -> tuple[TagBase, ...]:
