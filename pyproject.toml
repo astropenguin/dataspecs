@@ -14,14 +14,14 @@ python = ">=3.9, <3.13"
 typing-extensions = "^4.1"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.3"
+black = "^24.4"
 ipython = "^8.18"
-myst-parser = "^2.0"
-mypy = "^1.9"
+myst-parser = "^3.0"
+mypy = "^1.10"
 pydata-sphinx-theme = "^0.15"
 pyright = "^1.1"
-pytest = "^7.4"
-sphinx = "^7.2"
+pytest = "^8.2"
+sphinx = "^7.3"
 
 [tool.mypy]
 strict = true
