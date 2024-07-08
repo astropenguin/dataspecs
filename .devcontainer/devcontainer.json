@@ -1,13 +1,17 @@
 {
     "name": "dataspecs",
     "image": "python:3.12",
-    "runArgs": [
-        "--name=dataspecs"
-    ],
+    "features": {
+        "ghcr.io/devcontainers-contrib/features/poetry:2": {
+            "version": "1.8.3"
+        }
+    },
     "containerEnv": {
         "POETRY_VIRTUALENVS_CREATE": "false"
     },
-    "onCreateCommand": "pip install poetry==1.8.2",
+    "runArgs": [
+        "--name=dataspecs"
+    ],
     "postCreateCommand": "poetry install",
     "customizations": {
         "vscode": {
