@@ -45,7 +45,7 @@ specs_simple: Specs[Spec[Any]] = Specs(
         Spec(
             id=ID("/temp"),
             tags=(Tag.DATA,),
-            type=Union[list[float], float],
+            type=list[float],
             data=[10, 20],
         ),
         Spec(
@@ -69,7 +69,7 @@ specs_simple: Specs[Spec[Any]] = Specs(
         Spec(
             id=ID("/humid"),
             tags=(Tag.DATA,),
-            type=Union[list[float], float],
+            type=list[float],
             data=[30, 40],
         ),
         Spec(

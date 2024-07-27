@@ -74,23 +74,14 @@ def from_dataclass(
     specs: Specs[Any] = Specs()
 
     for field in fields(obj):
-        reftype = get_first(field.type) if first_only else field.type
-
-        specs.append(
-            spec_factory(
-                id=(child_id := ID(parent_id) / field.name),
-                tags=get_tags(reftype),
-                type=get_final(field.type, type_only),
-                data=getattr(obj, field.name, field.default),
-            )
-        )
         specs.extend(
             from_typehint(
-                reftype,
+                field.type,
                 first_only=first_only,
                 tagged_only=tagged_only,
                 type_only=type_only,
-                parent_id=child_id,
+                parent_id=ID(parent_id) / field.name,
+                parent_data=getattr(obj, field.name, field.default),
                 spec_factory=spec_factory,
             )
         )
@@ -107,6 +98,7 @@ def from_typehint(
     tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
+    parent_data: Any = None,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -119,6 +111,7 @@ def from_typehint(
     tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
+    parent_data: Any = None,
     spec_factory: Callable[..., TSpec],
 ) -> Specs[TSpec]: ...
 
@@ -131,6 +124,7 @@ def from_typehint(
     tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
+    parent_data: Any = None,
     spec_factory: Any = Spec,
 ) -> Any:
     """Create data specs from a type hint.
@@ -144,6 +138,7 @@ def from_typehint(
         type_only: If ``True``, each data spec type contains
             a type hint with all annotation removed.
         parent_id: ID of the parent data spec.
+        parent_data: Data of the parent data spec.
         spec_factory: Factory for creating each data spec.
 
     Returns:
@@ -152,34 +147,38 @@ def from_typehint(
     """
     specs: Specs[Any] = Specs()
 
-    for name, subtype in enumerate(get_subtypes(obj)):
-        specs.append(
-            spec_factory(
-                id=(child_id := ID(parent_id) / str(name)),
-                tags=get_tags(subtype),
-                type=get_final(subtype, type_only),
-                data=None,
-            )
+    if first_only:
+        obj = get_first(obj)
+
+    specs.append(
+        spec_factory(
+            id=ID(parent_id),
+            tags=get_tags(obj),
+            type=get_final(obj, type_only),
+            data=parent_data,
         )
+    )
+
+    for index, subtype in enumerate(get_subtypes(obj)):
         specs.extend(
             from_typehint(
                 subtype,
                 first_only=first_only,
                 tagged_only=tagged_only,
                 type_only=type_only,
-                parent_id=child_id,
+                parent_id=ID(parent_id) / str(index),
                 spec_factory=spec_factory,
             )
         )
 
-    for dataclass in get_dataclasses(obj):
+    for dc in get_dataclasses(obj):
         specs.extend(
             from_dataclass(
-                dataclass,
+                dc,
                 first_only=first_only,
                 tagged_only=tagged_only,
                 type_only=type_only,
-                parent_id=parent_id,
+                parent_id=ID(parent_id),
                 spec_factory=spec_factory,
             )
         )
