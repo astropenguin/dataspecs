@@ -89,6 +89,8 @@ data_specs_groups: TestData = [
     (Tag.NAME, []),
     (Tag.UNITS, []),
     #
+    (Tag, [specs[0:3], specs[3:6]]),
+    #
     ("/.*", [specs[0:3], specs[3:6], specs[6:]]),
     ("/a", [specs[0:3]]),
     ("/b", [specs[3:6]]),
@@ -101,6 +103,8 @@ data_specs_getitem: TestData = [
     (Tag.DATA, [specs[0], specs[3]]),
     (Tag.NAME, [specs[1], specs[4]]),
     (Tag.UNITS, [specs[2], specs[5]]),
+    #
+    (Tag, specs[0:6]),
     #
     ("/.*", specs),
     ("/[^/]*", [specs[0], specs[3], specs[6]]),
