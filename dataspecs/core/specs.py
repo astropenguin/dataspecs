@@ -6,14 +6,28 @@ from collections import UserList
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from os import fspath
+from os.path import commonpath
 from pathlib import PurePosixPath
 from re import fullmatch
-from typing import Any, Callable, Generic, Optional, SupportsIndex, TypeVar, overload
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    Optional,
+    SupportsIndex,
+    TypeVar,
+    Union,
+    overload,
+)
 
 
 # dependencies
 from typing_extensions import Self
 from .typing import StrPath, TagBase, is_strpath, is_tag
+
+
+# type hints
+SpecificIndex = Union[StrPath, TagBase, None]
 
 
 # constants
@@ -108,6 +122,16 @@ class Specs(UserList[TSpec]):
         """Return the data spec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
 
+    def groups(self, index: SpecificIndex = None, /) -> list[Self]:
+        """Return list of data specs grouped by the common ID."""
+        parent_id = ID(commonpath(spec.id for spec in self))
+
+        return [
+            self[f"{spec.id}(|/.*)"]
+            for spec in self[index]
+            if spec.id.parent == parent_id
+        ]
+
     def replace(self, old: TSpec, new: TSpec, /) -> Self:
         """Return data specs with old data spec replaced by new one."""
         return type(self)(new if spec == old else spec for spec in self)
@@ -122,10 +146,10 @@ class Specs(UserList[TSpec]):
     def __getitem__(self, index: StrPath, /) -> Self: ...
 
     @overload
-    def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
+    def __getitem__(self, index: slice, /) -> Self: ...
 
     @overload
-    def __getitem__(self, index: slice, /) -> Self: ...
+    def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
 
     def __getitem__(self, index: Any, /) -> Any:
         """Select data specs with given index.
