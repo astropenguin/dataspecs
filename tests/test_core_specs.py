@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 
 # dependencies
-from dataspecs.core.specs import ID, Spec, Specs
+from dataspecs.core.specs import ID, Spec, SpecificIndex, Specs
 from dataspecs.core.typing import TagBase
 from pytest import mark, raises
 
@@ -20,15 +20,17 @@ class Tag(TagBase):
     UNITS = auto()
 
 
-specs = [
-    Spec(ID("/a"), (Tag.DATA,), None, None),
-    Spec(ID("/a/name"), (Tag.NAME,), None, None),
-    Spec(ID("/a/units"), (Tag.UNITS,), None, None),
-    Spec(ID("/b"), (Tag.DATA,), None, None),
-    Spec(ID("/b/name"), (Tag.NAME,), None, None),
-    Spec(ID("/b/units"), (Tag.UNITS,), None, None),
-    Spec(ID("/c"), (), None, None),
-]
+specs = Specs(
+    [
+        Spec(ID("/a"), (Tag.DATA,), None, None),
+        Spec(ID("/a/name"), (Tag.NAME,), None, None),
+        Spec(ID("/a/units"), (Tag.UNITS,), None, None),
+        Spec(ID("/b"), (Tag.DATA,), None, None),
+        Spec(ID("/b/name"), (Tag.NAME,), None, None),
+        Spec(ID("/b/units"), (Tag.UNITS,), None, None),
+        Spec(ID("/c"), (), None, None),
+    ]
+)
 
 data_id_init: TestData = [
     ("/", True),
@@ -38,26 +40,25 @@ data_id_init: TestData = [
 ]
 
 data_id_match: TestData = [
-    ("/", "/", True),
-    ("/", "/.*", True),
-    ("/", ".*", True),
-    ("/", "/a", False),
+    (ID("/"), "/", True),
+    (ID("/"), "/.*", True),
+    (ID("/"), ".*", True),
+    (ID("/"), "/a", False),
     #
-    ("/a", "/a", True),
-    ("/a", "/.*", True),
-    ("/a", ".*", True),
-    ("/a", "/b", False),
+    (ID("/a"), "/a", True),
+    (ID("/a"), "/.*", True),
+    (ID("/a"), ".*", True),
+    (ID("/a"), "/b", False),
     #
-    ("/a/b", "/a/b", True),
-    ("/a/b", "/a/.*", True),
-    ("/a/b", "/.*/b", True),
-    ("/a/b", "/.*/.*", True),
-    ("/a/b", "/.*", True),
-    ("/a/b", ".*", True),
-    ("/a/b", "/a/c", False),
-    ("/a/b", "/c/b", False),
-    ("/a/b", "/c/d", False),
-    #
+    (ID("/a/b"), "/a/b", True),
+    (ID("/a/b"), "/a/.*", True),
+    (ID("/a/b"), "/.*/b", True),
+    (ID("/a/b"), "/.*/.*", True),
+    (ID("/a/b"), "/.*", True),
+    (ID("/a/b"), ".*", True),
+    (ID("/a/b"), "/a/c", False),
+    (ID("/a/b"), "/c/b", False),
+    (ID("/a/b"), "/c/d", False),
 ]
 
 data_specs_first: TestData = [
@@ -79,6 +80,19 @@ data_specs_unique: TestData = [
     (specs[3:6], None),
     (specs[1:2], specs[1]),
     (specs[0:0], None),
+]
+
+data_specs_groups: TestData = [
+    (None, [specs[0:3], specs[3:6], specs[6:]]),
+    #
+    (Tag.DATA, [specs[0:3], specs[3:6]]),
+    (Tag.NAME, []),
+    (Tag.UNITS, []),
+    #
+    ("/.*", [specs[0:3], specs[3:6], specs[6:]]),
+    ("/a", [specs[0:3]]),
+    ("/b", [specs[3:6]]),
+    ("/c", [specs[6:]]),
 ]
 
 data_specs_getitem: TestData = [
@@ -128,39 +142,35 @@ def test_id_init(tester: str, expected: Any) -> None:
 
 
 @mark.parametrize("id, tester, expected", data_id_match)
-def test_id_match(id: str, tester: str, expected: bool) -> None:
-    assert ID(id).match(tester) == expected
+def test_id_match(id: ID, tester: str, expected: bool) -> None:
+    assert id.match(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_specs_first)
-def test_specs_first(
-    tester: list[Spec[Any]],
-    expected: Optional[Spec[Any]],
-) -> None:
-    assert Specs(tester).first == expected
+def test_specs_first(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -> None:
+    assert tester.first == expected
 
 
 @mark.parametrize("tester, expected", data_specs_last)
-def test_specs_last(
-    tester: list[Spec[Any]],
-    expected: Optional[Spec[Any]],
-) -> None:
-    assert Specs(tester).last == expected
+def test_specs_last(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -> None:
+    assert tester.last == expected
 
 
 @mark.parametrize("tester, expected", data_specs_unique)
-def test_specs_unique(
-    tester: list[Spec[Any]],
-    expected: Optional[Spec[Any]],
-) -> None:
-    assert Specs(tester).unique == expected
+def test_specs_unique(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -> None:
+    assert tester.unique == expected
+
+
+@mark.parametrize("tester, expected", data_specs_groups)
+def test_specs_groups(tester: SpecificIndex, expected: list[Specs[Spec[Any]]]) -> None:
+    assert specs.groups(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_specs_getitem)
 def test_specs_getitem(tester: Any, expected: Any) -> None:
-    assert Specs(specs)[tester] == expected
+    assert specs[tester] == expected
 
 
 @mark.parametrize("tester, expected", data_specs_sub)
 def test_specs_sub(tester: Any, expected: Any) -> None:
-    assert Specs(specs) - tester == expected
+    assert specs - tester == expected
