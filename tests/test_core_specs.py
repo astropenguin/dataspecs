@@ -97,6 +97,12 @@ data_specs_groups: TestData = [
     ("/c", [specs[6:]]),
 ]
 
+data_specs_replace: TestData = [
+    (specs[0], [*specs[0:6], specs[0]]),
+    (specs[1], [*specs[0:6], specs[1]]),
+    (specs[-1], specs),
+]
+
 data_specs_getitem: TestData = [
     (None, specs),
     #
@@ -125,13 +131,6 @@ data_specs_getitem: TestData = [
     (slice(0, 2), specs[0:2]),
     (0, specs[0]),
     (-1, specs[-1]),
-]
-
-data_specs_sub: TestData = [
-    (specs, []),
-    (specs[3:6], [*specs[0:3], *specs[6:]]),
-    (specs[1:2], [specs[0], *specs[2:]]),
-    (specs[0:0], specs),
 ]
 
 
@@ -170,11 +169,11 @@ def test_specs_groups(tester: SpecificIndex, expected: list[Specs[Spec[Any]]]) -
     assert specs.groups(tester) == expected
 
 
+@mark.parametrize("tester, expected", data_specs_replace)
+def test_specs_replace(tester: Spec[Any], expected: list[Specs[Spec[Any]]]) -> None:
+    assert specs.replace(specs[-1], tester) == expected
+
+
 @mark.parametrize("tester, expected", data_specs_getitem)
 def test_specs_getitem(tester: Any, expected: Any) -> None:
     assert specs[tester] == expected
-
-
-@mark.parametrize("tester, expected", data_specs_sub)
-def test_specs_sub(tester: Any, expected: Any) -> None:
-    assert specs - tester == expected

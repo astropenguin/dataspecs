@@ -3,7 +3,6 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 
 # standard library
 from collections import UserList
-from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from os import fspath
 from os.path import commonpath
@@ -189,15 +188,3 @@ class Specs(UserList[TSpec]):
             return type(self)(spec for spec in self if spec.id.match(index))
 
         return super().__getitem__(index)  # type: ignore
-
-    def __sub__(self, removed: Iterable[TSpec], /) -> Self:
-        """Return data specs with given ones removed.
-
-        Args:
-            removed: Data specs to be removed.
-
-        Returns:
-            Data specs with given data specs removed.
-
-        """
-        return type(self)(spec for spec in self if (spec not in removed))
