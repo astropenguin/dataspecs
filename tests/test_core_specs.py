@@ -97,6 +97,12 @@ data_specs_groups: TestData = [
     ("/c", [specs[6:]]),
 ]
 
+data_specs_replace: TestData = [
+    (specs[0], [*specs[0:6], specs[0]]),
+    (specs[1], [*specs[0:6], specs[1]]),
+    (specs[-1], specs),
+]
+
 data_specs_getitem: TestData = [
     (None, specs),
     #
@@ -161,6 +167,11 @@ def test_specs_unique(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -
 @mark.parametrize("tester, expected", data_specs_groups)
 def test_specs_groups(tester: SpecificIndex, expected: list[Specs[Spec[Any]]]) -> None:
     assert specs.groups(tester) == expected
+
+
+@mark.parametrize("tester, expected", data_specs_replace)
+def test_specs_replace(tester: Spec[Any], expected: list[Specs[Spec[Any]]]) -> None:
+    assert specs.replace(specs[-1], tester) == expected
 
 
 @mark.parametrize("tester, expected", data_specs_getitem)
