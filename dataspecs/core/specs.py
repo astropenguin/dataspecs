@@ -23,11 +23,11 @@ from typing import (
 
 # dependencies
 from typing_extensions import Self
-from .typing import StrPath, TagBase, is_strpath, is_tag
+from .typing import StrPath, TagBase, is_strpath, is_tag, is_tagtype
 
 
 # type hints
-SpecificIndex = Union[StrPath, TagBase, None]
+SpecificIndex = Union[TagBase, type[TagBase], StrPath, None]
 
 
 # constants
@@ -143,6 +143,9 @@ class Specs(UserList[TSpec]):
     def __getitem__(self, index: TagBase, /) -> Self: ...
 
     @overload
+    def __getitem__(self, index: type[TagBase], /) -> Self: ...
+
+    @overload
     def __getitem__(self, index: StrPath, /) -> Self: ...
 
     @overload
@@ -156,13 +159,14 @@ class Specs(UserList[TSpec]):
 
         In addition to the normal list indexing, it also accepts
         (1) a tag to select data specs that contain it,
-        (2) a string path to select data specs that match it, or
-        (3) ``None`` to return all data specs (shallow copy).
+        (2) a tag type to select data specs that contain its tags,
+        (3) a string path to select data specs that match it, or
+        (4) ``None`` to return all data specs (shallow copy).
 
         Args:
             index: Index for selection. Either a normal index
                 (i.e. an object that has ``__index__`` method),
-                a tag, a string path, or ``None`` is accepted.
+                a tag, a tag type, a string path, or ``None`` is accepted.
 
         Returns:
             Selected data specs with given index.
@@ -173,6 +177,13 @@ class Specs(UserList[TSpec]):
 
         if is_tag(index):
             return type(self)(spec for spec in self if (index in spec.tags))
+
+        if is_tagtype(index):
+            return type(self)(
+                spec
+                for spec in self
+                if any(isinstance(tag, index) for tag in spec.tags)
+            )
 
         if is_strpath(index):
             return type(self)(spec for spec in self if spec.id.match(index))

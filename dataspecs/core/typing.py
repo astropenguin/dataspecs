@@ -104,6 +104,11 @@ def is_tag(obj: Any, /) -> TypeGuard[TagBase]:
     return isinstance(obj, TagBase)
 
 
+def is_tagtype(obj: Any, /) -> TypeGuard[type[TagBase]]:
+    """Check if an object is a specification tag type."""
+    return isinstance(obj, type) and issubclass(obj, TagBase)
+
+
 def is_union(obj: Any, /) -> bool:
     """Check if a type hint is a union type."""
     if get_origin(obj) is Union:
