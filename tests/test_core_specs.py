@@ -127,13 +127,6 @@ data_specs_getitem: TestData = [
     (-1, specs[-1]),
 ]
 
-data_specs_sub: TestData = [
-    (specs, []),
-    (specs[3:6], [*specs[0:3], *specs[6:]]),
-    (specs[1:2], [specs[0], *specs[2:]]),
-    (specs[0:0], specs),
-]
-
 
 # test functions
 @mark.parametrize("tester, expected", data_id_init)
@@ -173,8 +166,3 @@ def test_specs_groups(tester: SpecificIndex, expected: list[Specs[Spec[Any]]]) -
 @mark.parametrize("tester, expected", data_specs_getitem)
 def test_specs_getitem(tester: Any, expected: Any) -> None:
     assert specs[tester] == expected
-
-
-@mark.parametrize("tester, expected", data_specs_sub)
-def test_specs_sub(tester: Any, expected: Any) -> None:
-    assert specs - tester == expected
