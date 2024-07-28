@@ -45,7 +45,7 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
     new = specs.copy()
 
     for replacer in specs:
-        options = specs[replacer.id / "*"]
+        options = specs[replacer.id / "[^/]*"]
 
         if (
             (id := options[Tag.ID].unique) is None

@@ -7,17 +7,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from os import fspath
 from pathlib import PurePosixPath
-from re import Match, compile, escape, fullmatch
-from typing import (
-    Any,
-    Callable,
-    Generic,
-    Optional,
-    SupportsIndex,
-    TypeVar,
-    cast,
-    overload,
-)
+from re import fullmatch
+from typing import Any, Callable, Generic, Optional, SupportsIndex, TypeVar, overload
 
 
 # dependencies
@@ -26,8 +17,6 @@ from .typing import StrPath, TagBase, is_strpath, is_tag
 
 
 # constants
-GLOB_PATTERN = compile(r"\\\*\\\*()|\\\*([^\\\*]|$)")
-GLOB_REPLS = r".*", r"[^/]*"
 ROOT_PATH = "/"
 
 
@@ -51,36 +40,17 @@ class ID(PurePosixPath):
 
     """
 
-    # Implementation of __new__ is essential because PurePosixPath
-    # does not implement __init__ prior to Python 3.12.
+    # Implementation of __new__ is essential because
+    # PurePosixPath does not implement __init__ in Python < 3.12.
     def __new__(cls, *segments: StrPath) -> Self:
         if PurePosixPath(*segments).root != ROOT_PATH:
-            raise ValueError("ID must start with the root.")
+            raise ValueError("ID must start with the root (/).")
 
         return super().__new__(cls, *segments)
 
-    def match(self, path_pattern: StrPath, /) -> bool:
-        """Check if the ID matches a path pattern.
-
-        Unlike original ``PurePosixPath.match``, it always performs
-        case-sensitive matching. It also accepts double-wildcards
-        (``**``) for recursively matching the path segments.
-
-        Args:
-            path_pattern: Path pattern for matching.
-
-        Returns:
-            ``True`` if the path pattern matches the ID.
-            ``False`` otherwise.
-
-        """
-
-        def repl(match: Match[str]) -> str:
-            index = cast(int, match.lastindex)
-            return GLOB_REPLS[index - 1] + match.group(index)
-
-        regex = GLOB_PATTERN.sub(repl, escape(fspath(path_pattern)))
-        return bool(fullmatch(regex, fspath(self)))
+    def match(self, pattern: StrPath, /) -> bool:
+        """Check if the ID full-matches a regular expression."""
+        return bool(fullmatch(fspath(pattern), fspath(self)))
 
 
 ROOT = ID(ROOT_PATH)
