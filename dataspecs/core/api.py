@@ -86,7 +86,7 @@ def from_dataclass(
             )
         )
 
-    return drop_leaves(specs) if tagged_only else specs
+    return specs
 
 
 @overload
