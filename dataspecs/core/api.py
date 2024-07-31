@@ -86,7 +86,7 @@ def from_dataclass(
             )
         )
 
-    return drop_leaves(specs) if tagged_only else specs
+    return specs
 
 
 @overload
@@ -191,7 +191,7 @@ def drop_leaves(specs: Specs[TSpec], /) -> Specs[TSpec]:
     dropped = specs.copy()
 
     for spec in specs:
-        if not spec.tags and not specs[spec.id / "[^/]*"]:
+        if not spec.tags and not specs[spec.id / "[^/]+"]:
             dropped.remove(spec)
 
     return dropped
