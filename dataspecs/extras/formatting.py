@@ -45,7 +45,7 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
     new = specs.copy()
 
     for formatter in specs:
-        options = specs[formatter.id / "[^/]*"]
+        options = specs[formatter.id / "[^/]+"]
 
         if (
             (id := options[Tag.ID].unique) is None
