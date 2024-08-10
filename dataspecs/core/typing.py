@@ -17,10 +17,14 @@ from typing_extensions import TypeGuard, get_args, get_origin
 StrPath = Union[str, PathLike[str]]
 
 
-class DataClass(Protocol):
+class DataClassObject(Protocol):
     """Type hint for any dataclass object."""
 
     __dataclass_fields__: ClassVar[dict[str, Field[Any]]]
+
+
+DataClass = Union[DataClassObject, type[DataClassObject]]
+"""Type hint for any dataclass or dataclass object."""
 
 
 class TagBase(Enum):
@@ -58,7 +62,7 @@ def get_annotations(obj: Any, /) -> tuple[Any, ...]:
 
 
 def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
-    """Return dataclass objects that annotate a type hint."""
+    """Return dataclasses (objects) that annotate a type hint."""
     return tuple(filter(is_dataclass, get_annotations(obj)))
 
 

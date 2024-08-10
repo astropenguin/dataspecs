@@ -54,10 +54,10 @@ def from_dataclass(
     parent_id: StrPath = ROOT,
     spec_factory: Any = Spec,
 ) -> Any:
-    """Create data specs from a dataclass object.
+    """Create data specs from a dataclass (object).
 
     Args:
-        obj: Dataclass object to be parsed.
+        obj: Dataclass (object) to be parsed.
         first_only: If ``True`` and a type hint is a union of types,
             parse the first type only instead of the whole type hint.
         tagged_only: If ``True``, drop leaf (i.e. terminal) and
@@ -68,7 +68,7 @@ def from_dataclass(
         spec_factory: Factory for creating each data spec.
 
     Returns:
-        Data specs created from the dataclass object.
+        Data specs created from the dataclass (object).
 
     """
     specs: Specs[Any] = Specs()
