@@ -10,7 +10,7 @@ from typing import Annotated, Any, ClassVar, Literal, Protocol, Union
 
 
 # dependencies
-from typing_extensions import TypeGuard, get_args, get_origin, get_type_hints
+from typing_extensions import TypeGuard, get_args, get_origin
 
 
 # type hints
@@ -42,9 +42,14 @@ class TagBase(Enum):
     pass
 
 
-def get_annotated(obj: Any, /) -> Any:
+def get_annotated(obj: Any, /, recursive: bool = False) -> Any:
     """Return annotated type of a type hint if it exists."""
-    return get_args(obj)[0] if is_annotated(obj) else obj
+    if recursive:
+        from typing import _strip_annotations  # type: ignore
+
+        return _strip_annotations(obj)  # type: ignore
+    else:
+        return get_args(obj)[0] if is_annotated(obj) else obj
 
 
 def get_annotations(obj: Any, /) -> tuple[Any, ...]:
@@ -55,15 +60,6 @@ def get_annotations(obj: Any, /) -> tuple[Any, ...]:
 def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
     """Return dataclass objects that annotate a type hint."""
     return tuple(filter(is_dataclass, get_annotations(obj)))
-
-
-def get_final(obj: Any, /, type_only: bool = True) -> Any:
-    """Return the type hint with forward references resolved."""
-
-    class _:
-        __annotations__ = dict(obj=obj)
-
-    return get_type_hints(_, include_extras=not type_only)["obj"]
 
 
 def get_first(obj: Any, /) -> Any:

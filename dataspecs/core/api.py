@@ -11,8 +11,8 @@ from .specs import ID, ROOT, Spec, Specs, TSpec
 from .typing import (
     DataClass,
     StrPath,
+    get_annotated,
     get_dataclasses,
-    get_final,
     get_first,
     get_subtypes,
     get_tags,
@@ -154,7 +154,7 @@ def from_typehint(
         spec_factory(
             id=ID(parent_id),
             tags=get_tags(obj),
-            type=get_final(obj, type_only),
+            type=get_annotated(obj, True) if type_only else obj,
             data=parent_data,
         )
     )
