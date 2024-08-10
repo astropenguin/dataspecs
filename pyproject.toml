@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dataspecs"
-version = "0.6.0"
+version = "1.0.0"
 description = "Data specifications by data classes"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
 documentation = "https://astropenguin.github.io/dataspecs/"
@@ -14,14 +14,14 @@ python = ">=3.9, <3.13"
 typing-extensions = "^4.1"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.4"
+black = "^24.8"
 ipython = "^8.18"
 myst-parser = "^3.0"
-mypy = "^1.10"
+mypy = "^1.11"
 pydata-sphinx-theme = "^0.15"
 pyright = "^1.1"
-pytest = "^8.2"
-sphinx = "^7.3"
+pytest = "^8.3"
+sphinx = "^7.4"
 
 [tool.mypy]
 strict = true
