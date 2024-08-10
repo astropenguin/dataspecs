@@ -11,7 +11,7 @@ Data specifications by data classes
 ## Installation
 
 ```shell
-pip install dataspecs==1.0.0
+pip install dataspecs==1.0.1
 ```
 
 ## Usage
@@ -104,7 +104,7 @@ Specs([Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data
        Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K')])
 ```
 
-### Grouping specification
+### Grouping specifications
 
 ```python
 nested_specs.groups()
