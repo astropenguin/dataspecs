@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 
 # dependencies
-from dataspecs.core.specs import ID, Spec, SpecificIndex, Specs
+from dataspecs.core.specs import ID, ExtendedIndex, Spec, Specs
 from dataspecs.core.typing import TagBase
 from pytest import mark, raises
 
@@ -165,7 +165,7 @@ def test_specs_unique(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -
 
 
 @mark.parametrize("tester, expected", data_specs_groups)
-def test_specs_groups(tester: SpecificIndex, expected: list[Specs[Spec[Any]]]) -> None:
+def test_specs_groups(tester: ExtendedIndex, expected: list[Specs[Spec[Any]]]) -> None:
     assert specs.groups(tester) == expected
 
 

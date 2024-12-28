@@ -10,20 +10,20 @@ type: software
 authors:
   - given-names: Akio
     family-names: Taniguchi
-    email: taniguchi@a.phys.nagoya-u.ac.jp
-    affiliation: Nagoya University
+    email: taniguchi.akio@gmail.com
+    affiliation: Kitami Institute of Technology
     orcid: 'https://orcid.org/0000-0002-9695-6183'
 identifiers:
   - type: doi
     value: 10.5281/zenodo.10652375
-repository-code: 'https://github.com/astropenguin/dataspecs/'
-url: 'https://astropenguin.github.io/dataspecs/'
+repository-code: 'https://github.com/astropenguin/dataspecs'
+url: 'https://astropenguin.github.io/dataspecs/v1.0.2'
 abstract: Data specifications by data classes
 keywords:
   - python
   - dataclasses
-  - specification
+  - specifications
   - typing
 license: MIT
-version: 1.0.1
-date-released: '2024-08-10'
+version: 1.0.2
+date-released: '2024-12-28'

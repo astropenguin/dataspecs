@@ -26,7 +26,7 @@ from .typing import StrPath, TagBase, is_strpath, is_tag, is_tagtype
 
 
 # type hints
-SpecificIndex = Union[TagBase, type[TagBase], StrPath, None]
+ExtendedIndex = Union[TagBase, type[TagBase], StrPath, None]
 
 
 # constants
@@ -121,7 +121,7 @@ class Specs(UserList[TSpec]):
         """Return the data spec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
 
-    def groups(self, index: SpecificIndex = None, /) -> list[Self]:
+    def groups(self, index: ExtendedIndex = None, /) -> list[Self]:
         """Return list of data specs grouped by the common ID."""
         parent_id = ID(commonpath(spec.id for spec in self))
 
