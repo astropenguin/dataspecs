@@ -1,6 +1,6 @@
 [project]
 name = "dataspecs"
-version = "1.0.1"
+version = "1.0.2"
 description = "Data specifications by data classes"
 readme = "README.md"
 keywords = ["dataclasses", "specifications", "typing"]
@@ -24,7 +24,7 @@ email = "taniguchi.akio@gmail.com"
 file = "LICENSE"
 
 [project.urls]
-homepage = "https://astropenguin.github.io/dataspecs/v1.0.1"
+homepage = "https://astropenguin.github.io/dataspecs/v1.0.2"
 repository = "https://github.com/astropenguin/dataspecs"
 
 [dependency-groups]

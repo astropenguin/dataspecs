@@ -17,7 +17,7 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.10652375
 repository-code: 'https://github.com/astropenguin/dataspecs'
-url: 'https://astropenguin.github.io/dataspecs/v1.0.1'
+url: 'https://astropenguin.github.io/dataspecs/v1.0.2'
 abstract: Data specifications by data classes
 keywords:
   - python
@@ -25,5 +25,5 @@ keywords:
   - specifications
   - typing
 license: MIT
-version: 1.0.1
+version: 1.0.2
 date-released: '2024-08-10'
