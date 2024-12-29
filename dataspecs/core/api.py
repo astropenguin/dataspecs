@@ -25,7 +25,6 @@ def from_dataclass(
     /,
     *,
     first_only: bool = True,
-    tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
 ) -> Specs[Spec[Any]]: ...
@@ -37,7 +36,6 @@ def from_dataclass(
     /,
     *,
     first_only: bool = True,
-    tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     spec_factory: Callable[..., TSpec],
@@ -49,7 +47,6 @@ def from_dataclass(
     /,
     *,
     first_only: bool = True,
-    tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     spec_factory: Any = Spec,
@@ -60,8 +57,6 @@ def from_dataclass(
         obj: Dataclass (object) to be parsed.
         first_only: If ``True`` and a type hint is a union of types,
             parse the first type only instead of the whole type hint.
-        tagged_only: If ``True``, drop leaf (i.e. terminal) and
-            adjacent superior data specs that do not have any tags.
         type_only: If ``True``, each data spec type contains
             a type hint with all annotation removed.
         parent_id: ID of the parent data spec.
@@ -78,7 +73,6 @@ def from_dataclass(
             from_typehint(
                 field.type,
                 first_only=first_only,
-                tagged_only=tagged_only,
                 type_only=type_only,
                 parent_id=ID(parent_id) / field.name,
                 parent_data=getattr(obj, field.name, field.default),
@@ -95,7 +89,6 @@ def from_typehint(
     /,
     *,
     first_only: bool = True,
-    tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     parent_data: Any = None,
@@ -108,7 +101,6 @@ def from_typehint(
     /,
     *,
     first_only: bool = True,
-    tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     parent_data: Any = None,
@@ -121,7 +113,6 @@ def from_typehint(
     /,
     *,
     first_only: bool = True,
-    tagged_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     parent_data: Any = None,
@@ -133,8 +124,6 @@ def from_typehint(
         obj: Type hint to be parsed.
         first_only: If ``True`` and a type hint is a union of types,
             parse the first type only instead of the whole type hint.
-        tagged_only: If ``True``, drop leaf (i.e. terminal) and
-            adjacent superior data specs that do not have any tags.
         type_only: If ``True``, each data spec type contains
             a type hint with all annotation removed.
         parent_id: ID of the parent data spec.
@@ -164,7 +153,6 @@ def from_typehint(
             from_typehint(
                 subtype,
                 first_only=first_only,
-                tagged_only=tagged_only,
                 type_only=type_only,
                 parent_id=ID(parent_id) / str(index),
                 spec_factory=spec_factory,
@@ -176,22 +164,10 @@ def from_typehint(
             from_dataclass(
                 dc,
                 first_only=first_only,
-                tagged_only=tagged_only,
                 type_only=type_only,
                 parent_id=ID(parent_id),
                 spec_factory=spec_factory,
             )
         )
 
-    return drop_leaves(specs) if tagged_only else specs
-
-
-def drop_leaves(specs: Specs[TSpec], /) -> Specs[TSpec]:
-    """Drop leaf specs that do not have any tags."""
-    dropped = specs.copy()
-
-    for spec in specs:
-        if not spec.tags and not specs[spec.id / "[^/]+"]:
-            dropped.remove(spec)
-
-    return dropped
+    return specs
