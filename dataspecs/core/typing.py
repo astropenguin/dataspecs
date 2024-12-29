@@ -73,10 +73,10 @@ def get_first(obj: Any, /) -> Any:
     else:
         first = annotated
 
-    if annotations := get_annotations(obj):
-        return Annotated[first, *annotations]
-    else:
-        return first
+    for annotation in get_annotations(obj):
+        first = Annotated[first, annotation]
+
+    return first
 
 
 def get_others(obj: Any, /) -> tuple[Any, ...]:
