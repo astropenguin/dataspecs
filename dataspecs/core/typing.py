@@ -46,7 +46,7 @@ class TagBase(Enum):
     pass
 
 
-def get_annotated(obj: Any, /, recursive: bool = False) -> Any:
+def get_annotated(obj: Any, /, *, recursive: bool = False) -> Any:
     """Return annotated type of a type hint if it exists."""
     if recursive:
         from typing import _strip_annotations  # type: ignore
@@ -77,6 +77,19 @@ def get_first(obj: Any, /) -> Any:
         return Annotated[first, *annotations]
     else:
         return first
+
+
+def get_others(obj: Any, /) -> tuple[Any, ...]:
+    """Return annotations other than tags nor dataclasses."""
+    annotations = list(get_annotations(obj))
+
+    for tag in get_tags(obj):
+        annotations.remove(tag)
+
+    for dc in get_dataclasses(obj):
+        annotations.remove(dc)
+
+    return tuple(annotations)
 
 
 def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
