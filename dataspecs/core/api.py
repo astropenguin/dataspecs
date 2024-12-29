@@ -24,7 +24,6 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    first_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
 ) -> Specs[Spec[Any]]: ...
@@ -35,7 +34,6 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    first_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     spec_factory: Callable[..., TSpec],
@@ -46,7 +44,6 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    first_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     spec_factory: Any = Spec,
@@ -55,8 +52,6 @@ def from_dataclass(
 
     Args:
         obj: Dataclass (object) to be parsed.
-        first_only: If ``True`` and a type hint is a union of types,
-            parse the first type only instead of the whole type hint.
         type_only: If ``True``, each data spec type contains
             a type hint with all annotation removed.
         parent_id: ID of the parent data spec.
@@ -72,7 +67,6 @@ def from_dataclass(
         specs.extend(
             from_typehint(
                 field.type,
-                first_only=first_only,
                 type_only=type_only,
                 parent_id=ID(parent_id) / field.name,
                 parent_data=getattr(obj, field.name, field.default),
@@ -88,7 +82,6 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    first_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     parent_data: Any = None,
@@ -100,7 +93,6 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    first_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     parent_data: Any = None,
@@ -112,7 +104,6 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    first_only: bool = True,
     type_only: bool = True,
     parent_id: StrPath = ROOT,
     parent_data: Any = None,
@@ -122,8 +113,6 @@ def from_typehint(
 
     Args:
         obj: Type hint to be parsed.
-        first_only: If ``True`` and a type hint is a union of types,
-            parse the first type only instead of the whole type hint.
         type_only: If ``True``, each data spec type contains
             a type hint with all annotation removed.
         parent_id: ID of the parent data spec.
@@ -136,34 +125,29 @@ def from_typehint(
     """
     specs: Specs[Any] = Specs()
 
-    if first_only:
-        obj = get_first(obj)
-
     specs.append(
         spec_factory(
             id=ID(parent_id),
-            tags=get_tags(obj),
-            type=get_annotated(obj, True) if type_only else obj,
+            tags=get_tags(first := get_first(obj)),
+            type=get_annotated(first, True) if type_only else first,
             data=parent_data,
         )
     )
 
-    for index, subtype in enumerate(get_subtypes(obj)):
+    for index, subtype in enumerate(get_subtypes(first)):
         specs.extend(
             from_typehint(
                 subtype,
-                first_only=first_only,
                 type_only=type_only,
                 parent_id=ID(parent_id) / str(index),
                 spec_factory=spec_factory,
             )
         )
 
-    for dc in get_dataclasses(obj):
+    for dc in get_dataclasses(first):
         specs.extend(
             from_dataclass(
                 dc,
-                first_only=first_only,
                 type_only=type_only,
                 parent_id=ID(parent_id),
                 spec_factory=spec_factory,
