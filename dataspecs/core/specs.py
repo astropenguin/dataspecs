@@ -3,7 +3,7 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 
 # standard library
 from collections import UserList
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from os import fspath
 from os.path import commonpath
 from pathlib import PurePosixPath
@@ -79,6 +79,7 @@ class Spec(Generic[T]):
         tags: Tags of the data spec.
         type: Type hint for the data of the data spec.
         data: Default or final data of the data spec.
+        meta: Other metadata of the data spec.
 
     """
 
@@ -93,6 +94,9 @@ class Spec(Generic[T]):
 
     data: T
     """Default or final data of the data spec."""
+
+    meta: tuple[Any, ...] = field(default_factory=tuple, repr=False)
+    """Other metadata of the data spec."""
 
     def __call__(self, type: Callable[..., S], /) -> "Spec[S]":
         """Dynamically cast the data of the data spec."""
