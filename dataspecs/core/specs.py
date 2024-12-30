@@ -72,9 +72,9 @@ class Spec(Generic[TAny]):
 
     Args:
         id: ID of the data spec.
-        tags: Tags of the data spec.
         type: Type hint for the data of the data spec.
         data: Default or final data of the data spec.
+        tags: Tags of the data spec.
         meta: Other metadata of the data spec.
 
     """
@@ -82,16 +82,16 @@ class Spec(Generic[TAny]):
     id: ID
     """ID of the data spec."""
 
-    tags: tuple[TagBase, ...]
-    """Tags of the data spec."""
-
     type: Any
     """Type hint for the data of the data spec."""
 
     data: TAny
     """Default or final data of the data spec."""
 
-    meta: tuple[Any, ...] = field(default_factory=tuple, repr=False)
+    tags: tuple[TagBase, ...] = field(default_factory=tuple)
+    """Tags of the data spec."""
+
+    meta: tuple[Any, ...] = field(default_factory=tuple)
     """Other metadata of the data spec."""
 
     def __call__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":

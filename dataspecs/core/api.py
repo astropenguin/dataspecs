@@ -118,9 +118,9 @@ def from_typehint(
     specs.append(
         spec_factory(
             id=ID(parent_id),
-            tags=get_tags(first := get_first(obj)),
-            type=get_annotated(first, recursive=True),
+            type=get_annotated(first := get_first(obj), recursive=True),
             data=parent_data,
+            tags=get_tags(first),
             meta=get_others(first),
         )
     )
