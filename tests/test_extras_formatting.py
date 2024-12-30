@@ -25,11 +25,11 @@ def test_format() -> None:
     specs = from_dataclass(Data("{0}", 1))
     formatted = format(specs)
 
-    assert formatted[0].data == "1"
+    assert formatted[1].data == "1"
 
 
 def test_format_skip() -> None:
     specs = from_dataclass(Data("{0}", None))
     formatted = format(specs)
 
-    assert formatted[0].data == "{0}"
+    assert formatted[1].data == "{0}"

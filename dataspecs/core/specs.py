@@ -64,6 +64,16 @@ class ID(PurePosixPath):
 
         return super().__new__(cls, *segments)
 
+    @property
+    def children(self) -> Self:
+        """Return the regular expression that matches the child IDs."""
+        return self / "[^/]+"
+
+    @property
+    def descendants(self) -> Self:
+        """Return the regular expression that matches the descendant IDs."""
+        return self / ".+"
+
     def match(self, pattern: StrPath, /) -> bool:
         """Check if the ID full-matches a regular expression."""
         return bool(fullmatch(fspath(pattern), fspath(self)))
