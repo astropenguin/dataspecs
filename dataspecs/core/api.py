@@ -168,7 +168,7 @@ def named_enumerate(iterable: Iterable[TAny], /) -> Iterator[tuple[str, TAny]]:
     indexes: defaultdict[type[Any], int] = defaultdict(int)
 
     for obj in iterable:
-        if counts[cls := type(obj)] == 1:
+        if counts[(cls := type(obj))] == 1:
             yield decamelize(cls.__name__), obj
         else:
             yield f"{decamelize(cls.__name__)}_{indexes[cls]}", obj
