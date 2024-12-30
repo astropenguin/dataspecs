@@ -44,14 +44,17 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
     """Replace data spec attributes by replacer specs."""
     new = specs.copy()
 
-    for replacer in specs:
-        options = specs[replacer.id / "[^/]+"]
+    for spec in specs[Replace]:
+        options = specs[spec.id.children]
 
         if (
             (id := options[Tag.ID].unique) is None
             or (of := options[Tag.OF].unique) is None
             or (skipif := options[Tag.SKIPIF].unique) is None
         ):
+            continue
+
+        if (replacer := specs[spec.id.parent].unique) is None:
             continue
 
         if replacer.data == skipif.data:

@@ -6,7 +6,7 @@ import types
 from dataclasses import Field, is_dataclass
 from enum import Enum
 from os import PathLike
-from typing import Annotated, Any, ClassVar, Literal, Protocol, Union
+from typing import Annotated, Any, ClassVar, Literal, Protocol, TypeVar, Union
 
 
 # dependencies
@@ -15,6 +15,8 @@ from typing_extensions import TypeGuard, get_args, get_origin
 
 # type hints
 StrPath = Union[str, PathLike[str]]
+TAny = TypeVar("TAny")
+UAny = TypeVar("UAny")
 
 
 class DataClassObject(Protocol):
@@ -62,7 +64,7 @@ def get_annotations(obj: Any, /) -> tuple[Any, ...]:
 
 
 def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
-    """Return dataclasses (objects) that annotate a type hint."""
+    """Return annotations of dataclasses or their objects."""
     return tuple(filter(is_dataclass, get_annotations(obj)))
 
 
@@ -80,14 +82,14 @@ def get_first(obj: Any, /) -> Any:
 
 
 def get_others(obj: Any, /) -> tuple[Any, ...]:
-    """Return annotations other than tags nor dataclasses."""
+    """Return annotations other than tags, dataclasses, nor their objects."""
     annotations = list(get_annotations(obj))
 
     for tag in get_tags(obj):
         annotations.remove(tag)
 
-    for dc in get_dataclasses(obj):
-        annotations.remove(dc)
+    for dataclass in get_dataclasses(obj):
+        annotations.remove(dataclass)
 
     return tuple(annotations)
 
@@ -101,13 +103,18 @@ def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
 
 
 def get_tags(obj: Any, /) -> tuple[TagBase, ...]:
-    """Return tags that annotate a type hint."""
+    """Return annotations of tags for data specs."""
     return tuple(filter(is_tag, get_annotations(obj)))
 
 
 def is_annotated(obj: Any, /) -> bool:
     """Check if a type hint is annotated."""
     return get_origin(obj) is Annotated
+
+
+def is_anytype(obj: Any, /) -> TypeGuard[type[Any]]:
+    """Check if an object is an any type."""
+    return isinstance(obj, type)
 
 
 def is_literal(obj: Any, /) -> bool:

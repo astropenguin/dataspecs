@@ -42,9 +42,12 @@ simple_specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
 simple_specs
 ```
 ```python
-Specs([Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-       Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-       Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')])
+Specs([Spec(id=ID('/'), type=<class '__main__.Weather'>, data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo'), tags=(), meta=()),
+       Spec(id=ID('/temp'), type=list[float], data=[20.0, 25.0], tags=(<Tag.DATA: 2>,), meta=()),
+       Spec(id=ID('/temp/0'), type=<class 'float'>, data=None, tags=(), meta=()),
+       Spec(id=ID('/humid'), type=list[float], data=[50.0, 55.0], tags=(<Tag.DATA: 2>,), meta=()),
+       Spec(id=ID('/humid/0'), type=<class 'float'>, data=None, tags=(), meta=()),
+       Spec(id=ID('/location'), type=<class 'str'>, data='Tokyo', tags=(<Tag.ATTR: 1>,), meta=())])
 ```
 
 ### Nested specifications
@@ -75,15 +78,18 @@ nested_specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
 nested_specs
 ```
 ```python
-Specs([Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-       Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-       Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-       Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
-       Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-       Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-       Spec(id=ID('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
-       Spec(id=ID('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
-       Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')])
+Specs([Spec(id=ID('/'), type=<class '__main__.Weather'>, data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo'), tags=(), meta=()),
+       Spec(id=ID('/temp'), type=list[float], data=[20.0, 25.0], tags=(<Tag.DATA: 2>,), meta=()),
+       Spec(id=ID('/temp/0'), type=<class 'float'>, data=None, tags=(<Tag.DTYPE: 3>,), meta=()),
+       Spec(id=ID('/temp/meta'), type=<class '__main__.Meta'>, data=Meta(name='Ground temperature', units='K'), tags=(), meta=()),
+       Spec(id=ID('/temp/meta/name'), type=<class 'str'>, data='Ground temperature', tags=(<Tag.NAME: 4>,), meta=()),
+       Spec(id=ID('/temp/meta/units'), type=<class 'str'>, data='K', tags=(<Tag.UNITS: 5>,), meta=()),
+       Spec(id=ID('/humid'), type=list[float], data=[50.0, 55.0], tags=(<Tag.DATA: 2>,), meta=()),
+       Spec(id=ID('/humid/0'), type=<class 'float'>, data=None, tags=(<Tag.DTYPE: 3>,), meta=()),
+       Spec(id=ID('/humid/meta'), type=<class '__main__.Meta'>, data=Meta(name='Relative humidity', units='%'), tags=(), meta=()),
+       Spec(id=ID('/humid/meta/name'), type=<class 'str'>, data='Relative humidity', tags=(<Tag.NAME: 4>,), meta=()),
+       Spec(id=ID('/humid/meta/units'), type=<class 'str'>, data='%', tags=(<Tag.UNITS: 5>,), meta=()),
+       Spec(id=ID('/location'), type=<class 'str'>, data='Tokyo', tags=(<Tag.ATTR: 1>,), meta=())])
 ```
 
 ### Selecting specifications
@@ -92,31 +98,40 @@ Specs([Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0,
 nested_specs[Tag.DATA]
 ```
 ```python
-Specs([Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-       Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0])])
+Specs([Spec(id=ID('/temp'), type=list[float], data=[20.0, 25.0], tags=(<Tag.DATA: 2>,), meta=()),
+       Spec(id=ID('/humid'), type=list[float], data=[50.0, 55.0], tags=(<Tag.DATA: 2>,), meta=())])
 ```
 
 ```python
-nested_specs["/temp/[a-z]+"]
+nested_specs[Tag]
 ```
 ```python
-Specs([Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-       Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K')])
+Specs([Spec(id=ID('/temp'), type=list[float], data=[20.0, 25.0], tags=(<Tag.DATA: 2>,), meta=()),
+       Spec(id=ID('/temp/0'), type=<class 'float'>, data=None, tags=(<Tag.DTYPE: 3>,), meta=()),
+       Spec(id=ID('/temp/meta/name'), type=<class 'str'>, data='Ground temperature', tags=(<Tag.NAME: 4>,), meta=()),
+       Spec(id=ID('/temp/meta/units'), type=<class 'str'>, data='K', tags=(<Tag.UNITS: 5>,), meta=()),
+       Spec(id=ID('/humid'), type=list[float], data=[50.0, 55.0], tags=(<Tag.DATA: 2>,), meta=()),
+       Spec(id=ID('/humid/0'), type=<class 'float'>, data=None, tags=(<Tag.DTYPE: 3>,), meta=()),
+       Spec(id=ID('/humid/meta/name'), type=<class 'str'>, data='Relative humidity', tags=(<Tag.NAME: 4>,), meta=()),
+       Spec(id=ID('/humid/meta/units'), type=<class 'str'>, data='%', tags=(<Tag.UNITS: 5>,), meta=()),
+       Spec(id=ID('/location'), type=<class 'str'>, data='Tokyo', tags=(<Tag.ATTR: 1>,), meta=())])
 ```
 
-### Grouping specifications
-
 ```python
-nested_specs.groups()
+nested_specs[str]
 ```
 ```python
-[Specs([Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-        Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-        Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-        Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K')]),
- Specs([Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-        Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-        Spec(id=ID('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
-        Spec(id=ID('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%')]),
- Specs([Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')])]
+Specs([Spec(id=ID('/temp/meta/name'), type=<class 'str'>, data='Ground temperature', tags=(<Tag.NAME: 4>,), meta=()),
+       Spec(id=ID('/temp/meta/units'), type=<class 'str'>, data='K', tags=(<Tag.UNITS: 5>,), meta=()),
+       Spec(id=ID('/humid/meta/name'), type=<class 'str'>, data='Relative humidity', tags=(<Tag.NAME: 4>,), meta=()),
+       Spec(id=ID('/humid/meta/units'), type=<class 'str'>, data='%', tags=(<Tag.UNITS: 5>,), meta=()),
+       Spec(id=ID('/location'), type=<class 'str'>, data='Tokyo', tags=(<Tag.ATTR: 1>,), meta=())])
+```
+
+```python
+nested_specs["/temp/meta/[a-z]+"]
+```
+```python
+Specs([Spec(id=ID('/temp/meta/name'), type=<class 'str'>, data='Ground temperature', tags=(<Tag.NAME: 4>,), meta=()),
+       Spec(id=ID('/temp/meta/units'), type=<class 'str'>, data='K', tags=(<Tag.UNITS: 5>,), meta=())])
 ```
