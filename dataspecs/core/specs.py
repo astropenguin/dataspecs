@@ -5,7 +5,6 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 from collections import UserList
 from dataclasses import dataclass, field, replace
 from os import fspath
-from os.path import commonpath
 from pathlib import PurePosixPath
 from re import fullmatch
 from typing import (
@@ -35,7 +34,6 @@ from .typing import (
 
 
 # type hints
-ExtendedIndex = Union[TagBase, type[Any], StrPath, None]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -129,16 +127,6 @@ class Specs(UserList[TSpec]):
     def unique(self) -> Optional[TSpec]:
         """Return the data spec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
-
-    def groups(self, index: ExtendedIndex = None, /) -> list[Self]:
-        """Return list of data specs grouped by the common ID."""
-        parent_id = ID(commonpath(spec.id for spec in self))
-
-        return [
-            self[f"{spec.id}(|/.*)"]
-            for spec in self[index]
-            if spec.id.parent == parent_id
-        ]
 
     def replace(self, old: TSpec, new: TSpec, /) -> Self:
         """Return data specs with old data spec replaced by new one."""
