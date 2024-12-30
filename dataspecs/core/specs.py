@@ -22,28 +22,24 @@ from typing import (
 
 # dependencies
 from typing_extensions import Self
-from .typing import StrPath, TagBase, is_strpath, is_tag, is_tagtype
+from .typing import StrPath, TAny, UAny, TagBase, is_strpath, is_tag, is_tagtype
 
 
 # type hints
 ExtendedIndex = Union[TagBase, type[TagBase], StrPath, None]
+TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
 # constants
 ROOT_PATH = "/"
 
 
-# type hints
-S = TypeVar("S")
-T = TypeVar("T")
-TSpec = TypeVar("TSpec", bound="Spec[Any]")
-
-
 class ID(PurePosixPath):
     """Identifier (ID) for data specs.
 
     It is based on ``PurePosixPath``, however,
-    the difference is an ID must start with the root (``/``).
+    the differences are an ID must start with the root (``/``)
+    and the ``match`` method full-matches a regular expression.
 
     Args:
         *segments: Path segments to create an ID.
@@ -71,7 +67,7 @@ ROOT = ID(ROOT_PATH)
 
 
 @dataclass(frozen=True)
-class Spec(Generic[T]):
+class Spec(Generic[TAny]):
     """Data specification (data spec).
 
     Args:
@@ -92,17 +88,17 @@ class Spec(Generic[T]):
     type: Any
     """Type hint for the data of the data spec."""
 
-    data: T
+    data: TAny
     """Default or final data of the data spec."""
 
     meta: tuple[Any, ...] = field(default_factory=tuple, repr=False)
     """Other metadata of the data spec."""
 
-    def __call__(self, type: Callable[..., S], /) -> "Spec[S]":
+    def __call__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Dynamically cast the data of the data spec."""
         return replace(self, data=type(self.data))  # type: ignore
 
-    def __getitem__(self, type: Callable[..., S], /) -> "Spec[S]":
+    def __getitem__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Statically cast the data of the data spec."""
         return self  # type: ignore
 
