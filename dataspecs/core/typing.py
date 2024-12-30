@@ -112,6 +112,11 @@ def is_annotated(obj: Any, /) -> bool:
     return get_origin(obj) is Annotated
 
 
+def is_anytype(obj: Any, /) -> TypeGuard[type[Any]]:
+    """Check if an object is an any type."""
+    return isinstance(obj, type)
+
+
 def is_literal(obj: Any, /) -> bool:
     """Check if a type hint is a literal type."""
     return get_origin(obj) is Literal

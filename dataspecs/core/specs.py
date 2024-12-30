@@ -22,11 +22,20 @@ from typing import (
 
 # dependencies
 from typing_extensions import Self
-from .typing import StrPath, TAny, UAny, TagBase, is_strpath, is_tag, is_tagtype
+from .typing import (
+    StrPath,
+    TAny,
+    UAny,
+    TagBase,
+    is_anytype,
+    is_strpath,
+    is_tag,
+    is_tagtype,
+)
 
 
 # type hints
-ExtendedIndex = Union[TagBase, type[TagBase], StrPath, None]
+ExtendedIndex = Union[TagBase, type[Any], StrPath, None]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -142,7 +151,7 @@ class Specs(UserList[TSpec]):
     def __getitem__(self, index: TagBase, /) -> Self: ...
 
     @overload
-    def __getitem__(self, index: type[TagBase], /) -> Self: ...
+    def __getitem__(self, index: type[Any], /) -> Self: ...
 
     @overload
     def __getitem__(self, index: StrPath, /) -> Self: ...
@@ -156,24 +165,21 @@ class Specs(UserList[TSpec]):
     def __getitem__(self, index: Any, /) -> Any:
         """Select data specs with given index.
 
-        In addition to the normal list indexing, it also accepts
+        In addition to a normal index (i.e. an object that has ``__index__`` method),
+        it also accepts the following extended index for the advanced selection:
         (1) a tag to select data specs that contain it,
         (2) a tag type to select data specs that contain its tags,
-        (3) a string path to select data specs that match it, or
-        (4) ``None`` to return all data specs (shallow copy).
+        (3) an any type to select data specs that contain it,
+        (4) a string path to select data specs that match it, or
+        (5) ``None`` to return all data specs (shallow copy).
 
         Args:
-            index: Index for selection. Either a normal index
-                (i.e. an object that has ``__index__`` method),
-                a tag, a tag type, a string path, or ``None`` is accepted.
+            index: Normal or extended index for the selection of the data specs.
 
         Returns:
             Selected data specs with given index.
 
         """
-        if index is None:
-            return self.copy()  # shallow copy
-
         if is_tag(index):
             return type(self)(spec for spec in self if (index in spec.tags))
 
@@ -184,7 +190,17 @@ class Specs(UserList[TSpec]):
                 if any(isinstance(tag, index) for tag in spec.tags)
             )
 
+        if is_anytype(index):
+            return type(self)(
+                spec
+                for spec in self
+                if isinstance(spec.type, type) and issubclass(spec.type, index)
+            )
+
         if is_strpath(index):
             return type(self)(spec for spec in self if spec.id.match(index))
+
+        if index is None:
+            return self.copy()  # shallow copy
 
         return super().__getitem__(index)  # type: ignore
