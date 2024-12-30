@@ -11,7 +11,7 @@ __all__ = [
     "from_dataclass",
     "from_typehint",
 ]
-__version__ = "1.0.2"
+__version__ = "2.0.0"
 
 
 # subpackages
