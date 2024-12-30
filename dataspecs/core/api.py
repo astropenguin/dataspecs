@@ -66,6 +66,7 @@ def from_dataclass(
     specs.append(
         spec_factory(
             id=ID(parent_id),
+            tags=(),
             type=type(obj),
             data=obj,
         )
@@ -132,15 +133,15 @@ def from_typehint(
     specs.append(
         spec_factory(
             id=ID(parent_id),
-            type=get_annotated(obj := get_first(obj), recursive=True),
+            tags=get_tags(first := get_first(obj)),
+            type=get_annotated(first, recursive=True),
             data=parent_data,
-            tags=get_tags(obj),
-            meta=get_others(obj),
+            meta=get_others(first),
         )
     )
 
     # 2. data specs of the type hint subtypes
-    for name, subtype in enumerate(get_subtypes(obj)):
+    for name, subtype in enumerate(get_subtypes(first)):
         specs.extend(
             from_typehint(
                 subtype,
@@ -150,7 +151,7 @@ def from_typehint(
         )
 
     # 3. data specs of the sub-dataclasses or their objects
-    for name, dataclass in named_enumerate(get_dataclasses(obj)):
+    for name, dataclass in named_enumerate(get_dataclasses(first)):
         specs.extend(
             from_dataclass(
                 dataclass,
