@@ -16,9 +16,11 @@ from dataspecs.core.typing import (
     get_subtypes,
     get_tags,
     is_annotated,
+    is_anytype,
     is_literal,
     is_strpath,
     is_tag,
+    is_tagtype,
     is_union,
 )
 from pytest import mark
@@ -98,6 +100,12 @@ data_is_annotated: TestData = [
     (int, False),
 ]
 
+data_is_anytype: TestData = [
+    (int, True),
+    (Ann[int, "ann"], False),
+    (1, False),
+]
+
 data_is_literal: TestData = [
     (Literal[1], True),
     (1, False),
@@ -112,6 +120,14 @@ data_is_strpath: TestData = [
 
 data_is_tag: TestData = [
     (Tag.A, True),
+    (NonTag.A, False),
+    (1, False),
+]
+
+data_is_tagtype: TestData = [
+    (Tag, True),
+    (Tag.A, False),
+    (NonTag, False),
     (NonTag.A, False),
     (1, False),
 ]
@@ -164,6 +180,11 @@ def test_is_annotated(tester: Any, expected: bool) -> None:
     assert is_annotated(tester) == expected
 
 
+@mark.parametrize("tester, expected", data_is_anytype)
+def test_is_anytype(tester: Any, expected: bool) -> None:
+    assert is_anytype(tester) == expected
+
+
 @mark.parametrize("tester, expected", data_is_literal)
 def test_is_literal(tester: Any, expected: bool) -> None:
     assert is_literal(tester) == expected
@@ -177,6 +198,11 @@ def test_is_strpath(tester: Any, expected: bool) -> None:
 @mark.parametrize("tester, expected", data_is_tag)
 def test_is_tag(tester: Any, expected: bool) -> None:
     assert is_tag(tester) == expected
+
+
+@mark.parametrize("tester, expected", data_is_tagtype)
+def test_is_tagtype(tester: Any, expected: bool) -> None:
+    assert is_tagtype(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_is_union)

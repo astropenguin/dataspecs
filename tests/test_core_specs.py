@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 
 # dependencies
-from dataspecs.core.specs import ID, ExtendedIndex, Spec, Specs
+from dataspecs.core.specs import ID, Spec, Specs
 from dataspecs.core.typing import TagBase
 from pytest import mark, raises
 
@@ -22,13 +22,13 @@ class Tag(TagBase):
 
 specs = Specs(
     [
-        Spec(ID("/a"), (Tag.DATA,), None, None),
-        Spec(ID("/a/name"), (Tag.NAME,), None, None),
-        Spec(ID("/a/units"), (Tag.UNITS,), None, None),
-        Spec(ID("/b"), (Tag.DATA,), None, None),
-        Spec(ID("/b/name"), (Tag.NAME,), None, None),
-        Spec(ID("/b/units"), (Tag.UNITS,), None, None),
-        Spec(ID("/c"), (), None, None),
+        Spec(ID("/a"), int, None, (Tag.DATA,)),
+        Spec(ID("/a/name"), str, None, (Tag.NAME,)),
+        Spec(ID("/a/units"), str, None, (Tag.UNITS,)),
+        Spec(ID("/b"), int, None, (Tag.DATA,)),
+        Spec(ID("/b/name"), str, None, (Tag.NAME,)),
+        Spec(ID("/b/units"), str, None, (Tag.UNITS,)),
+        Spec(ID("/c"), int, None, ()),
     ]
 )
 
@@ -112,6 +112,9 @@ data_specs_getitem: TestData = [
     #
     (Tag, specs[0:6]),
     #
+    (int, [specs[0], specs[3], specs[6]]),
+    (str, [specs[1], specs[2], specs[4], specs[5]]),
+    #
     ("/.*", specs),
     ("/[^/]*", [specs[0], specs[3], specs[6]]),
     ("/.*/.*", [*specs[1:3], *specs[4:6]]),
@@ -162,11 +165,6 @@ def test_specs_last(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -> 
 @mark.parametrize("tester, expected", data_specs_unique)
 def test_specs_unique(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -> None:
     assert tester.unique == expected
-
-
-@mark.parametrize("tester, expected", data_specs_groups)
-def test_specs_groups(tester: ExtendedIndex, expected: list[Specs[Spec[Any]]]) -> None:
-    assert specs.groups(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_specs_replace)
