@@ -7,16 +7,7 @@ from dataclasses import dataclass, field, replace
 from os import fspath
 from pathlib import PurePosixPath
 from re import fullmatch
-from typing import (
-    Any,
-    Callable,
-    Generic,
-    Optional,
-    SupportsIndex,
-    TypeVar,
-    Union,
-    overload,
-)
+from typing import Any, Callable, Generic, Optional, SupportsIndex, TypeVar, overload
 
 
 # dependencies
