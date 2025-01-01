@@ -192,7 +192,7 @@ Specs([
 ```python
 from enum import auto
 from dataclasses import dataclass
-from dataspecs import TagBase, Replace, from_dataclass, replace
+from dataspecs import Replace, TagBase, from_dataclass, replace
 from typing import Annotated as Ann
 
 class Tag(TagBase):
