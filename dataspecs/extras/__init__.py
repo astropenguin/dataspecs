@@ -1,20 +1,6 @@
-__all__ = [
-    # submodules
-    "formatting",
-    "replacing",
-    # aliases
-    "Format",
-    "format",
-    "Replace",
-    "replace",
-]
+__all__ = ["formatting", "replacing"]
 
 
 # submodules
 from . import formatting
 from . import replacing
-
-
-# aliases
-from .formatting import *
-from .replacing import *

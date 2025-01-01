@@ -17,7 +17,7 @@ from .typing import (
     get_annotated,
     get_dataclasses,
     get_first,
-    get_others,
+    get_meta,
     get_subtypes,
     get_tags,
 )
@@ -49,23 +49,86 @@ def from_dataclass(
     parent_id: StrPath = ROOT,
     spec_factory: Any = Spec,
 ) -> Any:
-    """Create data specs from a dataclass or its object.
+    """Create data specs from a dataclass (object).
 
     Args:
-        obj: Dataclass or its object to be parsed.
+        obj: Dataclass (object) to be parsed.
         parent_id: ID of the parent data spec.
         spec_factory: Factory for creating each data spec.
 
     Returns:
-        Data specs created from the dataclass or its object.
+        Data specs created from the dataclass (object).
+
+    Examples:
+        ::
+
+            from enum import auto
+            from dataclasses import dataclass
+            from dataspecs import TagBase, from_dataclass
+            from typing import Annotated as Ann
+
+            class Tag(TagBase):
+                ATTR = auto()
+                DATA = auto()
+                DTYPE = auto()
+
+            @dataclass
+            class Weather:
+                temp: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA]
+                humid: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA]
+                location: Ann[str, Tag.ATTR]
+
+            from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
+
+        ::
+
+            Specs([
+                Spec(
+                    id=ID('/'),
+                    tags=(),
+                    type=<class '__main__.Weather'>,
+                    data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo'),
+                ),
+                Spec(
+                    id=ID('/temp'),
+                    tags=(<Tag.DATA: 2>,),
+                    type=list[float],
+                    data=[20.0, 25.0],
+                ),
+                Spec(
+                    id=ID('/temp/0'),
+                    tags=(<Tag.DTYPE: 3>,),
+                    type=<class 'float'>,
+                    data=None,
+                ),
+                Spec(
+                    id=ID('/humid'),
+                    tags=(<Tag.DATA: 2>,),
+                    type=list[float],
+                    data=[50.0, 55.0],
+                ),
+                Spec(
+                    id=ID('/humid/0'),
+                    tags=(<Tag.DTYPE: 3>,),
+                    type=<class 'float'>,
+                    data=None,
+                ),
+                Spec(
+                    id=ID('/location'),
+                    tags=(<Tag.ATTR: 1>,),
+                    type=<class 'str'>,
+                    data='Tokyo',
+                ),
+            ])
 
     """
     specs: Specs[Any] = Specs()
 
-    # 1. data spec of the dataclass or its object itself
+    # 1. data spec of the dataclass (object) itself
     specs.append(
         spec_factory(
             id=ID(parent_id),
+            tags=(),
             type=type(obj),
             data=obj,
         )
@@ -125,6 +188,36 @@ def from_typehint(
     Returns:
         Data specs created from the type hint.
 
+    Examples:
+        ::
+
+            from enum import auto
+            from dataspecs import TagBase, from_typehint
+            from typing import Annotated as Ann
+
+            class Tag(TagBase):
+                DATA = auto()
+                DTYPE = auto()
+
+            from_typehint(Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA])
+
+        ::
+
+            Specs([
+                Spec(
+                    id=ID('/'),
+                    tags=(<Tag.DATA: 1>,),
+                    type=list[float],
+                    data=None,
+                ),
+                Spec(
+                    id=ID('/0'),
+                    tags=(<Tag.DTYPE: 2>,),
+                    type=<class 'float'>,
+                    data=None,
+                ),
+            ])
+
     """
     specs: Specs[Any] = Specs()
 
@@ -132,15 +225,15 @@ def from_typehint(
     specs.append(
         spec_factory(
             id=ID(parent_id),
-            type=get_annotated(obj := get_first(obj), recursive=True),
+            tags=get_tags(first := get_first(obj)),
+            type=get_annotated(first, recursive=True),
             data=parent_data,
-            tags=get_tags(obj),
-            meta=get_others(obj),
+            meta=get_meta(first),
         )
     )
 
     # 2. data specs of the type hint subtypes
-    for name, subtype in enumerate(get_subtypes(obj)):
+    for name, subtype in enumerate(get_subtypes(first)):
         specs.extend(
             from_typehint(
                 subtype,
@@ -149,8 +242,8 @@ def from_typehint(
             )
         )
 
-    # 3. data specs of the sub-dataclasses or their objects
-    for name, dataclass in named_enumerate(get_dataclasses(obj)):
+    # 3. data specs of the sub-dataclasses (objects)
+    for name, dataclass in named_enumerate(get_dataclasses(first)):
         specs.extend(
             from_dataclass(
                 dataclass,
