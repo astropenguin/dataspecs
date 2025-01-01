@@ -30,6 +30,6 @@ templates_path = ["_templates"]
 # options for HTML output
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
-    "github_url": "https://github.com/astropenguin/dataspecs/",
+    "github_url": "https://github.com/astropenguin/dataspecs",
     "logo": {"text": "dataspecs"},
 }
