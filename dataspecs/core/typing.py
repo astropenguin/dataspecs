@@ -64,7 +64,7 @@ def get_annotations(obj: Any, /) -> tuple[Any, ...]:
 
 
 def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
-    """Return annotations of dataclasses or their objects."""
+    """Return annotations of dataclasses (objects)."""
     return tuple(filter(is_dataclass, get_annotations(obj)))
 
 
@@ -81,8 +81,8 @@ def get_first(obj: Any, /) -> Any:
     return first
 
 
-def get_others(obj: Any, /) -> tuple[Any, ...]:
-    """Return annotations other than tags, dataclasses, nor their objects."""
+def get_meta(obj: Any, /) -> tuple[Any, ...]:
+    """Return annotations other than tags nor dataclasses (objects)."""
     annotations = list(get_annotations(obj))
 
     for tag in get_tags(obj):
@@ -139,11 +139,9 @@ def is_tagtype(obj: Any, /) -> TypeGuard[type[TagBase]]:
 
 def is_union(obj: Any, /) -> bool:
     """Check if a type hint is a union type."""
-    if get_origin(obj) is Union:
-        return True
-
-    # Only for Python >= 3.10
-    if UnionType := getattr(types, "UnionType", None):
-        return isinstance(obj, UnionType)
-
-    return False
+    if (UnionType := getattr(types, "UnionType", None)) is not None:
+        # For Python >= 3.10
+        return get_origin(obj) is Union or isinstance(obj, UnionType)
+    else:
+        # For Python < 3.10
+        return get_origin(obj) is Union

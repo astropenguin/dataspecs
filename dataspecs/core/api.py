@@ -17,7 +17,7 @@ from .typing import (
     get_annotated,
     get_dataclasses,
     get_first,
-    get_others,
+    get_meta,
     get_subtypes,
     get_tags,
 )
@@ -49,20 +49,20 @@ def from_dataclass(
     parent_id: StrPath = ROOT,
     spec_factory: Any = Spec,
 ) -> Any:
-    """Create data specs from a dataclass or its object.
+    """Create data specs from a dataclass (object).
 
     Args:
-        obj: Dataclass or its object to be parsed.
+        obj: Dataclass (object) to be parsed.
         parent_id: ID of the parent data spec.
         spec_factory: Factory for creating each data spec.
 
     Returns:
-        Data specs created from the dataclass or its object.
+        Data specs created from the dataclass (object).
 
     """
     specs: Specs[Any] = Specs()
 
-    # 1. data spec of the dataclass or its object itself
+    # 1. data spec of the dataclass (object) itself
     specs.append(
         spec_factory(
             id=ID(parent_id),
@@ -136,7 +136,7 @@ def from_typehint(
             tags=get_tags(first := get_first(obj)),
             type=get_annotated(first, recursive=True),
             data=parent_data,
-            meta=get_others(first),
+            meta=get_meta(first),
         )
     )
 
@@ -150,7 +150,7 @@ def from_typehint(
             )
         )
 
-    # 3. data specs of the sub-dataclasses or their objects
+    # 3. data specs of the sub-dataclasses (objects)
     for name, dataclass in named_enumerate(get_dataclasses(first)):
         specs.extend(
             from_dataclass(
