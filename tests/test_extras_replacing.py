@@ -5,8 +5,7 @@ from typing import Annotated, Optional
 
 
 # dependencies
-from dataspecs import TagBase, from_dataclass
-from dataspecs.extras import Replace, replace
+from dataspecs import Replace, TagBase, from_dataclass, replace
 
 
 # test datasets

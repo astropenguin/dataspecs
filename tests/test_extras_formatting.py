@@ -5,8 +5,7 @@ from typing import Annotated, Optional
 
 
 # dependencies
-from dataspecs import TagBase, from_dataclass
-from dataspecs.extras import Format, format
+from dataspecs import Format, TagBase, format, from_dataclass
 
 
 # test datasets
