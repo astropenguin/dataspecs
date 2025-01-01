@@ -38,16 +38,18 @@ class Weather:
     location: Ann[str, Tag.ATTR]
 
 
-simple_specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
-simple_specs
+specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
+specs
 ```
-```python
-Specs([Spec(id=ID('/'), tags=(), type=<class '__main__.Weather'>, data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo')),
-       Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-       Spec(id=ID('/temp/0'), tags=(), type=<class 'float'>, data=None),
-       Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-       Spec(id=ID('/humid/0'), tags=(), type=<class 'float'>, data=None),
-       Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')])
+```
+Specs([
+    Spec(id=ID('/'), tags=(), type=<class '__main__.Weather'>, data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo')),
+    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID('/temp/0'), tags=(), type=<class 'float'>, data=None),
+    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+    Spec(id=ID('/humid/0'), tags=(), type=<class 'float'>, data=None),
+    Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
+])
 ```
 
 ### Nested specifications
@@ -74,64 +76,74 @@ class Weather:
     location: Ann[str, Tag.ATTR]
 
 
-nested_specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
-nested_specs
+specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
+specs
 ```
-```python
-Specs([Spec(id=ID('/'), tags=(), type=<class '__main__.Weather'>, data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo')),
-       Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-       Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-       Spec(id=ID('/temp/meta'), tags=(), type=<class '__main__.Meta'>, data=Meta(name='Ground temperature', units='K')),
-       Spec(id=ID('/temp/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-       Spec(id=ID('/temp/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
-       Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-       Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-       Spec(id=ID('/humid/meta'), tags=(), type=<class '__main__.Meta'>, data=Meta(name='Relative humidity', units='%')),
-       Spec(id=ID('/humid/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
-       Spec(id=ID('/humid/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
-       Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')])
+```
+Specs([
+    Spec(id=ID('/'), tags=(), type=<class '__main__.Weather'>, data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo')),
+    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+    Spec(id=ID('/temp/meta'), tags=(), type=<class '__main__.Meta'>, data=Meta(name='Ground temperature', units='K')),
+    Spec(id=ID('/temp/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+    Spec(id=ID('/temp/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+    Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+    Spec(id=ID('/humid/meta'), tags=(), type=<class '__main__.Meta'>, data=Meta(name='Relative humidity', units='%')),
+    Spec(id=ID('/humid/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
+    Spec(id=ID('/humid/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
+    Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
+])
 ```
 
 ### Selecting specifications
 
 ```python
-nested_specs[Tag.DATA]
+specs[Tag.DATA]
 ```
-```python
-Specs([Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-       Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0])])
 ```
-
-```python
-nested_specs[Tag]
-```
-```python
-Specs([Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-       Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-       Spec(id=ID('/temp/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-       Spec(id=ID('/temp/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
-       Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-       Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-       Spec(id=ID('/humid/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
-       Spec(id=ID('/humid/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
-       Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')])
+Specs([
+    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+])
 ```
 
 ```python
-nested_specs[str]
+specs[Tag]
 ```
-```python
-Specs([Spec(id=ID('/temp/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-       Spec(id=ID('/temp/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
-       Spec(id=ID('/humid/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
-       Spec(id=ID('/humid/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
-       Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')])
+```
+Specs([
+    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+    Spec(id=ID('/temp/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+    Spec(id=ID('/temp/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+    Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+    Spec(id=ID('/humid/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
+    Spec(id=ID('/humid/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
+    Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
+])
 ```
 
 ```python
-nested_specs["/temp/meta/[a-z]+"]
+specs[str]
 ```
+```
+Specs([
+    Spec(id=ID('/temp/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+    Spec(id=ID('/temp/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+    Spec(id=ID('/humid/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
+    Spec(id=ID('/humid/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
+    Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
+])
+```
+
 ```python
-Specs([Spec(id=ID('/temp/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-       Spec(id=ID('/temp/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K')])
+specs["/temp/meta/[a-z]+"]
+```
+```
+Specs([
+    Spec(id=ID('/temp/meta/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+    Spec(id=ID('/temp/meta/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+])
 ```
