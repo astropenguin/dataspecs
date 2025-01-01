@@ -59,6 +59,68 @@ def from_dataclass(
     Returns:
         Data specs created from the dataclass (object).
 
+    Examples:
+        ::
+
+            from enum import auto
+            from dataclasses import dataclass
+            from dataspecs import TagBase, from_dataclass
+            from typing import Annotated as Ann
+
+            class Tag(TagBase):
+                ATTR = auto()
+                DATA = auto()
+                DTYPE = auto()
+
+            @dataclass
+            class Weather:
+                temp: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA]
+                humid: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA]
+                location: Ann[str, Tag.ATTR]
+
+            from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
+
+        ::
+
+            Specs([
+                Spec(
+                    id=ID('/'),
+                    tags=(),
+                    type=<class '__main__.Weather'>,
+                    data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo'),
+                ),
+                Spec(
+                    id=ID('/temp'),
+                    tags=(<Tag.DATA: 2>,),
+                    type=list[float],
+                    data=[20.0, 25.0],
+                ),
+                Spec(
+                    id=ID('/temp/0'),
+                    tags=(<Tag.DTYPE: 3>,),
+                    type=<class 'float'>,
+                    data=None,
+                ),
+                Spec(
+                    id=ID('/humid'),
+                    tags=(<Tag.DATA: 2>,),
+                    type=list[float],
+                    data=[50.0, 55.0],
+                ),
+                Spec(
+                    id=ID('/humid/0'),
+                    tags=(<Tag.DTYPE: 3>,),
+                    type=<class 'float'>,
+                    data=None,
+                ),
+                Spec(
+                    id=ID('/location'),
+                    tags=(<Tag.ATTR: 1>,),
+                    type=<class 'str'>,
+                    data='Tokyo',
+                ),
+            ])
+
     """
     specs: Specs[Any] = Specs()
 
@@ -125,6 +187,36 @@ def from_typehint(
 
     Returns:
         Data specs created from the type hint.
+
+    Examples:
+        ::
+
+            from enum import auto
+            from dataspecs import TagBase, from_typehint
+            from typing import Annotated as Ann
+
+            class Tag(TagBase):
+                DATA = auto()
+                DTYPE = auto()
+
+            from_typehint(Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA])
+
+        ::
+
+            Specs([
+                Spec(
+                    id=ID('/'),
+                    tags=(<Tag.DATA: 1>,),
+                    type=list[float],
+                    data=None,
+                ),
+                Spec(
+                    id=ID('/0'),
+                    tags=(<Tag.DTYPE: 2>,),
+                    type=<class 'float'>,
+                    data=None,
+                ),
+            ])
 
     """
     specs: Specs[Any] = Specs()
