@@ -85,6 +85,7 @@ class Spec(Generic[TAny]):
         data: Default or final data of the data spec.
         annotations: Type hint annotations of the data spec.
         metadata: Metadata of the data spec.
+        origin: Origin of the data spec.
 
     """
 
@@ -105,6 +106,9 @@ class Spec(Generic[TAny]):
 
     metadata: dict[str, Any] = field(default_factory=dict, repr=False)
     """Metadata of the data spec."""
+
+    origin: Optional[Any] = field(default=None, repr=False)
+    """Origin of the data spec."""
 
     def __call__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Dynamically cast the data of the data spec."""

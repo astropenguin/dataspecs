@@ -123,6 +123,7 @@ def from_dataclass(
                 id=ID(id) / field.name,
                 data=getattr(obj, field.name, field.default),
                 metadata=dict(field.metadata),
+                origin=obj,
             )
         )
 
@@ -137,6 +138,7 @@ def from_typehint(
     id: StrPath = ROOT,
     data: Any = MISSING,
     metadata: Optional[dict[str, Any]] = None,
+    origin: Optional[Any] = None,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -149,6 +151,7 @@ def from_typehint(
     id: StrPath = ROOT,
     data: Any = MISSING,
     metadata: Optional[dict[str, Any]] = None,
+    origin: Optional[Any] = None,
 ) -> Specs[TSpec]: ...
 
 
@@ -160,6 +163,7 @@ def from_typehint(
     id: StrPath = ROOT,
     data: Any = None,
     metadata: Optional[dict[str, Any]] = None,
+    origin: Optional[Any] = None,
 ) -> Any:
     """Create data specs from a type hint.
 
@@ -214,6 +218,7 @@ def from_typehint(
             data=data,
             annotations=get_annotations(first),
             metadata={} if metadata is None else dict(metadata),
+            origin=origin,
         )
     )
 
@@ -223,6 +228,7 @@ def from_typehint(
                 subtype,
                 factory=factory,
                 id=ID(id) / str(index),
+                origin=obj,
             )
         )
 
