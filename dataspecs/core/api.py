@@ -2,18 +2,15 @@ __all__ = ["from_dataclass", "from_typehint"]
 
 
 # standard library
-from collections import Counter, defaultdict
 from dataclasses import fields
-from typing import Any, Callable, Iterable, Iterator, overload
+from typing import Any, Callable, overload
 
 
 # dependencies
-from humps import decamelize
 from .specs import ID, ROOT, Spec, Specs, TSpec
 from .typing import (
     DataClass,
     StrPath,
-    TAny,
     get_annotated,
     get_annotations,
     get_dataclasses,
@@ -124,17 +121,6 @@ def from_dataclass(
     """
     specs: Specs[Any] = Specs()
 
-    # 1. data spec of the dataclass (object) itself
-    specs.append(
-        factory(
-            id=ID(id),
-            tags=(),
-            type=type(obj),
-            data=obj,
-        )
-    )
-
-    # 2. data specs of the dataclass fields
     for field in fields(obj):
         specs.extend(
             from_typehint(
@@ -221,7 +207,6 @@ def from_typehint(
     """
     specs: Specs[Any] = Specs()
 
-    # 1. data spec of the type hint itself
     specs.append(
         factory(
             id=ID(id),
@@ -232,37 +217,22 @@ def from_typehint(
         )
     )
 
-    # 2. data specs of the type hint subtypes
-    for name, subtype in enumerate(get_subtypes(first)):
+    for index, subtype in enumerate(get_subtypes(first)):
         specs.extend(
             from_typehint(
                 subtype,
-                id=ID(id) / str(name),
+                id=ID(id) / str(index),
                 factory=factory,
             )
         )
 
-    # 3. data specs of the sub-dataclasses (objects)
-    for name, dataclass in named_enumerate(get_dataclasses(first)):
+    for dataclass in get_dataclasses(first):
         specs.extend(
             from_dataclass(
                 dataclass,
-                id=ID(id) / str(name),
+                id=ID(id),
                 factory=factory,
             )
         )
 
     return specs
-
-
-def named_enumerate(iterable: Iterable[TAny], /) -> Iterator[tuple[str, TAny]]:
-    """Same as enumerate but returns snake-case type names (with counts)."""
-    counts = Counter(type(obj) for obj in iterable)
-    indexes: defaultdict[type[Any], int] = defaultdict(int)
-
-    for obj in iterable:
-        if counts[(cls := type(obj))] == 1:
-            yield decamelize(cls.__name__), obj
-        else:
-            yield f"{decamelize(cls.__name__)}_{indexes[cls]}", obj
-            indexes[cls] += 1

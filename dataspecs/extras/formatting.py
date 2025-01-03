@@ -145,17 +145,14 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
     """
     new = specs.copy()
 
-    for spec in specs[Format]:
-        options = specs[spec.id.children]
+    for formatter in specs:
+        options = specs[formatter.id.children]
 
         if (
             (id := options[Tag.ID].unique) is None
             or (of := options[Tag.OF].unique) is None
             or (skipif := options[Tag.SKIPIF].unique) is None
         ):
-            continue
-
-        if (formatter := specs[spec.id.parent].unique) is None:
             continue
 
         if formatter.data == skipif.data:
