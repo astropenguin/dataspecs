@@ -24,19 +24,19 @@ class Format:
     """Annotation for formatter specs.
 
     Args:
-        id: ID of data spec(s) to be formatted.
-        of: Name of data spec attribute to be formatted.
-        skipif: Sentinel value for which formatting is skipped.
+        _format_id: ID of data spec(s) to be formatted.
+        _format_of: Name of data spec attribute to be formatted.
+        _format_skipif: Sentinel value for which formatting is skipped.
 
     """
 
-    id: Annotated[StrPath, Tag.ID]
+    _format_id: Annotated[StrPath, Tag.ID]
     """ID of data spec(s) to be formatted."""
 
-    of: Annotated[str, Tag.OF] = "data"
+    _format_of: Annotated[str, Tag.OF] = "data"
     """Name of data spec attribute to be formatted."""
 
-    skipif: Annotated[Any, Tag.SKIPIF] = None
+    _format_skipif: Annotated[Any, Tag.SKIPIF] = None
     """Sentinel value for which formatting is skipped."""
 
 
@@ -68,19 +68,13 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
             @dataclass
             class Weather:
                 temp: Ann[list[float], Attrs("Temperature ({0})", "{0}")]
-                units: Ann[str, Format("/temp/attrs/[a-z]+")] = "degC"
+                units: Ann[str, Format("/temp/(name|units)")] = "degC"
 
             format(from_dataclass(Weather([20.0, 25.0], "K")))
 
         ::
 
             Specs([
-                Spec(
-                    id=ID('/'),
-                    tags=(),
-                    type=<class '__main__.Weather'>,
-                    data=Weather(temp=[20.0, 25.0], units='K'),
-                ),
                 Spec(
                     id=ID('/temp'),
                     tags=(),
@@ -94,19 +88,13 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
                     data=None,
                 ),
                 Spec(
-                    id=ID('/temp/attrs'),
-                    tags=(),
-                    type=<class '__main__.Attrs'>,
-                    data=Attrs(name='Temperature ({0})', units='{0}'),
-                ),
-                Spec(
-                    id=ID('/temp/attrs/name'),
+                    id=ID('/temp/name'),
                     tags=(<Tag.ATTR: 1>,),
                     type=<class 'str'>,
                     data='Temperature (K)', # <- formatted
                 ),
                 Spec(
-                    id=ID('/temp/attrs/units'),
+                    id=ID('/temp/units'),
                     tags=(<Tag.ATTR: 1>,),
                     type=<class 'str'>, data='K', # <- formatted
                 ),
@@ -117,25 +105,19 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
                     data='K',
                 ),
                 Spec(
-                    id=ID('/units/format'),
-                    tags=(),
-                    type=<class 'dataspecs.extras.formatting.Format'>,
-                    data=Format(id='/temp/attrs/[a-z]+', of='data', skipif=None),
-                ),
-                Spec(
-                    id=ID('/units/format/id'),
+                    id=ID('/units/_format_id'),
                     tags=(<Tag.ID: 1>,),
                     type=<class 'str'>,
-                    data='/temp/attrs/[a-z]+',
+                    data='/temp/attrs/(name|units)',
                 ),
                 Spec(
-                    id=ID('/units/format/of'),
+                    id=ID('/units/_format_of'),
                     tags=(<Tag.OF: 2>,),
                     type=<class 'str'>,
                     data='data',
                 ),
                 Spec(
-                    id=ID('/units/format/skipif'),
+                    id=ID('/units/_format_skipif'),
                     tags=(<Tag.SKIPIF: 3>,),
                     type=typing.Any,
                     data=None,
