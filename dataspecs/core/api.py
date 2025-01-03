@@ -140,7 +140,7 @@ def from_dataclass(
             from_typehint(
                 field.type,
                 id=ID(id) / field.name,
-                parent_data=getattr(obj, field.name, field.default),
+                data=getattr(obj, field.name, field.default),
                 spec_factory=spec_factory,
             )
         )
@@ -154,7 +154,7 @@ def from_typehint(
     /,
     *,
     id: StrPath = ROOT,
-    parent_data: Any = None,
+    data: Any = None,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -164,7 +164,7 @@ def from_typehint(
     /,
     *,
     id: StrPath = ROOT,
-    parent_data: Any = None,
+    data: Any = None,
     spec_factory: Callable[..., TSpec],
 ) -> Specs[TSpec]: ...
 
@@ -174,7 +174,7 @@ def from_typehint(
     /,
     *,
     id: StrPath = ROOT,
-    parent_data: Any = None,
+    data: Any = None,
     spec_factory: Any = Spec,
 ) -> Any:
     """Create data specs from a type hint.
@@ -182,7 +182,7 @@ def from_typehint(
     Args:
         obj: Type hint to be parsed.
         id: ID of the parent data spec.
-        parent_data: Data of the parent data spec.
+        data: Data of the parent data spec.
         spec_factory: Factory for creating each data spec.
 
     Returns:
@@ -227,7 +227,7 @@ def from_typehint(
             id=ID(id),
             tags=get_tags(first := get_first(obj)),
             type=get_annotated(first, recursive=True),
-            data=parent_data,
+            data=data,
             meta=get_meta(first),
         )
     )
