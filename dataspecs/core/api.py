@@ -2,8 +2,8 @@ __all__ = ["from_dataclass", "from_typehint"]
 
 
 # standard library
-from dataclasses import fields
-from typing import Any, Callable, overload
+from dataclasses import MISSING, fields
+from typing import Any, Callable, Optional, overload
 
 
 # dependencies
@@ -34,8 +34,8 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: StrPath = ROOT,
     factory: Callable[..., TSpec],
+    id: StrPath = ROOT,
 ) -> Specs[TSpec]: ...
 
 
@@ -43,15 +43,15 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: StrPath = ROOT,
     factory: Any = Spec,
+    id: StrPath = ROOT,
 ) -> Any:
     """Create data specs from a dataclass (object).
 
     Args:
         obj: Dataclass (object) to be parsed.
-        id: ID of the parent data spec.
         factory: Factory for creating each data spec.
+        id: ID of the parent data spec.
 
     Returns:
         Data specs created from the dataclass (object).
@@ -119,9 +119,10 @@ def from_dataclass(
         specs.extend(
             from_typehint(
                 field.type,
+                factory=factory,
                 id=ID(id) / field.name,
                 data=getattr(obj, field.name, field.default),
-                factory=factory,
+                metadata=dict(field.metadata),
             )
         )
 
@@ -134,7 +135,8 @@ def from_typehint(
     /,
     *,
     id: StrPath = ROOT,
-    data: Any = None,
+    data: Any = MISSING,
+    metadata: Optional[dict[str, Any]] = None,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -143,9 +145,10 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    id: StrPath = ROOT,
-    data: Any = None,
     factory: Callable[..., TSpec],
+    id: StrPath = ROOT,
+    data: Any = MISSING,
+    metadata: Optional[dict[str, Any]] = None,
 ) -> Specs[TSpec]: ...
 
 
@@ -153,17 +156,19 @@ def from_typehint(
     obj: Any,
     /,
     *,
+    factory: Any = Spec,
     id: StrPath = ROOT,
     data: Any = None,
-    factory: Any = Spec,
+    metadata: Optional[dict[str, Any]] = None,
 ) -> Any:
     """Create data specs from a type hint.
 
     Args:
         obj: Type hint to be parsed.
+        factory: Factory for creating each data spec.
         id: ID of the parent data spec.
         data: Data of the parent data spec.
-        factory: Factory for creating each data spec.
+        metadata: Metadata of the parent data spec.
 
     Returns:
         Data specs created from the type hint.
@@ -208,6 +213,7 @@ def from_typehint(
             type=get_annotated(first, recursive=True),
             data=data,
             annotations=get_annotations(first),
+            metadata={} if metadata is None else dict(metadata),
         )
     )
 
@@ -215,17 +221,17 @@ def from_typehint(
         specs.extend(
             from_typehint(
                 subtype,
-                id=ID(id) / str(index),
                 factory=factory,
+                id=ID(id) / str(index),
             )
         )
 
-    for dataclass in get_dataclasses(first):
+    for sub_dataclass in get_dataclasses(first):
         specs.extend(
             from_dataclass(
-                dataclass,
-                id=ID(id),
+                sub_dataclass,
                 factory=factory,
+                id=ID(id),
             )
         )
 
