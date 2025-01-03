@@ -81,12 +81,6 @@ def from_dataclass(
 
             Specs([
                 Spec(
-                    id=ID('/'),
-                    tags=(),
-                    type=<class '__main__.Weather'>,
-                    data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo'),
-                ),
-                Spec(
                     id=ID('/temp'),
                     tags=(<Tag.DATA: 2>,),
                     type=list[float],
