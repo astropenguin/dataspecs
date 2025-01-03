@@ -83,7 +83,7 @@ class Spec(Generic[TAny]):
         tags: Tags of the data spec.
         type: Type hint for the data of the data spec.
         data: Default or final data of the data spec.
-        meta: Other metadata of the data spec.
+        annotations: Type hint annotations of the data spec.
 
     """
 
@@ -99,8 +99,8 @@ class Spec(Generic[TAny]):
     data: TAny
     """Default or final data of the data spec."""
 
-    meta: tuple[Any, ...] = field(default_factory=tuple, repr=False)
-    """Other metadata of the data spec."""
+    annotations: tuple[Any, ...] = field(default_factory=tuple, repr=False)
+    """Type hint annotations of the data spec."""
 
     def __call__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Dynamically cast the data of the data spec."""

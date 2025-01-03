@@ -15,9 +15,9 @@ from .typing import (
     StrPath,
     TAny,
     get_annotated,
+    get_annotations,
     get_dataclasses,
     get_first,
-    get_meta,
     get_subtypes,
     get_tags,
 )
@@ -228,7 +228,7 @@ def from_typehint(
             tags=get_tags(first := get_first(obj)),
             type=get_annotated(first, recursive=True),
             data=data,
-            meta=get_meta(first),
+            annotations=get_annotations(first),
         )
     )
 

@@ -81,19 +81,6 @@ def get_first(obj: Any, /) -> Any:
     return first
 
 
-def get_meta(obj: Any, /) -> tuple[Any, ...]:
-    """Return annotations other than tags nor dataclasses (objects)."""
-    annotations = list(get_annotations(obj))
-
-    for tag in get_tags(obj):
-        annotations.remove(tag)
-
-    for dataclass in get_dataclasses(obj):
-        annotations.remove(dataclass)
-
-    return tuple(annotations)
-
-
 def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
     """Return subtypes of a type hint if they exist."""
     if is_literal(annotated := get_annotated(obj)):

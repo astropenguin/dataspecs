@@ -12,7 +12,6 @@ from dataspecs.core.typing import (
     get_annotations,
     get_dataclasses,
     get_first,
-    get_meta,
     get_subtypes,
     get_tags,
     is_annotated,
@@ -72,12 +71,6 @@ data_get_first: TestData = [
     (Ann[Union[int, None], Tag.A], Ann[int, Tag.A]),
     (Ann[Optional[int], Tag.A], Ann[int, Tag.A]),
     (Ann[int, Tag.A], Ann[int, Tag.A]),
-]
-
-data_get_meta: TestData = [
-    (Ann[int, Tag.A, NonTag.A, DC(1)], (NonTag.A,)),
-    (Ann[int, Tag.A], ()),
-    (int, ()),
 ]
 
 data_get_subtypes: TestData = [
@@ -158,11 +151,6 @@ def test_get_dataclasses(tester: Any, expected: Any) -> None:
 @mark.parametrize("tester, expected", data_get_first)
 def test_get_first(tester: Any, expected: Any) -> None:
     assert get_first(tester) == expected
-
-
-@mark.parametrize("tester, expected", data_get_meta)
-def test_get_meta(tester: Any, expected: Any) -> None:
-    assert get_meta(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_get_subtypes)
