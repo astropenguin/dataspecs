@@ -28,7 +28,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    parent_id: StrPath = ROOT,
+    id: StrPath = ROOT,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -37,7 +37,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    parent_id: StrPath = ROOT,
+    id: StrPath = ROOT,
     spec_factory: Callable[..., TSpec],
 ) -> Specs[TSpec]: ...
 
@@ -46,14 +46,14 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    parent_id: StrPath = ROOT,
+    id: StrPath = ROOT,
     spec_factory: Any = Spec,
 ) -> Any:
     """Create data specs from a dataclass (object).
 
     Args:
         obj: Dataclass (object) to be parsed.
-        parent_id: ID of the parent data spec.
+        id: ID of the parent data spec.
         spec_factory: Factory for creating each data spec.
 
     Returns:
@@ -127,7 +127,7 @@ def from_dataclass(
     # 1. data spec of the dataclass (object) itself
     specs.append(
         spec_factory(
-            id=ID(parent_id),
+            id=ID(id),
             tags=(),
             type=type(obj),
             data=obj,
@@ -139,7 +139,7 @@ def from_dataclass(
         specs.extend(
             from_typehint(
                 field.type,
-                parent_id=ID(parent_id) / field.name,
+                id=ID(id) / field.name,
                 parent_data=getattr(obj, field.name, field.default),
                 spec_factory=spec_factory,
             )
@@ -153,7 +153,7 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    parent_id: StrPath = ROOT,
+    id: StrPath = ROOT,
     parent_data: Any = None,
 ) -> Specs[Spec[Any]]: ...
 
@@ -163,7 +163,7 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    parent_id: StrPath = ROOT,
+    id: StrPath = ROOT,
     parent_data: Any = None,
     spec_factory: Callable[..., TSpec],
 ) -> Specs[TSpec]: ...
@@ -173,7 +173,7 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    parent_id: StrPath = ROOT,
+    id: StrPath = ROOT,
     parent_data: Any = None,
     spec_factory: Any = Spec,
 ) -> Any:
@@ -181,7 +181,7 @@ def from_typehint(
 
     Args:
         obj: Type hint to be parsed.
-        parent_id: ID of the parent data spec.
+        id: ID of the parent data spec.
         parent_data: Data of the parent data spec.
         spec_factory: Factory for creating each data spec.
 
@@ -224,7 +224,7 @@ def from_typehint(
     # 1. data spec of the type hint itself
     specs.append(
         spec_factory(
-            id=ID(parent_id),
+            id=ID(id),
             tags=get_tags(first := get_first(obj)),
             type=get_annotated(first, recursive=True),
             data=parent_data,
@@ -237,7 +237,7 @@ def from_typehint(
         specs.extend(
             from_typehint(
                 subtype,
-                parent_id=ID(parent_id) / str(name),
+                id=ID(id) / str(name),
                 spec_factory=spec_factory,
             )
         )
@@ -247,7 +247,7 @@ def from_typehint(
         specs.extend(
             from_dataclass(
                 dataclass,
-                parent_id=ID(parent_id) / str(name),
+                id=ID(id) / str(name),
                 spec_factory=spec_factory,
             )
         )
