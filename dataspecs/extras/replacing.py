@@ -8,7 +8,7 @@ from typing import Annotated, Any
 
 
 # dependencies
-from ..core.specs import Specs, TSpec
+from ..core.specs import SpecAttr, Specs, TSpec
 from ..core.typing import StrPath, TagBase
 
 
@@ -33,7 +33,7 @@ class Replace:
     _replace_id: Annotated[StrPath, Tag.ID]
     """ID of data spec(s) to be replaced."""
 
-    _replace_of: Annotated[str, Tag.OF] = "data"
+    _replace_of: Annotated[SpecAttr, Tag.OF] = "data"
     """Name of data spec attribute to be replaced."""
 
     _replace_skipif: Annotated[Any, Tag.SKIPIF] = None
@@ -126,22 +126,21 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
     """
     new = specs.copy()
 
-    for replacer in specs:
-        options = specs[replacer.id.children]
+    for spec in specs:
+        for options in specs[spec.id.children].groupby("origin", method="id"):
+            if (
+                (id := options[Tag.ID].unique) is None
+                or (of := options[Tag.OF].unique) is None
+                or (skipif := options[Tag.SKIPIF].unique) is None
+            ):
+                continue
 
-        if (
-            (id := options[Tag.ID].unique) is None
-            or (of := options[Tag.OF].unique) is None
-            or (skipif := options[Tag.SKIPIF].unique) is None
-        ):
-            continue
+            if spec.data == skipif.data:
+                continue
 
-        if replacer.data == skipif.data:
-            continue
-
-        for target in new[id[str].data]:
-            changes = {of[str].data: replacer.data}
-            updated = replace_(target, **changes)  # type: ignore
-            new = new.replace(target, updated)
+            for target in new[id[str].data]:
+                changes = {of[str].data: spec.data}
+                updated = replace_(target, **changes)  # type: ignore
+                new = new.replace(target, updated)
 
     return new

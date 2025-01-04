@@ -8,7 +8,7 @@ from typing import Annotated, Any
 
 
 # dependencies
-from ..core.specs import Specs, TSpec
+from ..core.specs import SpecAttr, Specs, TSpec
 from ..core.typing import StrPath, TagBase
 
 
@@ -33,7 +33,7 @@ class Format:
     _format_id: Annotated[StrPath, Tag.ID]
     """ID of data spec(s) to be formatted."""
 
-    _format_of: Annotated[str, Tag.OF] = "data"
+    _format_of: Annotated[SpecAttr, Tag.OF] = "data"
     """Name of data spec attribute to be formatted."""
 
     _format_skipif: Annotated[Any, Tag.SKIPIF] = None
@@ -127,23 +127,22 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
     """
     new = specs.copy()
 
-    for formatter in specs:
-        options = specs[formatter.id.children]
+    for spec in specs:
+        for options in specs[spec.id.children].groupby("origin", method="id"):
+            if (
+                (id := options[Tag.ID].unique) is None
+                or (of := options[Tag.OF].unique) is None
+                or (skipif := options[Tag.SKIPIF].unique) is None
+            ):
+                continue
 
-        if (
-            (id := options[Tag.ID].unique) is None
-            or (of := options[Tag.OF].unique) is None
-            or (skipif := options[Tag.SKIPIF].unique) is None
-        ):
-            continue
+            if spec.data == skipif.data:
+                continue
 
-        if formatter.data == skipif.data:
-            continue
-
-        for target in new[id[str].data]:
-            attr: str = getattr(target, of[str].data)
-            changes = {of[str].data: attr.format(formatter.data)}
-            updated = replace(target, **changes)  # type: ignore
-            new = new.replace(target, updated)
+            for target in new[id[str].data]:
+                attr: str = getattr(target, of[str].data)
+                changes = {of[str].data: attr.format(spec.data)}
+                updated = replace(target, **changes)  # type: ignore
+                new = new.replace(target, updated)
 
     return new

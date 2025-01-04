@@ -2,12 +2,22 @@ __all__ = ["ID", "ROOT", "Spec", "Specs"]
 
 
 # standard library
-from collections import UserList
+from collections import UserList, defaultdict
 from dataclasses import dataclass, field, replace
 from os import fspath
 from pathlib import PurePosixPath
 from re import fullmatch
-from typing import Any, Callable, Generic, Optional, SupportsIndex, TypeVar, overload
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    Hashable,
+    Literal,
+    Optional,
+    SupportsIndex,
+    TypeVar,
+    overload,
+)
 
 
 # dependencies
@@ -25,6 +35,7 @@ from .typing import (
 
 
 # type hints
+SpecAttr = Literal["id", "tags", "type", "data", "annotations", "metadata", "origin"]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -136,6 +147,39 @@ class Specs(UserList[TSpec]):
     def unique(self) -> Optional[TSpec]:
         """Return the data spec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
+
+    def groupby(
+        self,
+        by: SpecAttr,
+        /,
+        *,
+        method: Literal["eq", "equality", "id", "identity"] = "equality",
+    ) -> list[Self]:
+        """Group the data specs by their attributes.
+
+        Args:
+            by: Name of the data spec attribute for grouping.
+                Either ``'id'``, ``'tags'``, ``'type'``, ``'data'``,
+                ``'annotations'``, ``'metadata'``, or ``'origin'`` is accepted.
+            method: Grouping method.
+                Either ``'equality'`` (or ``'eq'``; hash-based grouping),
+                or ``'identity'` (or ``'id'``; id-based grouping) is accepted.
+
+        Returns:
+            List of data specs grouped by the selected data spec attribute.
+
+        """
+        groups: defaultdict[Hashable, Self] = defaultdict(type(self))
+
+        for spec in self:
+            if method == "eq" or method == "equality":
+                groups[getattr(spec, by)].append(spec)
+            elif method == "id" or method == "identity":
+                groups[id(getattr(spec, by))].append(spec)
+            else:
+                raise ValueError("Method must be either equality or identity.")
+
+        return list(groups.values())
 
     def replace(self, old: TSpec, new: TSpec, /) -> Self:
         """Return data specs with old data spec replaced by new one."""
