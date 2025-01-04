@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 
 # dependencies
-from dataspecs.core.specs import ID, Spec, Specs
+from dataspecs.core.specs import ID, SpecAttr, Spec, Specs
 from dataspecs.core.typing import TagBase
 from pytest import mark, raises
 
@@ -82,19 +82,39 @@ data_specs_unique: TestData = [
     (specs[0:0], None),
 ]
 
-data_specs_groups: TestData = [
-    (None, [specs[0:3], specs[3:6], specs[6:]]),
-    #
-    (Tag.DATA, [specs[0:3], specs[3:6]]),
-    (Tag.NAME, []),
-    (Tag.UNITS, []),
-    #
-    (Tag, [specs[0:3], specs[3:6]]),
-    #
-    ("/.*", [specs[0:3], specs[3:6], specs[6:]]),
-    ("/a", [specs[0:3]]),
-    ("/b", [specs[3:6]]),
-    ("/c", [specs[6:]]),
+data_specs_groupby: TestData = [
+    (
+        "id",
+        [
+            specs[0:1],
+            specs[1:2],
+            specs[2:3],
+            specs[3:4],
+            specs[4:5],
+            specs[5:6],
+            specs[6:7],
+        ],
+    ),
+    (
+        "tags",
+        [
+            Specs([specs[0], specs[3]]),
+            Specs([specs[1], specs[4]]),
+            Specs([specs[2], specs[5]]),
+            Specs([specs[6]]),
+        ],
+    ),
+    (
+        "type",
+        [
+            Specs([specs[0], specs[3], specs[6]]),
+            Specs([*specs[1:3], *specs[4:6]]),
+        ],
+    ),
+    (
+        "data",
+        [specs],
+    ),
 ]
 
 data_specs_replace: TestData = [
@@ -165,6 +185,11 @@ def test_specs_last(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -> 
 @mark.parametrize("tester, expected", data_specs_unique)
 def test_specs_unique(tester: Specs[Spec[Any]], expected: Optional[Spec[Any]]) -> None:
     assert tester.unique == expected
+
+
+@mark.parametrize("tester, expected", data_specs_groupby)
+def test_specs_groupby(tester: SpecAttr, expected: list[Specs[Spec[Any]]]) -> None:
+    assert specs.groupby(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_specs_replace)

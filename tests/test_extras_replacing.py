@@ -25,13 +25,13 @@ def test_replace() -> None:
     specs = from_dataclass(Data(0, int, 1))
     replaced = replace(specs)
 
-    assert replaced[1].type is int
-    assert replaced[1].data == 1
+    assert replaced[0].type is int
+    assert replaced[0].data == 1
 
 
 def test_replace_skip() -> None:
     specs = from_dataclass(Data(0, None, None))
     replaced = replace(specs)
 
-    assert replaced[1].type is float
-    assert replaced[1].data == 0
+    assert replaced[0].type is float
+    assert replaced[0].data == 0

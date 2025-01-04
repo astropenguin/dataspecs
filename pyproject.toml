@@ -1,14 +1,11 @@
 [project]
 name = "dataspecs"
-version = "2.0.1"
+version = "3.0.0"
 description = "Data specifications by data classes"
 readme = "README.md"
 keywords = ["dataclasses", "specifications", "typing"]
 requires-python = ">=3.9,<3.14"
-dependencies = [
-    "pyhumps>=3.8,<4.0",
-    "typing-extensions>=4.1,<5.0",
-]
+dependencies = ["typing-extensions>=4.1,<5.0"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -27,7 +24,7 @@ email = "taniguchi.akio@gmail.com"
 file = "LICENSE"
 
 [project.urls]
-homepage = "https://astropenguin.github.io/dataspecs/v2.0.1"
+homepage = "https://astropenguin.github.io/dataspecs/v3.0.0"
 repository = "https://github.com/astropenguin/dataspecs"
 
 [dependency-groups]
