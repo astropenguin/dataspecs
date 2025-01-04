@@ -1,0 +1,670 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>dataspecs &#8212; Project name not set  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dataspecs package" href="_apidoc/dataspecs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dataspecs</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="#">
+    Home
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="_apidoc/dataspecs.html">
+    Package guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/astropenguin/dataspecs" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="#">
+    Home
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="_apidoc/dataspecs.html">
+    Package guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/astropenguin/dataspecs" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="dataspecs">
+<h1>dataspecs<a class="headerlink" href="#dataspecs" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://pypi.org/project/dataspecs/"><img alt="Release" src="https://img.shields.io/pypi/v/dataspecs?label=Release&amp;color=cornflowerblue&amp;style=flat-square" /></a>
+<a class="reference external" href="https://pypi.org/project/dataspecs/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/dataspecs?label=Python&amp;color=cornflowerblue&amp;style=flat-square" /></a>
+<a class="reference external" href="https://pepy.tech/project/dataspecs"><img alt="Downloads" src="https://img.shields.io/pypi/dm/dataspecs?label=Downloads&amp;color=cornflowerblue&amp;style=flat-square" /></a>
+<a class="reference external" href="https://doi.org/10.5281/zenodo.10652375"><img alt="DOI" src="https://img.shields.io/badge/DOI-10.5281/zenodo.10652375-cornflowerblue?style=flat-square" /></a>
+<a class="reference external" href="https://github.com/astropenguin/dataspecs/actions"><img alt="Tests" src="https://img.shields.io/github/actions/workflow/status/astropenguin/dataspecs/tests.yaml?label=Tests&amp;style=flat-square" /></a></p>
+<p>Data specifications by data classes</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>dataspecs
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">dataspecs</span> <span class="kn">import</span> <span class="n">TagBase</span><span class="p">,</span> <span class="n">from_dataclass</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">auto</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span> <span class="k">as</span> <span class="n">Ann</span>
+</pre></div>
+</div>
+<section id="simple-specifications">
+<h3>Simple specifications<a class="headerlink" href="#simple-specifications" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">TagBase</span><span class="p">):</span>
+    <span class="n">ATTR</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">DATA</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Weather</span><span class="p">:</span>
+    <span class="n">temp</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">]</span>
+    <span class="n">humid</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">]</span>
+    <span class="n">location</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">ATTR</span><span class="p">]</span>
+
+
+<span class="n">specs</span> <span class="o">=</span> <span class="n">from_dataclass</span><span class="p">(</span><span class="n">Weather</span><span class="p">([</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">55.0</span><span class="p">],</span> <span class="s2">&quot;Tokyo&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Specs([
+    Spec(id=ID(&#39;/temp&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID(&#39;/temp/0&#39;), tags=(), type=&lt;class &#39;float&#39;&gt;, data=None),
+    Spec(id=ID(&#39;/humid&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[50.0, 55.0]),
+    Spec(id=ID(&#39;/humid/0&#39;), tags=(), type=&lt;class &#39;float&#39;&gt;, data=None),
+    Spec(id=ID(&#39;/location&#39;), tags=(&lt;Tag.ATTR: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Tokyo&#39;),
+])
+</pre></div>
+</div>
+</section>
+<section id="nested-specifications">
+<h3>Nested specifications<a class="headerlink" href="#nested-specifications" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">TagBase</span><span class="p">):</span>
+    <span class="n">ATTR</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">DATA</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">DTYPE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">NAME</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">UNITS</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">NAME</span><span class="p">]</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">UNITS</span><span class="p">]</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Weather</span><span class="p">:</span>
+    <span class="n">temp</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Ann</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DTYPE</span><span class="p">]],</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">,</span> <span class="n">Meta</span><span class="p">(</span><span class="s2">&quot;Ground temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">)]</span>
+    <span class="n">humid</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Ann</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DTYPE</span><span class="p">]],</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">,</span> <span class="n">Meta</span><span class="p">(</span><span class="s2">&quot;Relative humidity&quot;</span><span class="p">,</span> <span class="s2">&quot;%&quot;</span><span class="p">)]</span>
+    <span class="n">location</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">ATTR</span><span class="p">]</span>
+
+
+<span class="n">specs</span> <span class="o">=</span> <span class="n">from_dataclass</span><span class="p">(</span><span class="n">Weather</span><span class="p">([</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">55.0</span><span class="p">],</span> <span class="s2">&quot;Tokyo&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Specs([
+    Spec(id=ID(&#39;/temp&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID(&#39;/temp/0&#39;), tags=(&lt;Tag.DTYPE: 3&gt;,), type=&lt;class &#39;float&#39;&gt;, data=None),
+    Spec(id=ID(&#39;/temp/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Ground temperature&#39;),
+    Spec(id=ID(&#39;/temp/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;K&#39;),
+    Spec(id=ID(&#39;/humid&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[50.0, 55.0]),
+    Spec(id=ID(&#39;/humid/0&#39;), tags=(&lt;Tag.DTYPE: 3&gt;,), type=&lt;class &#39;float&#39;&gt;, data=None),
+    Spec(id=ID(&#39;/humid/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Relative humidity&#39;),
+    Spec(id=ID(&#39;/humid/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;%&#39;),
+    Spec(id=ID(&#39;/location&#39;), tags=(&lt;Tag.ATTR: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Tokyo&#39;),
+])
+</pre></div>
+</div>
+</section>
+<section id="selecting-specifications">
+<h3>Selecting specifications<a class="headerlink" href="#selecting-specifications" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">specs</span><span class="p">[</span><span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Specs</span><span class="p">([</span>
+    <span class="n">Spec</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">ID</span><span class="p">(</span><span class="s1">&#39;/temp&#39;</span><span class="p">),</span> <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="o">&lt;</span><span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">:</span> <span class="mi">2</span><span class="o">&gt;</span><span class="p">,),</span> <span class="nb">type</span><span class="o">=</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">]),</span>
+    <span class="n">Spec</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">ID</span><span class="p">(</span><span class="s1">&#39;/humid&#39;</span><span class="p">),</span> <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="o">&lt;</span><span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">:</span> <span class="mi">2</span><span class="o">&gt;</span><span class="p">,),</span> <span class="nb">type</span><span class="o">=</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">55.0</span><span class="p">]),</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">specs</span><span class="p">[</span><span class="n">Tag</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Specs([
+    Spec(id=ID(&#39;/temp&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID(&#39;/temp/0&#39;), tags=(&lt;Tag.DTYPE: 3&gt;,), type=&lt;class &#39;float&#39;&gt;, data=None),
+    Spec(id=ID(&#39;/temp/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Ground temperature&#39;),
+    Spec(id=ID(&#39;/temp/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;K&#39;),
+    Spec(id=ID(&#39;/humid&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[50.0, 55.0]),
+    Spec(id=ID(&#39;/humid/0&#39;), tags=(&lt;Tag.DTYPE: 3&gt;,), type=&lt;class &#39;float&#39;&gt;, data=None),
+    Spec(id=ID(&#39;/humid/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Relative humidity&#39;),
+    Spec(id=ID(&#39;/humid/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;%&#39;),
+    Spec(id=ID(&#39;/location&#39;), tags=(&lt;Tag.ATTR: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Tokyo&#39;),
+])
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">specs</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Specs([
+    Spec(id=ID(&#39;/temp/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Ground temperature&#39;),
+    Spec(id=ID(&#39;/temp/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;K&#39;),
+    Spec(id=ID(&#39;/humid/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Relative humidity&#39;),
+    Spec(id=ID(&#39;/humid/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;%&#39;),
+    Spec(id=ID(&#39;/location&#39;), tags=(&lt;Tag.ATTR: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Tokyo&#39;),
+])
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">specs</span><span class="p">[</span><span class="s2">&quot;/temp/[a-z]+&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Specs([
+    Spec(id=ID(&#39;/temp/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Ground temperature&#39;),
+    Spec(id=ID(&#39;/temp/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;K&#39;),
+])
+</pre></div>
+</div>
+</section>
+<section id="grouping-specifications">
+<h3>Grouping specifications<a class="headerlink" href="#grouping-specifications" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">specs</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[
+    Specs([
+        Spec(id=ID(&#39;/temp&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[20.0, 25.0]),
+        Spec(id=ID(&#39;/humid&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[50.0, 55.0]),
+    ]),
+    Specs([
+        Spec(id=ID(&#39;/temp/0&#39;), tags=(&lt;Tag.DTYPE: 3&gt;,), type=&lt;class &#39;float&#39;&gt;, data=None),
+        Spec(id=ID(&#39;/humid/0&#39;), tags=(&lt;Tag.DTYPE: 3&gt;,), type=&lt;class &#39;float&#39;&gt;, data=None),
+    ]),
+    Specs([
+        Spec(id=ID(&#39;/temp/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Ground temperature&#39;),
+        Spec(id=ID(&#39;/humid/name&#39;), tags=(&lt;Tag.NAME: 4&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Relative humidity&#39;),
+    ]),
+    Specs([
+        Spec(id=ID(&#39;/temp/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;K&#39;),
+        Spec(id=ID(&#39;/humid/units&#39;), tags=(&lt;Tag.UNITS: 5&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;%&#39;),
+    ]),
+    Specs([
+        Spec(id=ID(&#39;/location&#39;), tags=(&lt;Tag.ATTR: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Tokyo&#39;)
+    ]),
+]
+</pre></div>
+</div>
+</section>
+<section id="formatting-specifications">
+<h3>Formatting specifications<a class="headerlink" href="#formatting-specifications" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">auto</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">dataspecs</span> <span class="kn">import</span> <span class="n">TagBase</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="n">from_dataclass</span><span class="p">,</span> <span class="nb">format</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span> <span class="k">as</span> <span class="n">Ann</span>
+
+<span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">TagBase</span><span class="p">):</span>
+    <span class="n">ATTR</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Attrs</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">ATTR</span><span class="p">]</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">ATTR</span><span class="p">]</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Weather</span><span class="p">:</span>
+    <span class="n">temp</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Attrs</span><span class="p">(</span><span class="s2">&quot;Temperature (</span><span class="si">{0}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="p">)]</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Format</span><span class="p">(</span><span class="s2">&quot;/temp/(name|units)&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s2">&quot;degC&quot;</span>
+
+<span class="nb">format</span><span class="p">(</span><span class="n">from_dataclass</span><span class="p">(</span><span class="n">Weather</span><span class="p">([</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">],</span> <span class="s2">&quot;K&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Specs([
+    Spec(id=ID(&#39;/temp&#39;), tags=(), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID(&#39;/temp/0&#39;), tags=(), type=&lt;class &#39;float&#39;&gt;, data=None),
+    Spec(id=ID(&#39;/temp/name&#39;), tags=(&lt;Tag.ATTR: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;Temperature (K)&#39;), # &lt;- formatted
+    Spec(id=ID(&#39;/temp/units&#39;), tags=(&lt;Tag.ATTR: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;K&#39;), # &lt;- formatted
+    Spec(id=ID(&#39;/units&#39;), tags=(), type=&lt;class &#39;str&#39;&gt;, data=&#39;K&#39;),
+    Spec(id=ID(&#39;/units/_format_id&#39;), tags=(&lt;Tag.ID: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;/temp/(name|units)&#39;),
+    Spec(id=ID(&#39;/units/_format_of&#39;), tags=(&lt;Tag.OF: 2&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;data&#39;),
+    Spec(id=ID(&#39;/units/_format_skipif&#39;), tags=(&lt;Tag.SKIPIF: 3&gt;,), type=typing.Any, data=None),
+])
+</pre></div>
+</div>
+</section>
+<section id="replacing-specifications">
+<h3>Replacing specifications<a class="headerlink" href="#replacing-specifications" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">auto</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">dataspecs</span> <span class="kn">import</span> <span class="n">Replace</span><span class="p">,</span> <span class="n">TagBase</span><span class="p">,</span> <span class="n">from_dataclass</span><span class="p">,</span> <span class="n">replace</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span> <span class="k">as</span> <span class="n">Ann</span>
+
+<span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">TagBase</span><span class="p">):</span>
+    <span class="n">ATTR</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">DATA</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">DTYPE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Weather</span><span class="p">:</span>
+    <span class="n">temp</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Ann</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DTYPE</span><span class="p">]],</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">]</span>
+    <span class="n">humid</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Ann</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DTYPE</span><span class="p">]],</span> <span class="n">Tag</span><span class="o">.</span><span class="n">DATA</span><span class="p">]</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Ann</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">Replace</span><span class="p">(</span><span class="s2">&quot;/[a-z]+/0&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">replace</span><span class="p">(</span><span class="n">from_dataclass</span><span class="p">(</span><span class="n">Weather</span><span class="p">([</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">55.0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Specs([
+    Spec(id=ID(&#39;/temp&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[20.0, 25.0]),
+    Spec(id=ID(&#39;/temp/0&#39;), tags=(&lt;Tag.DTYPE: 3&gt;,), type=&lt;class &#39;int&#39;&gt;, data=None), # &lt;- replaced
+    Spec(id=ID(&#39;/humid&#39;), tags=(&lt;Tag.DATA: 2&gt;,), type=list[float], data=[50.0, 55.0]),
+    Spec(id=ID(&#39;/humid/0&#39;), tags=(&lt;Tag.DTYPE: 3&gt;,), type=&lt;class &#39;int&#39;&gt;, data=None), # &lt;- replaced
+    Spec(id=ID(&#39;/dtype&#39;), tags=(), type=&lt;class &#39;type&#39;&gt;, data=&lt;class &#39;int&#39;&gt;),
+    Spec(id=ID(&#39;/dtype/_replace_id&#39;), tags=(&lt;Tag.ID: 1&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;/[a-z]+/0&#39;),
+    Spec(id=ID(&#39;/dtype/_replace_of&#39;), tags=(&lt;Tag.OF: 2&gt;,), type=&lt;class &#39;str&#39;&gt;, data=&#39;type&#39;),
+    Spec(id=ID(&#39;/dtype/_replace_skipif&#39;), tags=(&lt;Tag.SKIPIF: 3&gt;,), type=typing.Any, data=None),
+])
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="_apidoc/dataspecs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">dataspecs package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-specifications">Simple specifications</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nested-specifications">Nested specifications</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selecting-specifications">Selecting specifications</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#grouping-specifications">Grouping specifications</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#formatting-specifications">Formatting specifications</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#replacing-specifications">Replacing specifications</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023-2025 Akio Taniguchi.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
