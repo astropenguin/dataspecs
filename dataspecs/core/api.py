@@ -173,6 +173,7 @@ def from_typehint(
         id: ID of the parent data spec.
         data: Data of the parent data spec.
         metadata: Metadata of the parent data spec.
+        origin: Origin of the parent data spec.
 
     Returns:
         Data specs created from the type hint.

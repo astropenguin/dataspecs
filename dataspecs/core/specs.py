@@ -163,7 +163,7 @@ class Specs(UserList[TSpec]):
                 ``'annotations'``, ``'metadata'``, or ``'origin'`` is accepted.
             method: Grouping method.
                 Either ``'equality'`` (or ``'eq'``; hash-based grouping),
-                or ``'identity'` (or ``'id'``; id-based grouping) is accepted.
+                or ``'identity'`` (or ``'id'``; id-based grouping) is accepted.
 
         Returns:
             List of data specs grouped by the selected data spec attribute.

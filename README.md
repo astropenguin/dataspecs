@@ -39,11 +39,10 @@ class Weather:
 
 
 specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
-specs
+print(specs)
 ```
 ```
 Specs([
-    Spec(id=ID('/'), tags=(), type=<class '__main__.Weather'>, data=Weather(temp=[20.0, 25.0], humid=[50.0, 55.0], location='Tokyo')),
     Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
     Spec(id=ID('/temp/0'), tags=(), type=<class 'float'>, data=None),
     Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
@@ -77,7 +76,7 @@ class Weather:
 
 
 specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
-specs
+print(specs)
 ```
 ```
 Specs([
