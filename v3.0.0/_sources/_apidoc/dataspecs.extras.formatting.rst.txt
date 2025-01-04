@@ -1,0 +1,7 @@
+dataspecs.extras.formatting module
+==================================
+
+.. automodule:: dataspecs.extras.formatting
+   :members:
+   :undoc-members:
+   :show-inheritance:
