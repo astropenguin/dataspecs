@@ -35,7 +35,16 @@ from .typing import (
 
 
 # type hints
-SpecAttr = Literal["id", "tags", "type", "data", "annotations", "metadata", "origin"]
+SpecAttr = Literal[
+    "id",
+    "name",
+    "tags",
+    "type",
+    "data",
+    "annotations",
+    "metadata",
+    "origin",
+]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -91,6 +100,7 @@ class Spec(Generic[TAny]):
 
     Args:
         id: ID of the data spec.
+        name: Name of the data spec.
         tags: Tags of the data spec.
         type: Type hint for the data of the data spec.
         data: Default or final data of the data spec.
@@ -102,6 +112,9 @@ class Spec(Generic[TAny]):
 
     id: ID
     """ID of the data spec."""
+
+    name: Hashable
+    """Name of the data spec."""
 
     tags: tuple[TagBase, ...]
     """Tags of the data spec."""
@@ -159,7 +172,7 @@ class Specs(UserList[TSpec]):
 
         Args:
             by: Name of the data spec attribute for grouping.
-                Either ``'id'``, ``'tags'``, ``'type'``, ``'data'``,
+                Either ``'id'``, ``'name'``, ``'tags'``, ``'type'``, ``'data'``,
                 ``'annotations'``, ``'metadata'``, or ``'origin'`` is accepted.
             method: Grouping method.
                 Either ``'equality'`` (or ``'eq'``; hash-based grouping),
