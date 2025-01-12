@@ -26,6 +26,29 @@ from typing import Annotated as Ann
 ### Simple specifications
 
 ```python
+@dataclass
+class Weather:
+    temp: list[float]
+    humid: list[float]
+    location: str
+
+
+specs = from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
+print(specs)
+```
+```
+Specs([
+    Spec(path=Path('/temp'), name='temp', tags=(), type=list[float], data=[20.0, 25.0]),
+    Spec(path=Path('/temp/0'), name='0', tags=(), type=<class 'float'>, data=None),
+    Spec(path=Path('/humid'), name='humid', tags=(), type=list[float], data=[50.0, 55.0]),
+    Spec(path=Path('/humid/0'), name='0', tags=(), type=<class 'float'>, data=None),
+    Spec(path=Path('/location'), name='location', tags=(), type=<class 'str'>, data='Tokyo'),
+])
+```
+
+### Simple specifications with tags
+
+```python
 class Tag(TagBase):
     ATTR = auto()
     DATA = auto()
@@ -51,7 +74,7 @@ Specs([
 ])
 ```
 
-### Nested specifications
+### Nested specifications (with tags)
 
 ```python
 class Tag(TagBase):
@@ -184,13 +207,13 @@ class Tag(TagBase):
     ATTR = auto()
 
 @dataclass
-class Attrs:
+class Meta:
     name: Ann[str, Tag.ATTR]
     units: Ann[str, Tag.ATTR]
 
 @dataclass
 class Weather:
-    temp: Ann[list[float], Attrs("Temperature ({0})", "{0}")]
+    temp: Ann[list[float], Meta("Temperature ({0})", "{0}")]
     units: Ann[str, Format("/temp/(name|units)")] = "degC"
 
 format(from_dataclass(Weather([20.0, 25.0], "K")))
@@ -199,8 +222,8 @@ format(from_dataclass(Weather([20.0, 25.0], "K")))
 Specs([
     Spec(path=Path('/temp'), name='temp', tags=(), type=list[float], data=[20.0, 25.0]),
     Spec(path=Path('/temp/0'), name='0', tags=(), type=<class 'float'>, data=None),
-    Spec(path=Path('/temp/name'), name='name', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Temperature (K)'), # <- formatted
-    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'), # <- formatted
+    Spec(path=Path('/temp/name'), name='name', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Temperature (K)'), # <- data formatted
+    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'), # <- data formatted
     Spec(path=Path('/units'), name='units', tags=(), type=<class 'str'>, data='K'),
 ])
 ```
@@ -219,8 +242,8 @@ name(from_dataclass(Weather(20.0, 50.0)))
 ```
 ```
 Specs([
-    Spec(path=Path('/temp'), name='Ground temperature', tags=(), type=<class 'float'>, data=20.0), # <- named
-    Spec(path=Path('/humid'), name='Relative humidity', tags=(), type=<class 'float'>, data=50.0), # <- named
+    Spec(path=Path('/temp'), name='Ground temperature', tags=(), type=<class 'float'>, data=20.0), # <- name replaced
+    Spec(path=Path('/humid'), name='Relative humidity', tags=(), type=<class 'float'>, data=50.0), # <- name replaced
 ])
 ```
 
@@ -245,9 +268,9 @@ replace(from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], int)))
 ```
 Specs([
     Spec(path=Path('/temp'), name='temp', tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-    Spec(path=Path('/temp/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
+    Spec(path=Path('/temp/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- type replaced
     Spec(path=Path('/humid'), name='humid', tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-    Spec(path=Path('/humid/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
+    Spec(path=Path('/humid/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- type replaced
     Spec(path=Path('/dtype'), name='dtype', tags=(), type=<class 'type'>, data=<class 'int'>),
 ])
 ```
