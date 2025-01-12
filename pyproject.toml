@@ -29,7 +29,7 @@ repository = "https://github.com/astropenguin/dataspecs"
 
 [dependency-groups]
 dev = [
-    "black>=24.8",
+    "black>=24.10",
     "ipython>=8.18",
     "myst-parser>=3.0",
     "pydata-sphinx-theme>=0.16",
