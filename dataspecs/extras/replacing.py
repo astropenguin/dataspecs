@@ -13,9 +13,9 @@ from ..core.typing import StrPath, TagBase
 
 
 # constants
-class Tag(TagBase):
-    ID = auto()
-    OF = auto()
+class ReplaceTag(TagBase):
+    ATTR = auto()
+    PATH = auto()
     SKIPIF = auto()
 
 
@@ -24,19 +24,19 @@ class Replace:
     """Annotation for replacer specs.
 
     Args:
-        _replace_id: ID of data spec(s) to be replaced.
-        _replace_of: Name of data spec attribute to be replaced.
+        _replace_path: Path of data spec(s) to be replaced.
+        _replace_attr: Name of data spec attribute to be replaced.
         _replace_skipif: Sentinel value for which replacing is skipped.
 
     """
 
-    _replace_id: Annotated[StrPath, Tag.ID]
-    """ID of data spec(s) to be replaced."""
+    _replace_path: Annotated[StrPath, ReplaceTag.PATH]
+    """Path of data spec(s) to be replaced."""
 
-    _replace_of: Annotated[SpecAttr, Tag.OF] = "data"
+    _replace_attr: Annotated[SpecAttr, ReplaceTag.ATTR] = "data"
     """Name of data spec attribute to be replaced."""
 
-    _replace_skipif: Annotated[Any, Tag.SKIPIF] = None
+    _replace_skipif: Annotated[Any, ReplaceTag.SKIPIF] = None
     """Sentinel value for which replacing is skipped."""
 
 
@@ -74,50 +74,50 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
 
             Specs([
                 Spec(
-                    id=ID('/temp'),
+                    path=Path('/temp'),
                     tags=(<Tag.DATA: 2>,),
                     type=list[float],
                     data=[20.0, 25.0],
                 ),
                 Spec(
-                    id=ID('/temp/0'),
+                    path=Path('/temp/0'),
                     tags=(<Tag.DTYPE: 3>,),
                     type=<class 'int'>, # <- replaced
                     data=None,
                 ),
                 Spec(
-                    id=ID('/humid'),
+                    path=Path('/humid'),
                     tags=(<Tag.DATA: 2>,),
                     type=list[float],
                     data=[50.0, 55.0],
                 ),
                 Spec(
-                    id=ID('/humid/0'),
+                    path=Path('/humid/0'),
                     tags=(<Tag.DTYPE: 3>,),
                     type=<class 'int'>, # <- replaced
                     data=None,
                 ),
                 Spec(
-                    id=ID('/dtype'),
+                    path=Path('/dtype'),
                     tags=(),
                     type=<class 'type'>,
                     data=<class 'int'>,
                 ),
                 Spec(
-                    id=ID('/dtype/_replace_id'),
-                    tags=(<Tag.ID: 1>,),
+                    path=Path('/dtype/_replace_path'),
+                    tags=(<ReplaceTag.PATH: 1>,),
                     type=<class 'str'>,
                     data='/[a-z]+/0',
                 ),
                 Spec(
-                    id=ID('/dtype/_replace_of'),
-                    tags=(<Tag.OF: 2>,),
-                    type=<class 'str'>,
+                    path=Path('/dtype/_replace_attr'),
+                    tags=(<ReplaceTag.ATTR: 2>,),
+                    type=typing.Literal['path', 'name', 'tags', 'type', 'data', 'anns', 'meta', 'orig'],
                     data='type',
                 ),
                 Spec(
-                    id=ID('/dtype/_replace_skipif'),
-                    tags=(<Tag.SKIPIF: 3>,),
+                    path=Path('/dtype/_replace_skipif'),
+                    tags=(<ReplaceTag.SKIPIF: 3>,),
                     type=typing.Any,
                     data=None,
                 ),
@@ -127,20 +127,20 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
     new = specs.copy()
 
     for spec in specs:
-        for options in specs[spec.id.children].groupby("origin", method="id"):
+        for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
-                (id := options[Tag.ID].unique) is None
-                or (of := options[Tag.OF].unique) is None
-                or (skipif := options[Tag.SKIPIF].unique) is None
+                (path := options[ReplaceTag.PATH].unique) is None
+                or (attr := options[ReplaceTag.ATTR].unique) is None
+                or (skipif := options[ReplaceTag.SKIPIF].unique) is None
             ):
                 continue
 
             if spec.data == skipif.data:
                 continue
 
-            for target in new[id[str].data]:
-                changes = {of[str].data: spec.data}
-                updated = replace_(target, **changes)  # type: ignore
+            for target in new[path[str].data]:
+                changes = {attr[str].data: spec.data}
+                updated = replace_(target, **changes)
                 new = new.replace(target, updated)
 
     return new

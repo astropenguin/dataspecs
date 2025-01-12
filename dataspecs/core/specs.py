@@ -1,4 +1,4 @@
-__all__ = ["ID", "ROOT", "Spec", "Specs"]
+__all__ = ["ROOT", "Path", "Spec", "Specs"]
 
 
 # standard library
@@ -35,16 +35,7 @@ from .typing import (
 
 
 # type hints
-SpecAttr = Literal[
-    "id",
-    "name",
-    "tags",
-    "type",
-    "data",
-    "annotations",
-    "metadata",
-    "origin",
-]
+SpecAttr = Literal["path", "name", "tags", "type", "data", "anns", "meta", "orig"]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -52,15 +43,15 @@ TSpec = TypeVar("TSpec", bound="Spec[Any]")
 ROOT_PATH = "/"
 
 
-class ID(PurePosixPath):
-    """Identifier (ID) for data specs.
+class Path(PurePosixPath):
+    """Path for data specs.
 
     It is based on ``PurePosixPath``, however,
-    the differences are an ID must start with the root (``/``)
+    the differences are a path must start with the root (``/``)
     and the ``match`` method full-matches a regular expression.
 
     Args:
-        *segments: Path segments to create an ID.
+        *segments: Segments to create a path.
 
     Raises:
         ValueError: Raised if it does not start with the root.
@@ -71,27 +62,27 @@ class ID(PurePosixPath):
     # PurePosixPath does not implement __init__ in Python < 3.12.
     def __new__(cls, *segments: StrPath) -> Self:
         if PurePosixPath(*segments).root != ROOT_PATH:
-            raise ValueError("ID must start with the root (/).")
+            raise ValueError("Path must start with the root (/).")
 
         return super().__new__(cls, *segments)
 
     @property
     def children(self) -> Self:
-        """Return the regular expression that matches the child IDs."""
+        """Return the regular expression that matches the child paths."""
         return self / "[^/]+"
 
     @property
     def descendants(self) -> Self:
-        """Return the regular expression that matches the descendant IDs."""
+        """Return the regular expression that matches the descendant paths."""
         return self / ".+"
 
     def match(self, pattern: StrPath, /) -> bool:
-        """Check if the ID full-matches a regular expression."""
+        """Check if the path full-matches a regular expression."""
         return bool(fullmatch(fspath(pattern), fspath(self)))
 
 
-ROOT = ID(ROOT_PATH)
-"""Root ID."""
+ROOT = Path(ROOT_PATH)
+"""Root path."""
 
 
 @dataclass(frozen=True)
@@ -99,19 +90,19 @@ class Spec(Generic[TAny]):
     """Data specification (data spec).
 
     Args:
-        id: ID of the data spec.
+        path: Path of the data spec.
         name: Name of the data spec.
         tags: Tags of the data spec.
-        type: Type hint for the data of the data spec.
+        type: Type hint (unannotated) of the data spec.
         data: Default or final data of the data spec.
-        annotations: Type hint annotations of the data spec.
-        metadata: Metadata of the data spec.
-        origin: Origin of the data spec.
+        anns: Type hint annotations of the data spec.
+        meta: Metadata of the data spec.
+        orig: Origin of the data spec.
 
     """
 
-    id: ID
-    """ID of the data spec."""
+    path: Path
+    """Path of the data spec."""
 
     name: Hashable
     """Name of the data spec."""
@@ -120,23 +111,23 @@ class Spec(Generic[TAny]):
     """Tags of the data spec."""
 
     type: Any
-    """Type hint for the data of the data spec."""
+    """Type hint (unannotated) of the data spec."""
 
     data: TAny
     """Default or final data of the data spec."""
 
-    annotations: tuple[Any, ...] = field(default_factory=tuple, repr=False)
+    anns: tuple[Any, ...] = field(default_factory=tuple, repr=False)
     """Type hint annotations of the data spec."""
 
-    metadata: dict[str, Any] = field(default_factory=dict, repr=False)
+    meta: dict[str, Any] = field(default_factory=dict, repr=False)
     """Metadata of the data spec."""
 
-    origin: Optional[Any] = field(default=None, repr=False)
+    orig: Optional[Any] = field(default=None, repr=False)
     """Origin of the data spec."""
 
     def __call__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Dynamically cast the data of the data spec."""
-        return replace(self, data=type(self.data))  # type: ignore
+        return replace(self, type=type, data=type(self.data))  # type: ignore
 
     def __getitem__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Statically cast the data of the data spec."""
@@ -172,8 +163,8 @@ class Specs(UserList[TSpec]):
 
         Args:
             by: Name of the data spec attribute for grouping.
-                Either ``'id'``, ``'name'``, ``'tags'``, ``'type'``, ``'data'``,
-                ``'annotations'``, ``'metadata'``, or ``'origin'`` is accepted.
+                Either ``'path'``, ``'name'``, ``'tags'``, ``'type'``,
+                ``'data'``, ``'anns'``, ``'meta'``, or ``'orig'`` is accepted.
             method: Grouping method.
                 Either ``'equality'`` (or ``'eq'``; hash-based grouping),
                 or ``'identity'`` (or ``'id'``; id-based grouping) is accepted.
@@ -252,7 +243,7 @@ class Specs(UserList[TSpec]):
             )
 
         if is_strpath(index):
-            return type(self)(spec for spec in self if spec.id.match(index))
+            return type(self)(spec for spec in self if spec.path.match(index))
 
         if index is None:
             return self.copy()  # shallow copy

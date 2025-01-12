@@ -13,9 +13,9 @@ from ..core.typing import StrPath, TagBase
 
 
 # constants
-class Tag(TagBase):
-    ID = auto()
-    OF = auto()
+class FormatTag(TagBase):
+    ATTR = auto()
+    PATH = auto()
     SKIPIF = auto()
 
 
@@ -24,19 +24,19 @@ class Format:
     """Annotation for formatter specs.
 
     Args:
-        _format_id: ID of data spec(s) to be formatted.
-        _format_of: Name of data spec attribute to be formatted.
+        _format_path: Path of data spec(s) to be formatted.
+        _format_attr: Name of data spec attribute to be formatted.
         _format_skipif: Sentinel value for which formatting is skipped.
 
     """
 
-    _format_id: Annotated[StrPath, Tag.ID]
-    """ID of data spec(s) to be formatted."""
+    _format_path: Annotated[StrPath, FormatTag.PATH]
+    """Path of data spec(s) to be formatted."""
 
-    _format_of: Annotated[SpecAttr, Tag.OF] = "data"
+    _format_attr: Annotated[SpecAttr, FormatTag.ATTR] = "data"
     """Name of data spec attribute to be formatted."""
 
-    _format_skipif: Annotated[Any, Tag.SKIPIF] = None
+    _format_skipif: Annotated[Any, FormatTag.SKIPIF] = None
     """Sentinel value for which formatting is skipped."""
 
 
@@ -76,49 +76,49 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
 
             Specs([
                 Spec(
-                    id=ID('/temp'),
+                    path=Path('/temp'),
                     tags=(),
                     type=list[float],
                     data=[20.0, 25.0],
                 ),
                 Spec(
-                    id=ID('/temp/0'),
+                    path=Path('/temp/0'),
                     tags=(),
                     type=<class 'float'>,
                     data=None,
                 ),
                 Spec(
-                    id=ID('/temp/name'),
+                    path=Path('/temp/name'),
                     tags=(<Tag.ATTR: 1>,),
                     type=<class 'str'>,
                     data='Temperature (K)', # <- formatted
                 ),
                 Spec(
-                    id=ID('/temp/units'),
+                    path=Path('/temp/units'),
                     tags=(<Tag.ATTR: 1>,),
                     type=<class 'str'>, data='K', # <- formatted
                 ),
                 Spec(
-                    id=ID('/units'),
+                    path=Path('/units'),
                     tags=(),
                     type=<class 'str'>,
                     data='K',
                 ),
                 Spec(
-                    id=ID('/units/_format_id'),
-                    tags=(<Tag.ID: 1>,),
+                    path=Path('/units/_format_path'),
+                    tags=(<FormatTag.PATH: 1>,),
                     type=<class 'str'>,
                     data='/temp/attrs/(name|units)',
                 ),
                 Spec(
-                    id=ID('/units/_format_of'),
-                    tags=(<Tag.OF: 2>,),
-                    type=<class 'str'>,
+                    path=Path('/units/_format_attr'),
+                    tags=(<FormatTag.ATTR: 2>,),
+                    type=typing.Literal['path', 'name', 'tags', 'type', 'data', 'anns', 'meta', 'orig'],
                     data='data',
                 ),
                 Spec(
-                    id=ID('/units/_format_skipif'),
-                    tags=(<Tag.SKIPIF: 3>,),
+                    path=Path('/units/_format_skipif'),
+                    tags=(<FormatTag.SKIPIF: 3>,),
                     type=typing.Any,
                     data=None,
                 ),
@@ -128,21 +128,21 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
     new = specs.copy()
 
     for spec in specs:
-        for options in specs[spec.id.children].groupby("origin", method="id"):
+        for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
-                (id := options[Tag.ID].unique) is None
-                or (of := options[Tag.OF].unique) is None
-                or (skipif := options[Tag.SKIPIF].unique) is None
+                (path := options[FormatTag.PATH].unique) is None
+                or (attr := options[FormatTag.ATTR].unique) is None
+                or (skipif := options[FormatTag.SKIPIF].unique) is None
             ):
                 continue
 
             if spec.data == skipif.data:
                 continue
 
-            for target in new[id[str].data]:
-                attr: str = getattr(target, of[str].data)
-                changes = {of[str].data: attr.format(spec.data)}
-                updated = replace(target, **changes)  # type: ignore
+            for target in new[path[str].data]:
+                string: str = getattr(target, attr[str].data)
+                changes = {attr[str].data: string.format(spec.data)}
+                updated = replace(target, **changes)
                 new = new.replace(target, updated)
 
     return new
