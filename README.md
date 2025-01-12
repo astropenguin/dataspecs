@@ -206,7 +206,7 @@ Specs([
     Spec(path=Path('/temp/units'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'), # <- formatted
     Spec(path=Path('/units'), tags=(), type=<class 'str'>, data='K'),
     Spec(path=Path('/units/_format_path'), tags=(<Tag.PATH: 1>,), type=<class 'str'>, data='/temp/(name|units)'),
-    Spec(path=Path('/units/_format_of'), tags=(<Tag.OF: 2>,), type=<class 'str'>, data='data'),
+    Spec(path=Path('/units/_format_attr'), tags=(<Tag.ATTR: 2>,), type=<class 'str'>, data='data'),
     Spec(path=Path('/units/_format_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
 ])
 ```
@@ -263,7 +263,7 @@ Specs([
     Spec(path=Path('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
     Spec(path=Path('/dtype'), tags=(), type=<class 'type'>, data=<class 'int'>),
     Spec(path=Path('/dtype/_replace_path'), tags=(<Tag.PATH: 1>,), type=<class 'str'>, data='/[a-z]+/0'),
-    Spec(path=Path('/dtype/_replace_of'), tags=(<Tag.OF: 2>,), type=<class 'str'>, data='type'),
+    Spec(path=Path('/dtype/_replace_attr'), tags=(<Tag.ATTR: 2>,), type=<class 'str'>, data='type'),
     Spec(path=Path('/dtype/_replace_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
 ])
 ```

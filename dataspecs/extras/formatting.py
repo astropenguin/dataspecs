@@ -14,8 +14,8 @@ from ..core.typing import StrPath, TagBase
 
 # constants
 class Tag(TagBase):
+    ATTR = auto()
     PATH = auto()
-    OF = auto()
     SKIPIF = auto()
 
 
@@ -25,7 +25,7 @@ class Format:
 
     Args:
         _format_path: Path of data spec(s) to be formatted.
-        _format_of: Name of data spec attribute to be formatted.
+        _format_attr: Name of data spec attribute to be formatted.
         _format_skipif: Sentinel value for which formatting is skipped.
 
     """
@@ -33,7 +33,7 @@ class Format:
     _format_path: Annotated[StrPath, Tag.PATH]
     """Path of data spec(s) to be formatted."""
 
-    _format_of: Annotated[SpecAttr, Tag.OF] = "data"
+    _format_attr: Annotated[SpecAttr, Tag.ATTR] = "data"
     """Name of data spec attribute to be formatted."""
 
     _format_skipif: Annotated[Any, Tag.SKIPIF] = None
@@ -111,8 +111,8 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
                     data='/temp/attrs/(name|units)',
                 ),
                 Spec(
-                    path=Path('/units/_format_of'),
-                    tags=(<Tag.OF: 2>,),
+                    path=Path('/units/_format_attr'),
+                    tags=(<Tag.ATTR: 2>,),
                     type=<class 'str'>,
                     data='data',
                 ),
@@ -131,7 +131,7 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
         for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
                 (path := options[Tag.PATH].unique) is None
-                or (of := options[Tag.OF].unique) is None
+                or (attr := options[Tag.ATTR].unique) is None
                 or (skipif := options[Tag.SKIPIF].unique) is None
             ):
                 continue
@@ -140,9 +140,9 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 continue
 
             for target in new[path[str].data]:
-                attr: str = getattr(target, of[str].data)
-                changes = {of[str].data: attr.format(spec.data)}
-                updated = replace(target, **changes)  # type: ignore
+                string: str = getattr(target, attr[str].data)
+                changes = {attr[str].data: string.format(spec.data)}
+                updated = replace(target, **changes)
                 new = new.replace(target, updated)
 
     return new

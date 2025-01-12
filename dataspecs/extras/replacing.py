@@ -14,8 +14,8 @@ from ..core.typing import StrPath, TagBase
 
 # constants
 class Tag(TagBase):
+    ATTR = auto()
     PATH = auto()
-    OF = auto()
     SKIPIF = auto()
 
 
@@ -25,7 +25,7 @@ class Replace:
 
     Args:
         _replace_path: Path of data spec(s) to be replaced.
-        _replace_of: Name of data spec attribute to be replaced.
+        _replace_attr: Name of data spec attribute to be replaced.
         _replace_skipif: Sentinel value for which replacing is skipped.
 
     """
@@ -33,7 +33,7 @@ class Replace:
     _replace_path: Annotated[StrPath, Tag.PATH]
     """Path of data spec(s) to be replaced."""
 
-    _replace_of: Annotated[SpecAttr, Tag.OF] = "data"
+    _replace_attr: Annotated[SpecAttr, Tag.ATTR] = "data"
     """Name of data spec attribute to be replaced."""
 
     _replace_skipif: Annotated[Any, Tag.SKIPIF] = None
@@ -110,8 +110,8 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
                     data='/[a-z]+/0',
                 ),
                 Spec(
-                    path=Path('/dtype/_replace_of'),
-                    tags=(<Tag.OF: 2>,),
+                    path=Path('/dtype/_replace_attr'),
+                    tags=(<Tag.ATTR: 2>,),
                     type=<class 'str'>,
                     data='type',
                 ),
@@ -130,7 +130,7 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
         for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
                 (path := options[Tag.PATH].unique) is None
-                or (of := options[Tag.OF].unique) is None
+                or (attr := options[Tag.ATTR].unique) is None
                 or (skipif := options[Tag.SKIPIF].unique) is None
             ):
                 continue
@@ -139,8 +139,8 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 continue
 
             for target in new[path[str].data]:
-                changes = {of[str].data: spec.data}
-                updated = replace_(target, **changes)  # type: ignore
+                changes = {attr[str].data: spec.data}
+                updated = replace_(target, **changes)
                 new = new.replace(target, updated)
 
     return new
