@@ -12,8 +12,10 @@ __all__ = [
     "from_typehint",
     # aliases (extras)
     "Format",
+    "Name",
     "Replace",
     "format",
+    "name",
     "replace",
 ]
 __version__ = "3.0.1"
@@ -32,4 +34,5 @@ from .core.typing import *
 
 # aliases (extras)
 from .extras.formatting import *
+from .extras.naming import *
 from .extras.replacing import *

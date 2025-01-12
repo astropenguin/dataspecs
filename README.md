@@ -14,7 +14,7 @@ Data specifications by data classes
 pip install dataspecs
 ```
 
-## Usage
+## Basic usage
 
 ```python
 from dataclasses import dataclass
@@ -144,6 +144,8 @@ Specs([
 ])
 ```
 
+## Advanced usage
+
 ### Grouping specifications
 
 ```python
@@ -206,6 +208,29 @@ Specs([
     Spec(id=ID('/units/_format_id'), tags=(<Tag.ID: 1>,), type=<class 'str'>, data='/temp/(name|units)'),
     Spec(id=ID('/units/_format_of'), tags=(<Tag.OF: 2>,), type=<class 'str'>, data='data'),
     Spec(id=ID('/units/_format_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
+])
+```
+
+### Naming specifications
+
+```python
+from dataclasses import dataclass
+from dataspecs import Name, name, from_dataclass
+from typing import Annotated as Ann
+
+@dataclass
+class Weather:
+    temp: Ann[float, Name("Ground temperature")]
+    humid: Ann[float, Name("Relative humidity")]
+
+name(from_dataclass(Weather(20.0, 50.0)))
+```
+```
+Specs([
+    Spec(id=ID('/temp'), name='Ground temperature', tags=(), type=<class 'float'>, data=20.0), # <- named
+    Spec(id=ID('/temp/_name'), name='_name', tags=(<Tag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Ground temperature'),
+    Spec(id=ID('/humid'), name='Relative humidity', tags=(), type=<class 'float'>, data=50.0), # <- named
+    Spec(id=ID('/humid/_name'), name='_name', tags=(<Tag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Relative humidity'),
 ])
 ```
 
