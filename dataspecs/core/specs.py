@@ -127,7 +127,7 @@ class Spec(Generic[TAny]):
 
     def __call__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Dynamically cast the data of the data spec."""
-        return replace(self, data=type(self.data))  # type: ignore
+        return replace(self, type=type, data=type(self.data))  # type: ignore
 
     def __getitem__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Statically cast the data of the data spec."""
