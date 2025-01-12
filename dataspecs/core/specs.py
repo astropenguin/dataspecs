@@ -6,7 +6,7 @@ from collections import UserList, defaultdict
 from dataclasses import dataclass, field, replace
 from os import fspath
 from pathlib import PurePosixPath
-from re import fullmatch
+from re import escape, fullmatch
 from typing import (
     Any,
     Callable,
@@ -40,7 +40,7 @@ TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
 # constants
-ROOT_PATH = "/"
+ROOT_STR = "/"
 
 
 class Path(PurePosixPath):
@@ -61,7 +61,7 @@ class Path(PurePosixPath):
     # Implementation of __new__ is essential because
     # PurePosixPath does not implement __init__ in Python < 3.12.
     def __new__(cls, *segments: StrPath) -> Self:
-        if PurePosixPath(*segments).root != ROOT_PATH:
+        if PurePosixPath(*segments).root != ROOT_STR:
             raise ValueError("Path must start with the root (/).")
 
         return super().__new__(cls, *segments)
@@ -69,19 +69,24 @@ class Path(PurePosixPath):
     @property
     def children(self) -> Self:
         """Return the regular expression that matches the child paths."""
-        return self / "[^/]+"
+        return self.regex / "[^/]+"
 
     @property
     def descendants(self) -> Self:
         """Return the regular expression that matches the descendant paths."""
-        return self / ".+"
+        return self.regex / ".+"
+
+    @property
+    def regex(self) -> Self:
+        """Return the regular expression that matches the path itself."""
+        return type(self)(escape(fspath(self)))
 
     def match(self, pattern: StrPath, /) -> bool:
         """Check if the path full-matches a regular expression."""
         return bool(fullmatch(fspath(pattern), fspath(self)))
 
 
-ROOT = Path(ROOT_PATH)
+ROOT = Path(ROOT_STR)
 """Root path."""
 
 
