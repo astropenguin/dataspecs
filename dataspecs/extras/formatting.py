@@ -113,7 +113,7 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 Spec(
                     path=Path('/units/_format_attr'),
                     tags=(<FormatTag.ATTR: 2>,),
-                    type=<class 'str'>,
+                    type=typing.Literal['path', 'name', 'tags', 'type', 'data', 'anns', 'meta', 'orig'],
                     data='data',
                 ),
                 Spec(

@@ -112,7 +112,7 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 Spec(
                     path=Path('/dtype/_replace_attr'),
                     tags=(<ReplaceTag.ATTR: 2>,),
-                    type=<class 'str'>,
+                    type=typing.Literal['path', 'name', 'tags', 'type', 'data', 'anns', 'meta', 'orig'],
                     data='type',
                 ),
                 Spec(

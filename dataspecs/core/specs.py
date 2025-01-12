@@ -93,7 +93,7 @@ class Spec(Generic[TAny]):
         path: Path of the data spec.
         name: Name of the data spec.
         tags: Tags of the data spec.
-        type: Type hint of the data spec.
+        type: Type hint (unannotated) of the data spec.
         data: Default or final data of the data spec.
         anns: Type hint annotations of the data spec.
         meta: Metadata of the data spec.
@@ -111,7 +111,7 @@ class Spec(Generic[TAny]):
     """Tags of the data spec."""
 
     type: Any
-    """Type hint of the data spec."""
+    """Type hint (unannotated) of the data spec."""
 
     data: TAny
     """Default or final data of the data spec."""
