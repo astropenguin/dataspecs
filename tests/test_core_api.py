@@ -6,7 +6,7 @@ from typing import Annotated as Ann, Any, TypeVar, Union
 
 # dependencies
 from dataspecs.core.api import from_dataclass
-from dataspecs.core.specs import ID, Spec, Specs
+from dataspecs.core.specs import Path, Spec, Specs
 from dataspecs.core.typing import TagBase
 
 
@@ -43,7 +43,7 @@ class Weather:
 specs: Specs[Spec[Any]] = Specs(
     [
         Spec(
-            id=ID("/temp"),
+            path=Path("/temp"),
             name="temp",
             tags=(Tag.DATA,),
             type=list[float],
@@ -52,7 +52,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
-            id=ID("/temp/0"),
+            path=Path("/temp/0"),
             name="0",
             tags=(Tag.DTYPE,),
             type=float,
@@ -61,7 +61,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Union[Ann[Data[float], Quantity("Temperature", "K")], float],
         ),
         Spec(
-            id=ID("/temp/name"),
+            path=Path("/temp/name"),
             name="name",
             tags=(Tag.NAME,),
             type=str,
@@ -70,7 +70,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Quantity("Temperature", "K"),
         ),
         Spec(
-            id=ID("/temp/units"),
+            path=Path("/temp/units"),
             name="units",
             tags=(Tag.UNITS,),
             type=str,
@@ -79,7 +79,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Quantity("Temperature", "K"),
         ),
         Spec(
-            id=ID("/humid"),
+            path=Path("/humid"),
             name="humid",
             tags=(Tag.DATA,),
             type=list[float],
@@ -88,7 +88,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
-            id=ID("/humid/0"),
+            path=Path("/humid/0"),
             name="0",
             tags=(Tag.DTYPE,),
             type=float,
@@ -97,7 +97,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Union[Ann[Data[float], Quantity("Humidity", "%")], float],
         ),
         Spec(
-            id=ID("/humid/name"),
+            path=Path("/humid/name"),
             name="name",
             tags=(Tag.NAME,),
             type=str,
@@ -106,7 +106,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Quantity("Humidity", "%"),
         ),
         Spec(
-            id=ID("/humid/units"),
+            path=Path("/humid/units"),
             name="units",
             tags=(Tag.UNITS,),
             type=str,
@@ -115,7 +115,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Quantity("Humidity", "%"),
         ),
         Spec(
-            id=ID("/lon"),
+            path=Path("/lon"),
             name="lon",
             tags=(Tag.ATTR,),
             type=float,
@@ -124,7 +124,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
-            id=ID("/lon/name"),
+            path=Path("/lon/name"),
             name="name",
             tags=(Tag.NAME,),
             type=str,
@@ -133,7 +133,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Quantity("Longitude", "deg"),
         ),
         Spec(
-            id=ID("/lon/units"),
+            path=Path("/lon/units"),
             name="units",
             tags=(Tag.UNITS,),
             type=str,
@@ -142,7 +142,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Quantity("Longitude", "deg"),
         ),
         Spec(
-            id=ID("/lat"),
+            path=Path("/lat"),
             name="lat",
             tags=(Tag.ATTR,),
             type=float,
@@ -151,7 +151,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
-            id=ID("/lat/name"),
+            path=Path("/lat/name"),
             name="name",
             tags=(Tag.NAME,),
             type=str,
@@ -160,7 +160,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Quantity("Latitude", "deg"),
         ),
         Spec(
-            id=ID("/lat/units"),
+            path=Path("/lat/units"),
             name="units",
             tags=(Tag.UNITS,),
             type=str,
@@ -169,7 +169,7 @@ specs: Specs[Spec[Any]] = Specs(
             origin=Quantity("Latitude", "deg"),
         ),
         Spec(
-            id=ID("/memo"),
+            path=Path("/memo"),
             name="memo",
             tags=(),
             type=str,

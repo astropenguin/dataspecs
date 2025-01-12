@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 
 # dependencies
-from dataspecs.core.specs import ID, SpecAttr, Spec, Specs
+from dataspecs.core.specs import Path, SpecAttr, Spec, Specs
 from dataspecs.core.typing import TagBase
 from pytest import mark, raises
 
@@ -22,43 +22,43 @@ class Tag(TagBase):
 
 specs = Specs(
     [
-        Spec(ID("/a"), "a", (Tag.DATA,), int, None),
-        Spec(ID("/a/name"), "name", (Tag.NAME,), str, None),
-        Spec(ID("/a/units"), "units", (Tag.UNITS,), str, None),
-        Spec(ID("/b"), "b", (Tag.DATA,), int, None),
-        Spec(ID("/b/name"), "name", (Tag.NAME,), str, None),
-        Spec(ID("/b/units"), "units", (Tag.UNITS,), str, None),
-        Spec(ID("/c"), "c", (), int, None),
+        Spec(Path("/a"), "a", (Tag.DATA,), int, None),
+        Spec(Path("/a/name"), "name", (Tag.NAME,), str, None),
+        Spec(Path("/a/units"), "units", (Tag.UNITS,), str, None),
+        Spec(Path("/b"), "b", (Tag.DATA,), int, None),
+        Spec(Path("/b/name"), "name", (Tag.NAME,), str, None),
+        Spec(Path("/b/units"), "units", (Tag.UNITS,), str, None),
+        Spec(Path("/c"), "c", (), int, None),
     ]
 )
 
-data_id_init: TestData = [
+data_path_init: TestData = [
     ("/", True),
     ("/a", True),
     ("", ValueError),
     ("a", ValueError),
 ]
 
-data_id_match: TestData = [
-    (ID("/"), "/", True),
-    (ID("/"), "/.*", True),
-    (ID("/"), ".*", True),
-    (ID("/"), "/a", False),
+data_path_match: TestData = [
+    (Path("/"), "/", True),
+    (Path("/"), "/.*", True),
+    (Path("/"), ".*", True),
+    (Path("/"), "/a", False),
     #
-    (ID("/a"), "/a", True),
-    (ID("/a"), "/.*", True),
-    (ID("/a"), ".*", True),
-    (ID("/a"), "/b", False),
+    (Path("/a"), "/a", True),
+    (Path("/a"), "/.*", True),
+    (Path("/a"), ".*", True),
+    (Path("/a"), "/b", False),
     #
-    (ID("/a/b"), "/a/b", True),
-    (ID("/a/b"), "/a/.*", True),
-    (ID("/a/b"), "/.*/b", True),
-    (ID("/a/b"), "/.*/.*", True),
-    (ID("/a/b"), "/.*", True),
-    (ID("/a/b"), ".*", True),
-    (ID("/a/b"), "/a/c", False),
-    (ID("/a/b"), "/c/b", False),
-    (ID("/a/b"), "/c/d", False),
+    (Path("/a/b"), "/a/b", True),
+    (Path("/a/b"), "/a/.*", True),
+    (Path("/a/b"), "/.*/b", True),
+    (Path("/a/b"), "/.*/.*", True),
+    (Path("/a/b"), "/.*", True),
+    (Path("/a/b"), ".*", True),
+    (Path("/a/b"), "/a/c", False),
+    (Path("/a/b"), "/c/b", False),
+    (Path("/a/b"), "/c/d", False),
 ]
 
 data_specs_first: TestData = [
@@ -84,7 +84,7 @@ data_specs_unique: TestData = [
 
 data_specs_groupby: TestData = [
     (
-        "id",
+        "path",
         [
             specs[0:1],
             specs[1:2],
@@ -158,18 +158,18 @@ data_specs_getitem: TestData = [
 
 
 # test functions
-@mark.parametrize("tester, expected", data_id_init)
-def test_id_init(tester: str, expected: Any) -> None:
+@mark.parametrize("tester, expected", data_path_init)
+def test_path_init(tester: str, expected: Any) -> None:
     if expected is ValueError:
         with raises(expected):
-            ID(tester)
+            Path(tester)
     else:
-        assert ID(tester)
+        assert Path(tester)
 
 
-@mark.parametrize("id, tester, expected", data_id_match)
-def test_id_match(id: ID, tester: str, expected: bool) -> None:
-    assert id.match(tester) == expected
+@mark.parametrize("path, tester, expected", data_path_match)
+def test_path_match(path: Path, tester: str, expected: bool) -> None:
+    assert path.match(tester) == expected
 
 
 @mark.parametrize("tester, expected", data_specs_first)

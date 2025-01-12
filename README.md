@@ -43,11 +43,11 @@ print(specs)
 ```
 ```
 Specs([
-    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-    Spec(id=ID('/temp/0'), tags=(), type=<class 'float'>, data=None),
-    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-    Spec(id=ID('/humid/0'), tags=(), type=<class 'float'>, data=None),
-    Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
+    Spec(path=Path('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(path=Path('/temp/0'), tags=(), type=<class 'float'>, data=None),
+    Spec(path=Path('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+    Spec(path=Path('/humid/0'), tags=(), type=<class 'float'>, data=None),
+    Spec(path=Path('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
 ])
 ```
 
@@ -80,15 +80,15 @@ print(specs)
 ```
 ```
 Specs([
-    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-    Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-    Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-    Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
-    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-    Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-    Spec(id=ID('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
-    Spec(id=ID('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
-    Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
+    Spec(path=Path('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(path=Path('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+    Spec(path=Path('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+    Spec(path=Path('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+    Spec(path=Path('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+    Spec(path=Path('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+    Spec(path=Path('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
+    Spec(path=Path('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
+    Spec(path=Path('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
 ])
 ```
 
@@ -99,8 +99,8 @@ specs[Tag.DATA]
 ```
 ```
 Specs([
-    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+    Spec(path=Path('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(path=Path('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
 ])
 ```
 
@@ -109,15 +109,15 @@ specs[Tag]
 ```
 ```
 Specs([
-    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-    Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-    Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-    Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
-    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-    Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-    Spec(id=ID('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
-    Spec(id=ID('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
-    Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
+    Spec(path=Path('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(path=Path('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+    Spec(path=Path('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+    Spec(path=Path('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+    Spec(path=Path('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+    Spec(path=Path('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+    Spec(path=Path('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
+    Spec(path=Path('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
+    Spec(path=Path('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
 ])
 ```
 
@@ -126,11 +126,11 @@ specs[str]
 ```
 ```
 Specs([
-    Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-    Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
-    Spec(id=ID('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
-    Spec(id=ID('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
-    Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
+    Spec(path=Path('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+    Spec(path=Path('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+    Spec(path=Path('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
+    Spec(path=Path('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
+    Spec(path=Path('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo'),
 ])
 ```
 
@@ -139,8 +139,8 @@ specs["/temp/[a-z]+"]
 ```
 ```
 Specs([
-    Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-    Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+    Spec(path=Path('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+    Spec(path=Path('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
 ])
 ```
 
@@ -154,23 +154,23 @@ specs.groupby("tags")
 ```
 [
     Specs([
-        Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-        Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+        Spec(path=Path('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+        Spec(path=Path('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
     ]),
     Specs([
-        Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-        Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+        Spec(path=Path('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
+        Spec(path=Path('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
     ]),
     Specs([
-        Spec(id=ID('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
-        Spec(id=ID('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
+        Spec(path=Path('/temp/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Ground temperature'),
+        Spec(path=Path('/humid/name'), tags=(<Tag.NAME: 4>,), type=<class 'str'>, data='Relative humidity'),
     ]),
     Specs([
-        Spec(id=ID('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
-        Spec(id=ID('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
+        Spec(path=Path('/temp/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='K'),
+        Spec(path=Path('/humid/units'), tags=(<Tag.UNITS: 5>,), type=<class 'str'>, data='%'),
     ]),
     Specs([
-        Spec(id=ID('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')
+        Spec(path=Path('/location'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Tokyo')
     ]),
 ]
 ```
@@ -200,14 +200,14 @@ format(from_dataclass(Weather([20.0, 25.0], "K")))
 ```
 ```
 Specs([
-    Spec(id=ID('/temp'), tags=(), type=list[float], data=[20.0, 25.0]),
-    Spec(id=ID('/temp/0'), tags=(), type=<class 'float'>, data=None),
-    Spec(id=ID('/temp/name'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Temperature (K)'), # <- formatted
-    Spec(id=ID('/temp/units'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'), # <- formatted
-    Spec(id=ID('/units'), tags=(), type=<class 'str'>, data='K'),
-    Spec(id=ID('/units/_format_id'), tags=(<Tag.ID: 1>,), type=<class 'str'>, data='/temp/(name|units)'),
-    Spec(id=ID('/units/_format_of'), tags=(<Tag.OF: 2>,), type=<class 'str'>, data='data'),
-    Spec(id=ID('/units/_format_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
+    Spec(path=Path('/temp'), tags=(), type=list[float], data=[20.0, 25.0]),
+    Spec(path=Path('/temp/0'), tags=(), type=<class 'float'>, data=None),
+    Spec(path=Path('/temp/name'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Temperature (K)'), # <- formatted
+    Spec(path=Path('/temp/units'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'), # <- formatted
+    Spec(path=Path('/units'), tags=(), type=<class 'str'>, data='K'),
+    Spec(path=Path('/units/_format_path'), tags=(<Tag.PATH: 1>,), type=<class 'str'>, data='/temp/(name|units)'),
+    Spec(path=Path('/units/_format_of'), tags=(<Tag.OF: 2>,), type=<class 'str'>, data='data'),
+    Spec(path=Path('/units/_format_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
 ])
 ```
 
@@ -227,10 +227,10 @@ name(from_dataclass(Weather(20.0, 50.0)))
 ```
 ```
 Specs([
-    Spec(id=ID('/temp'), name='Ground temperature', tags=(), type=<class 'float'>, data=20.0), # <- named
-    Spec(id=ID('/temp/_name'), name='_name', tags=(<Tag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Ground temperature'),
-    Spec(id=ID('/humid'), name='Relative humidity', tags=(), type=<class 'float'>, data=50.0), # <- named
-    Spec(id=ID('/humid/_name'), name='_name', tags=(<Tag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Relative humidity'),
+    Spec(path=Path('/temp'), name='Ground temperature', tags=(), type=<class 'float'>, data=20.0), # <- named
+    Spec(path=Path('/temp/_name'), name='_name', tags=(<Tag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Ground temperature'),
+    Spec(path=Path('/humid'), name='Relative humidity', tags=(), type=<class 'float'>, data=50.0), # <- named
+    Spec(path=Path('/humid/_name'), name='_name', tags=(<Tag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Relative humidity'),
 ])
 ```
 
@@ -257,13 +257,13 @@ replace(from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], int)))
 ```
 ```
 Specs([
-    Spec(id=ID('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
-    Spec(id=ID('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
-    Spec(id=ID('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
-    Spec(id=ID('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
-    Spec(id=ID('/dtype'), tags=(), type=<class 'type'>, data=<class 'int'>),
-    Spec(id=ID('/dtype/_replace_id'), tags=(<Tag.ID: 1>,), type=<class 'str'>, data='/[a-z]+/0'),
-    Spec(id=ID('/dtype/_replace_of'), tags=(<Tag.OF: 2>,), type=<class 'str'>, data='type'),
-    Spec(id=ID('/dtype/_replace_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
+    Spec(path=Path('/temp'), tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
+    Spec(path=Path('/temp/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
+    Spec(path=Path('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
+    Spec(path=Path('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
+    Spec(path=Path('/dtype'), tags=(), type=<class 'type'>, data=<class 'int'>),
+    Spec(path=Path('/dtype/_replace_path'), tags=(<Tag.PATH: 1>,), type=<class 'str'>, data='/[a-z]+/0'),
+    Spec(path=Path('/dtype/_replace_of'), tags=(<Tag.OF: 2>,), type=<class 'str'>, data='type'),
+    Spec(path=Path('/dtype/_replace_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
 ])
 ```

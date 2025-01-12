@@ -3,8 +3,8 @@ __all__ = [
     "core",
     "extras",
     # aliases (core)
-    "ID",
     "ROOT",
+    "Path",
     "Spec",
     "Specs",
     "TagBase",

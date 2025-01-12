@@ -7,7 +7,7 @@ from typing import Any, Callable, Optional, overload
 
 
 # dependencies
-from .specs import ID, ROOT, Spec, Specs, TSpec
+from .specs import ROOT, Path, Spec, Specs, TSpec
 from .typing import (
     DataClass,
     StrPath,
@@ -25,7 +25,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: StrPath = ROOT,
+    path: StrPath = ROOT,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -35,7 +35,7 @@ def from_dataclass(
     /,
     *,
     factory: Callable[..., TSpec],
-    id: StrPath = ROOT,
+    path: StrPath = ROOT,
 ) -> Specs[TSpec]: ...
 
 
@@ -44,14 +44,14 @@ def from_dataclass(
     /,
     *,
     factory: Any = Spec,
-    id: StrPath = ROOT,
+    path: StrPath = ROOT,
 ) -> Any:
     """Create data specs from a dataclass (object).
 
     Args:
         obj: Dataclass (object) to be parsed.
         factory: Factory for creating each data spec.
-        id: ID of the parent data spec.
+        path: Path of the parent data spec.
 
     Returns:
         Data specs created from the dataclass (object).
@@ -81,31 +81,31 @@ def from_dataclass(
 
             Specs([
                 Spec(
-                    id=ID('/temp'),
+                    path=Path('/temp'),
                     tags=(<Tag.DATA: 2>,),
                     type=list[float],
                     data=[20.0, 25.0],
                 ),
                 Spec(
-                    id=ID('/temp/0'),
+                    path=Path('/temp/0'),
                     tags=(<Tag.DTYPE: 3>,),
                     type=<class 'float'>,
                     data=None,
                 ),
                 Spec(
-                    id=ID('/humid'),
+                    path=Path('/humid'),
                     tags=(<Tag.DATA: 2>,),
                     type=list[float],
                     data=[50.0, 55.0],
                 ),
                 Spec(
-                    id=ID('/humid/0'),
+                    path=Path('/humid/0'),
                     tags=(<Tag.DTYPE: 3>,),
                     type=<class 'float'>,
                     data=None,
                 ),
                 Spec(
-                    id=ID('/location'),
+                    path=Path('/location'),
                     tags=(<Tag.ATTR: 1>,),
                     type=<class 'str'>,
                     data='Tokyo',
@@ -120,7 +120,7 @@ def from_dataclass(
             from_typehint(
                 field.type,
                 factory=factory,
-                id=ID(id) / field.name,
+                path=Path(path) / field.name,
                 data=getattr(obj, field.name, field.default),
                 metadata=dict(field.metadata),
                 origin=obj,
@@ -135,7 +135,7 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    id: StrPath = ROOT,
+    path: StrPath = ROOT,
     data: Any = MISSING,
     metadata: Optional[dict[str, Any]] = None,
     origin: Optional[Any] = None,
@@ -148,7 +148,7 @@ def from_typehint(
     /,
     *,
     factory: Callable[..., TSpec],
-    id: StrPath = ROOT,
+    path: StrPath = ROOT,
     data: Any = MISSING,
     metadata: Optional[dict[str, Any]] = None,
     origin: Optional[Any] = None,
@@ -160,7 +160,7 @@ def from_typehint(
     /,
     *,
     factory: Any = Spec,
-    id: StrPath = ROOT,
+    path: StrPath = ROOT,
     data: Any = None,
     metadata: Optional[dict[str, Any]] = None,
     origin: Optional[Any] = None,
@@ -170,7 +170,7 @@ def from_typehint(
     Args:
         obj: Type hint to be parsed.
         factory: Factory for creating each data spec.
-        id: ID of the parent data spec.
+        path: Path of the parent data spec.
         data: Data of the parent data spec.
         metadata: Metadata of the parent data spec.
         origin: Origin of the parent data spec.
@@ -195,13 +195,13 @@ def from_typehint(
 
             Specs([
                 Spec(
-                    id=ID('/'),
+                    path=Path('/'),
                     tags=(<Tag.DATA: 1>,),
                     type=list[float],
                     data=None,
                 ),
                 Spec(
-                    id=ID('/0'),
+                    path=Path('/0'),
                     tags=(<Tag.DTYPE: 2>,),
                     type=<class 'float'>,
                     data=None,
@@ -213,8 +213,8 @@ def from_typehint(
 
     specs.append(
         factory(
-            id=(id_ := ID(id)),
-            name=id_.name,
+            path=(path := Path(path)),
+            name=path.name,
             tags=get_tags(first := get_first(obj)),
             type=get_annotated(first, recursive=True),
             data=data,
@@ -229,7 +229,7 @@ def from_typehint(
             from_typehint(
                 subtype,
                 factory=factory,
-                id=id_ / str(index),
+                path=path / str(index),
                 origin=obj,
             )
         )
@@ -239,7 +239,7 @@ def from_typehint(
             from_dataclass(
                 sub_dataclass,
                 factory=factory,
-                id=id,
+                path=path,
             )
         )
 

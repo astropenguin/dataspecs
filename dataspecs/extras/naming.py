@@ -58,28 +58,28 @@ def name(specs: Specs[TSpec], /) -> Specs[TSpec]:
 
             Specs([
                 Spec(
-                    id=ID('/temp'),
+                    path=Path('/temp'),
                     name='Ground temperature',
                     tags=(),
                     type=<class 'float'>,
                     data=20.0,
                 ),
                 Spec(
-                    id=ID('/temp/_name'),
+                    path=Path('/temp/_name'),
                     name='_name',
                     tags=(<Tag.NAME: 1>,),
                     type=<class 'collections.abc.Hashable'>,
                     data='Ground temperature',
                 ),
                 Spec(
-                    id=ID('/humid'),
+                    path=Path('/humid'),
                     name='Relative humidity',
                     tags=(),
                     type=<class 'float'>,
                     data=50.0,
                 ),
                 Spec(
-                    id=ID('/humid/_name'),
+                    path=Path('/humid/_name'),
                     name='_name',
                     tags=(<Tag.NAME: 1>,),
                     type=<class 'collections.abc.Hashable'>,
@@ -91,7 +91,7 @@ def name(specs: Specs[TSpec], /) -> Specs[TSpec]:
     new = specs.copy()
 
     for spec in specs:
-        options = specs[spec.id.children]
+        options = specs[spec.path.children]
 
         if (name := options[Tag.NAME].unique) is not None:
             new = new.replace(spec, replace(spec, name=name.data))
