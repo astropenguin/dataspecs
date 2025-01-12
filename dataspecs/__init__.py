@@ -7,6 +7,7 @@ __all__ = [
     "Path",
     "Spec",
     "Specs",
+    "StrPath",
     "TagBase",
     "from_dataclass",
     "from_typehint",
@@ -18,7 +19,7 @@ __all__ = [
     "name",
     "replace",
 ]
-__version__ = "3.0.1"
+__version__ = "4.0.0"
 
 
 # subpackages

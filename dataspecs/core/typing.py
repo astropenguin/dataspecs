@@ -1,4 +1,4 @@
-__all__ = ["TagBase"]
+__all__ = ["StrPath", "TagBase"]
 
 
 # standard library

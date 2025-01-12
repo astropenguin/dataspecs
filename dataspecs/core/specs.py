@@ -159,7 +159,7 @@ class Specs(UserList[TSpec]):
 
     def groupby(
         self,
-        by: SpecAttr,
+        attr: SpecAttr,
         /,
         *,
         method: Literal["eq", "equality", "id", "identity"] = "equality",
@@ -167,7 +167,7 @@ class Specs(UserList[TSpec]):
         """Group the data specs by their attributes.
 
         Args:
-            by: Name of the data spec attribute for grouping.
+            attr: Name of the data spec attribute for grouping.
                 Either ``'path'``, ``'name'``, ``'tags'``, ``'type'``,
                 ``'data'``, ``'anns'``, ``'meta'``, or ``'orig'`` is accepted.
             method: Grouping method.
@@ -182,9 +182,9 @@ class Specs(UserList[TSpec]):
 
         for spec in self:
             if method == "eq" or method == "equality":
-                groups[getattr(spec, by)].append(spec)
+                groups[getattr(spec, attr)].append(spec)
             elif method == "id" or method == "identity":
-                groups[id(getattr(spec, by))].append(spec)
+                groups[id(getattr(spec, attr))].append(spec)
             else:
                 raise ValueError("Method must be either equality or identity.")
 
