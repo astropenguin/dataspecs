@@ -13,7 +13,7 @@ from ..core.typing import StrPath, TagBase
 
 
 # constants
-class Tag(TagBase):
+class FormatTag(TagBase):
     ATTR = auto()
     PATH = auto()
     SKIPIF = auto()
@@ -30,13 +30,13 @@ class Format:
 
     """
 
-    _format_path: Annotated[StrPath, Tag.PATH]
+    _format_path: Annotated[StrPath, FormatTag.PATH]
     """Path of data spec(s) to be formatted."""
 
-    _format_attr: Annotated[SpecAttr, Tag.ATTR] = "data"
+    _format_attr: Annotated[SpecAttr, FormatTag.ATTR] = "data"
     """Name of data spec attribute to be formatted."""
 
-    _format_skipif: Annotated[Any, Tag.SKIPIF] = None
+    _format_skipif: Annotated[Any, FormatTag.SKIPIF] = None
     """Sentinel value for which formatting is skipped."""
 
 
@@ -106,19 +106,19 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 ),
                 Spec(
                     path=Path('/units/_format_path'),
-                    tags=(<Tag.PATH: 1>,),
+                    tags=(<FormatTag.PATH: 1>,),
                     type=<class 'str'>,
                     data='/temp/attrs/(name|units)',
                 ),
                 Spec(
                     path=Path('/units/_format_attr'),
-                    tags=(<Tag.ATTR: 2>,),
+                    tags=(<FormatTag.ATTR: 2>,),
                     type=<class 'str'>,
                     data='data',
                 ),
                 Spec(
                     path=Path('/units/_format_skipif'),
-                    tags=(<Tag.SKIPIF: 3>,),
+                    tags=(<FormatTag.SKIPIF: 3>,),
                     type=typing.Any,
                     data=None,
                 ),
@@ -130,9 +130,9 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
     for spec in specs:
         for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
-                (path := options[Tag.PATH].unique) is None
-                or (attr := options[Tag.ATTR].unique) is None
-                or (skipif := options[Tag.SKIPIF].unique) is None
+                (path := options[FormatTag.PATH].unique) is None
+                or (attr := options[FormatTag.ATTR].unique) is None
+                or (skipif := options[FormatTag.SKIPIF].unique) is None
             ):
                 continue
 

@@ -13,7 +13,7 @@ from ..core.typing import StrPath, TagBase
 
 
 # constants
-class Tag(TagBase):
+class ReplaceTag(TagBase):
     ATTR = auto()
     PATH = auto()
     SKIPIF = auto()
@@ -30,13 +30,13 @@ class Replace:
 
     """
 
-    _replace_path: Annotated[StrPath, Tag.PATH]
+    _replace_path: Annotated[StrPath, ReplaceTag.PATH]
     """Path of data spec(s) to be replaced."""
 
-    _replace_attr: Annotated[SpecAttr, Tag.ATTR] = "data"
+    _replace_attr: Annotated[SpecAttr, ReplaceTag.ATTR] = "data"
     """Name of data spec attribute to be replaced."""
 
-    _replace_skipif: Annotated[Any, Tag.SKIPIF] = None
+    _replace_skipif: Annotated[Any, ReplaceTag.SKIPIF] = None
     """Sentinel value for which replacing is skipped."""
 
 
@@ -105,19 +105,19 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 ),
                 Spec(
                     path=Path('/dtype/_replace_path'),
-                    tags=(<Tag.PATH: 1>,),
+                    tags=(<ReplaceTag.PATH: 1>,),
                     type=<class 'str'>,
                     data='/[a-z]+/0',
                 ),
                 Spec(
                     path=Path('/dtype/_replace_attr'),
-                    tags=(<Tag.ATTR: 2>,),
+                    tags=(<ReplaceTag.ATTR: 2>,),
                     type=<class 'str'>,
                     data='type',
                 ),
                 Spec(
                     path=Path('/dtype/_replace_skipif'),
-                    tags=(<Tag.SKIPIF: 3>,),
+                    tags=(<ReplaceTag.SKIPIF: 3>,),
                     type=typing.Any,
                     data=None,
                 ),
@@ -129,9 +129,9 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
     for spec in specs:
         for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
-                (path := options[Tag.PATH].unique) is None
-                or (attr := options[Tag.ATTR].unique) is None
-                or (skipif := options[Tag.SKIPIF].unique) is None
+                (path := options[ReplaceTag.PATH].unique) is None
+                or (attr := options[ReplaceTag.ATTR].unique) is None
+                or (skipif := options[ReplaceTag.SKIPIF].unique) is None
             ):
                 continue
 

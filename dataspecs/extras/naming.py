@@ -14,7 +14,7 @@ from ..core.typing import TagBase
 
 
 # constants
-class Tag(TagBase):
+class NameTag(TagBase):
     NAME = auto()
 
 
@@ -27,7 +27,7 @@ class Name:
 
     """
 
-    _name: Annotated[Hashable, Tag.NAME]
+    _name: Annotated[Hashable, NameTag.NAME]
     """New name of the data spec to be replaced."""
 
 
@@ -67,7 +67,7 @@ def name(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 Spec(
                     path=Path('/temp/_name'),
                     name='_name',
-                    tags=(<Tag.NAME: 1>,),
+                    tags=(<NameTag.NAME: 1>,),
                     type=<class 'collections.abc.Hashable'>,
                     data='Ground temperature',
                 ),
@@ -81,7 +81,7 @@ def name(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 Spec(
                     path=Path('/humid/_name'),
                     name='_name',
-                    tags=(<Tag.NAME: 1>,),
+                    tags=(<NameTag.NAME: 1>,),
                     type=<class 'collections.abc.Hashable'>,
                     data='Relative humidity',
                 ),
@@ -93,7 +93,7 @@ def name(specs: Specs[TSpec], /) -> Specs[TSpec]:
     for spec in specs:
         options = specs[spec.path.children]
 
-        if (name := options[Tag.NAME].unique) is not None:
+        if (name := options[NameTag.NAME].unique) is not None:
             new = new.replace(spec, replace(spec, name=name.data))
 
     return new

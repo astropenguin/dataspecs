@@ -205,9 +205,9 @@ Specs([
     Spec(path=Path('/temp/name'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='Temperature (K)'), # <- formatted
     Spec(path=Path('/temp/units'), tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'), # <- formatted
     Spec(path=Path('/units'), tags=(), type=<class 'str'>, data='K'),
-    Spec(path=Path('/units/_format_path'), tags=(<Tag.PATH: 1>,), type=<class 'str'>, data='/temp/(name|units)'),
-    Spec(path=Path('/units/_format_attr'), tags=(<Tag.ATTR: 2>,), type=<class 'str'>, data='data'),
-    Spec(path=Path('/units/_format_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
+    Spec(path=Path('/units/_format_path'), tags=(<FormatTag.PATH: 1>,), type=<class 'str'>, data='/temp/(name|units)'),
+    Spec(path=Path('/units/_format_attr'), tags=(<FormatTag.ATTR: 2>,), type=<class 'str'>, data='data'),
+    Spec(path=Path('/units/_format_skipif'), tags=(<FormatTag.SKIPIF: 3>,), type=typing.Any, data=None),
 ])
 ```
 
@@ -228,9 +228,9 @@ name(from_dataclass(Weather(20.0, 50.0)))
 ```
 Specs([
     Spec(path=Path('/temp'), name='Ground temperature', tags=(), type=<class 'float'>, data=20.0), # <- named
-    Spec(path=Path('/temp/_name'), name='_name', tags=(<Tag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Ground temperature'),
+    Spec(path=Path('/temp/_name'), name='_name', tags=(<NameTag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Ground temperature'),
     Spec(path=Path('/humid'), name='Relative humidity', tags=(), type=<class 'float'>, data=50.0), # <- named
-    Spec(path=Path('/humid/_name'), name='_name', tags=(<Tag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Relative humidity'),
+    Spec(path=Path('/humid/_name'), name='_name', tags=(<NameTag.NAME: 1>,), type=<class 'collections.abc.Hashable'>, data='Relative humidity'),
 ])
 ```
 
@@ -262,8 +262,8 @@ Specs([
     Spec(path=Path('/humid'), tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
     Spec(path=Path('/humid/0'), tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
     Spec(path=Path('/dtype'), tags=(), type=<class 'type'>, data=<class 'int'>),
-    Spec(path=Path('/dtype/_replace_path'), tags=(<Tag.PATH: 1>,), type=<class 'str'>, data='/[a-z]+/0'),
-    Spec(path=Path('/dtype/_replace_attr'), tags=(<Tag.ATTR: 2>,), type=<class 'str'>, data='type'),
-    Spec(path=Path('/dtype/_replace_skipif'), tags=(<Tag.SKIPIF: 3>,), type=typing.Any, data=None),
+    Spec(path=Path('/dtype/_replace_path'), tags=(<ReplaceTag.PATH: 1>,), type=<class 'str'>, data='/[a-z]+/0'),
+    Spec(path=Path('/dtype/_replace_attr'), tags=(<ReplaceTag.ATTR: 2>,), type=<class 'str'>, data='type'),
+    Spec(path=Path('/dtype/_replace_skipif'), tags=(<ReplaceTag.SKIPIF: 3>,), type=typing.Any, data=None),
 ])
 ```
