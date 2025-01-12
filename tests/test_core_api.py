@@ -49,7 +49,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=list[float],
             data=[10, 20],
             anns=(Tag.DATA, Quantity("Temperature", "K")),
-            origin=Weather([10, 20], [30, 40]),
+            orig=Weather([10, 20], [30, 40]),
         ),
         Spec(
             path=Path("/temp/0"),
@@ -58,7 +58,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=float,
             data=None,
             anns=(Tag.DTYPE,),
-            origin=Union[Ann[Data[float], Quantity("Temperature", "K")], float],
+            orig=Union[Ann[Data[float], Quantity("Temperature", "K")], float],
         ),
         Spec(
             path=Path("/temp/name"),
@@ -67,7 +67,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="Temperature",
             anns=(Tag.NAME,),
-            origin=Quantity("Temperature", "K"),
+            orig=Quantity("Temperature", "K"),
         ),
         Spec(
             path=Path("/temp/units"),
@@ -76,7 +76,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="K",
             anns=(Tag.UNITS,),
-            origin=Quantity("Temperature", "K"),
+            orig=Quantity("Temperature", "K"),
         ),
         Spec(
             path=Path("/humid"),
@@ -85,7 +85,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=list[float],
             data=[30, 40],
             anns=(Tag.DATA, Quantity("Humidity", "%")),
-            origin=Weather([10, 20], [30, 40]),
+            orig=Weather([10, 20], [30, 40]),
         ),
         Spec(
             path=Path("/humid/0"),
@@ -94,7 +94,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=float,
             data=None,
             anns=(Tag.DTYPE,),
-            origin=Union[Ann[Data[float], Quantity("Humidity", "%")], float],
+            orig=Union[Ann[Data[float], Quantity("Humidity", "%")], float],
         ),
         Spec(
             path=Path("/humid/name"),
@@ -103,7 +103,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="Humidity",
             anns=(Tag.NAME,),
-            origin=Quantity("Humidity", "%"),
+            orig=Quantity("Humidity", "%"),
         ),
         Spec(
             path=Path("/humid/units"),
@@ -112,7 +112,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="%",
             anns=(Tag.UNITS,),
-            origin=Quantity("Humidity", "%"),
+            orig=Quantity("Humidity", "%"),
         ),
         Spec(
             path=Path("/lon"),
@@ -121,7 +121,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=float,
             data=0.0,
             anns=(Tag.ATTR, Quantity("Longitude", "deg")),
-            origin=Weather([10, 20], [30, 40]),
+            orig=Weather([10, 20], [30, 40]),
         ),
         Spec(
             path=Path("/lon/name"),
@@ -130,7 +130,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="Longitude",
             anns=(Tag.NAME,),
-            origin=Quantity("Longitude", "deg"),
+            orig=Quantity("Longitude", "deg"),
         ),
         Spec(
             path=Path("/lon/units"),
@@ -139,7 +139,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="deg",
             anns=(Tag.UNITS,),
-            origin=Quantity("Longitude", "deg"),
+            orig=Quantity("Longitude", "deg"),
         ),
         Spec(
             path=Path("/lat"),
@@ -148,7 +148,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=float,
             data=0.0,
             anns=(Tag.ATTR, Quantity("Latitude", "deg")),
-            origin=Weather([10, 20], [30, 40]),
+            orig=Weather([10, 20], [30, 40]),
         ),
         Spec(
             path=Path("/lat/name"),
@@ -157,7 +157,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="Latitude",
             anns=(Tag.NAME,),
-            origin=Quantity("Latitude", "deg"),
+            orig=Quantity("Latitude", "deg"),
         ),
         Spec(
             path=Path("/lat/units"),
@@ -166,7 +166,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="deg",
             anns=(Tag.UNITS,),
-            origin=Quantity("Latitude", "deg"),
+            orig=Quantity("Latitude", "deg"),
         ),
         Spec(
             path=Path("/memo"),
@@ -175,7 +175,7 @@ specs: Specs[Spec[Any]] = Specs(
             type=str,
             data="Observed in Tokyo",
             anns=(),
-            origin=Weather([10, 20], [30, 40]),
+            orig=Weather([10, 20], [30, 40]),
         ),
     ]
 )

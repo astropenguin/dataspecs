@@ -127,7 +127,7 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
     new = specs.copy()
 
     for spec in specs:
-        for options in specs[spec.path.children].groupby("origin", method="id"):
+        for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
                 (path := options[Tag.PATH].unique) is None
                 or (of := options[Tag.OF].unique) is None
