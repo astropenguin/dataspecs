@@ -7,6 +7,7 @@ __all__ = [
     "Path",
     "Spec",
     "Specs",
+    "StrPath",
     "TagBase",
     "from_dataclass",
     "from_typehint",
