@@ -48,7 +48,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.DATA,),
             type=list[float],
             data=[10, 20],
-            annotations=(Tag.DATA, Quantity("Temperature", "K")),
+            anns=(Tag.DATA, Quantity("Temperature", "K")),
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
@@ -57,7 +57,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.DTYPE,),
             type=float,
             data=None,
-            annotations=(Tag.DTYPE,),
+            anns=(Tag.DTYPE,),
             origin=Union[Ann[Data[float], Quantity("Temperature", "K")], float],
         ),
         Spec(
@@ -66,7 +66,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.NAME,),
             type=str,
             data="Temperature",
-            annotations=(Tag.NAME,),
+            anns=(Tag.NAME,),
             origin=Quantity("Temperature", "K"),
         ),
         Spec(
@@ -75,7 +75,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.UNITS,),
             type=str,
             data="K",
-            annotations=(Tag.UNITS,),
+            anns=(Tag.UNITS,),
             origin=Quantity("Temperature", "K"),
         ),
         Spec(
@@ -84,7 +84,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.DATA,),
             type=list[float],
             data=[30, 40],
-            annotations=(Tag.DATA, Quantity("Humidity", "%")),
+            anns=(Tag.DATA, Quantity("Humidity", "%")),
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
@@ -93,7 +93,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.DTYPE,),
             type=float,
             data=None,
-            annotations=(Tag.DTYPE,),
+            anns=(Tag.DTYPE,),
             origin=Union[Ann[Data[float], Quantity("Humidity", "%")], float],
         ),
         Spec(
@@ -102,7 +102,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.NAME,),
             type=str,
             data="Humidity",
-            annotations=(Tag.NAME,),
+            anns=(Tag.NAME,),
             origin=Quantity("Humidity", "%"),
         ),
         Spec(
@@ -111,7 +111,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.UNITS,),
             type=str,
             data="%",
-            annotations=(Tag.UNITS,),
+            anns=(Tag.UNITS,),
             origin=Quantity("Humidity", "%"),
         ),
         Spec(
@@ -120,7 +120,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.ATTR,),
             type=float,
             data=0.0,
-            annotations=(Tag.ATTR, Quantity("Longitude", "deg")),
+            anns=(Tag.ATTR, Quantity("Longitude", "deg")),
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
@@ -129,7 +129,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.NAME,),
             type=str,
             data="Longitude",
-            annotations=(Tag.NAME,),
+            anns=(Tag.NAME,),
             origin=Quantity("Longitude", "deg"),
         ),
         Spec(
@@ -138,7 +138,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.UNITS,),
             type=str,
             data="deg",
-            annotations=(Tag.UNITS,),
+            anns=(Tag.UNITS,),
             origin=Quantity("Longitude", "deg"),
         ),
         Spec(
@@ -147,7 +147,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.ATTR,),
             type=float,
             data=0.0,
-            annotations=(Tag.ATTR, Quantity("Latitude", "deg")),
+            anns=(Tag.ATTR, Quantity("Latitude", "deg")),
             origin=Weather([10, 20], [30, 40]),
         ),
         Spec(
@@ -156,7 +156,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.NAME,),
             type=str,
             data="Latitude",
-            annotations=(Tag.NAME,),
+            anns=(Tag.NAME,),
             origin=Quantity("Latitude", "deg"),
         ),
         Spec(
@@ -165,7 +165,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(Tag.UNITS,),
             type=str,
             data="deg",
-            annotations=(Tag.UNITS,),
+            anns=(Tag.UNITS,),
             origin=Quantity("Latitude", "deg"),
         ),
         Spec(
@@ -174,7 +174,7 @@ specs: Specs[Spec[Any]] = Specs(
             tags=(),
             type=str,
             data="Observed in Tokyo",
-            annotations=(),
+            anns=(),
             origin=Weather([10, 20], [30, 40]),
         ),
     ]

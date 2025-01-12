@@ -218,7 +218,7 @@ def from_typehint(
             tags=get_tags(first := get_first(obj)),
             type=get_annotated(first, recursive=True),
             data=data,
-            annotations=get_annotations(first),
+            anns=get_annotations(first),
             metadata={} if metadata is None else dict(metadata),
             origin=origin,
         )

@@ -35,16 +35,7 @@ from .typing import (
 
 
 # type hints
-SpecAttr = Literal[
-    "path",
-    "name",
-    "tags",
-    "type",
-    "data",
-    "annotations",
-    "metadata",
-    "origin",
-]
+SpecAttr = Literal["path", "name", "tags", "type", "data", "anns", "metadata", "origin"]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -102,9 +93,9 @@ class Spec(Generic[TAny]):
         path: Path of the data spec.
         name: Name of the data spec.
         tags: Tags of the data spec.
-        type: Type hint for the data of the data spec.
+        type: Type hint of the data spec.
         data: Default or final data of the data spec.
-        annotations: Type hint annotations of the data spec.
+        anns: Type hint annotations of the data spec.
         metadata: Metadata of the data spec.
         origin: Origin of the data spec.
 
@@ -120,12 +111,12 @@ class Spec(Generic[TAny]):
     """Tags of the data spec."""
 
     type: Any
-    """Type hint for the data of the data spec."""
+    """Type hint of the data spec."""
 
     data: TAny
     """Default or final data of the data spec."""
 
-    annotations: tuple[Any, ...] = field(default_factory=tuple, repr=False)
+    anns: tuple[Any, ...] = field(default_factory=tuple, repr=False)
     """Type hint annotations of the data spec."""
 
     metadata: dict[str, Any] = field(default_factory=dict, repr=False)
@@ -173,7 +164,7 @@ class Specs(UserList[TSpec]):
         Args:
             by: Name of the data spec attribute for grouping.
                 Either ``'path'``, ``'name'``, ``'tags'``, ``'type'``, ``'data'``,
-                ``'annotations'``, ``'metadata'``, or ``'origin'`` is accepted.
+                ``'anns'``, ``'metadata'``, or ``'origin'`` is accepted.
             method: Grouping method.
                 Either ``'equality'`` (or ``'eq'``; hash-based grouping),
                 or ``'identity'`` (or ``'id'``; id-based grouping) is accepted.
