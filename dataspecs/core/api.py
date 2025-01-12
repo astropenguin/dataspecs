@@ -213,7 +213,8 @@ def from_typehint(
 
     specs.append(
         factory(
-            id=ID(id),
+            id=(id_ := ID(id)),
+            name=id_.name,
             tags=get_tags(first := get_first(obj)),
             type=get_annotated(first, recursive=True),
             data=data,
@@ -228,7 +229,7 @@ def from_typehint(
             from_typehint(
                 subtype,
                 factory=factory,
-                id=ID(id) / str(index),
+                id=id_ / str(index),
                 origin=obj,
             )
         )
@@ -238,7 +239,7 @@ def from_typehint(
             from_dataclass(
                 sub_dataclass,
                 factory=factory,
-                id=ID(id),
+                id=id,
             )
         )
 

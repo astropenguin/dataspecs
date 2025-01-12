@@ -44,6 +44,7 @@ specs: Specs[Spec[Any]] = Specs(
     [
         Spec(
             id=ID("/temp"),
+            name="temp",
             tags=(Tag.DATA,),
             type=list[float],
             data=[10, 20],
@@ -52,6 +53,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/temp/0"),
+            name="0",
             tags=(Tag.DTYPE,),
             type=float,
             data=None,
@@ -60,6 +62,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/temp/name"),
+            name="name",
             tags=(Tag.NAME,),
             type=str,
             data="Temperature",
@@ -68,6 +71,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/temp/units"),
+            name="units",
             tags=(Tag.UNITS,),
             type=str,
             data="K",
@@ -76,6 +80,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/humid"),
+            name="humid",
             tags=(Tag.DATA,),
             type=list[float],
             data=[30, 40],
@@ -84,6 +89,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/humid/0"),
+            name="0",
             tags=(Tag.DTYPE,),
             type=float,
             data=None,
@@ -92,6 +98,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/humid/name"),
+            name="name",
             tags=(Tag.NAME,),
             type=str,
             data="Humidity",
@@ -100,6 +107,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/humid/units"),
+            name="units",
             tags=(Tag.UNITS,),
             type=str,
             data="%",
@@ -108,6 +116,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/lon"),
+            name="lon",
             tags=(Tag.ATTR,),
             type=float,
             data=0.0,
@@ -116,6 +125,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/lon/name"),
+            name="name",
             tags=(Tag.NAME,),
             type=str,
             data="Longitude",
@@ -124,6 +134,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/lon/units"),
+            name="units",
             tags=(Tag.UNITS,),
             type=str,
             data="deg",
@@ -132,6 +143,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/lat"),
+            name="lat",
             tags=(Tag.ATTR,),
             type=float,
             data=0.0,
@@ -140,6 +152,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/lat/name"),
+            name="name",
             tags=(Tag.NAME,),
             type=str,
             data="Latitude",
@@ -148,6 +161,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/lat/units"),
+            name="units",
             tags=(Tag.UNITS,),
             type=str,
             data="deg",
@@ -156,6 +170,7 @@ specs: Specs[Spec[Any]] = Specs(
         ),
         Spec(
             id=ID("/memo"),
+            name="memo",
             tags=(),
             type=str,
             data="Observed in Tokyo",

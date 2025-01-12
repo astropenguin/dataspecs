@@ -22,13 +22,13 @@ class Tag(TagBase):
 
 specs = Specs(
     [
-        Spec(ID("/a"), (Tag.DATA,), int, None),
-        Spec(ID("/a/name"), (Tag.NAME,), str, None),
-        Spec(ID("/a/units"), (Tag.UNITS,), str, None),
-        Spec(ID("/b"), (Tag.DATA,), int, None),
-        Spec(ID("/b/name"), (Tag.NAME,), str, None),
-        Spec(ID("/b/units"), (Tag.UNITS,), str, None),
-        Spec(ID("/c"), (), int, None),
+        Spec(ID("/a"), "a", (Tag.DATA,), int, None),
+        Spec(ID("/a/name"), "name", (Tag.NAME,), str, None),
+        Spec(ID("/a/units"), "units", (Tag.UNITS,), str, None),
+        Spec(ID("/b"), "b", (Tag.DATA,), int, None),
+        Spec(ID("/b/name"), "name", (Tag.NAME,), str, None),
+        Spec(ID("/b/units"), "units", (Tag.UNITS,), str, None),
+        Spec(ID("/c"), "c", (), int, None),
     ]
 )
 
