@@ -31,11 +31,12 @@ class Name:
     """New name of the data spec to be replaced."""
 
 
-def name(specs: Specs[TSpec], /) -> Specs[TSpec]:
+def name(specs: Specs[TSpec], /, leave: bool = False) -> Specs[TSpec]:
     """Replace data spec names by corresponding namer specs.
 
     Args:
         specs: Input data specs.
+        leave: Whether to leave the namer specs.
 
     Returns:
         Data specs whose names are replaced.
@@ -65,25 +66,11 @@ def name(specs: Specs[TSpec], /) -> Specs[TSpec]:
                     data=20.0,
                 ),
                 Spec(
-                    path=Path('/temp/_name'),
-                    name='_name',
-                    tags=(<NameTag.NAME: 1>,),
-                    type=<class 'collections.abc.Hashable'>,
-                    data='Ground temperature',
-                ),
-                Spec(
                     path=Path('/humid'),
                     name='Relative humidity',
                     tags=(),
                     type=<class 'float'>,
                     data=50.0,
-                ),
-                Spec(
-                    path=Path('/humid/_name'),
-                    name='_name',
-                    tags=(<NameTag.NAME: 1>,),
-                    type=<class 'collections.abc.Hashable'>,
-                    data='Relative humidity',
                 ),
             ])
 
@@ -93,7 +80,12 @@ def name(specs: Specs[TSpec], /) -> Specs[TSpec]:
     for spec in specs:
         options = specs[spec.path.children]
 
-        if (name := options[NameTag.NAME].unique) is not None:
-            new = new.replace(spec, replace(spec, name=name.data))
+        if (name := options[NameTag.NAME].unique) is None:
+            continue
+
+        new = new.replace(spec, replace(spec, name=name.data))
+
+        if not leave:
+            new.remove(name)
 
     return new

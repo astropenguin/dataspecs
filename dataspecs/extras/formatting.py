@@ -40,11 +40,12 @@ class Format:
     """Sentinel value for which formatting is skipped."""
 
 
-def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
+def format(specs: Specs[TSpec], /, leave: bool = False) -> Specs[TSpec]:
     """Format data spec attributes by formatter specs.
 
     Args:
         specs: Input data specs.
+        leave: Whether to leave the formatter specs.
 
     Returns:
         Data specs whose attributes are formatted.
@@ -109,27 +110,6 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
                     type=<class 'str'>,
                     data='K',
                 ),
-                Spec(
-                    path=Path('/units/_format_path'),
-                    name='_format_path',
-                    tags=(<FormatTag.PATH: 1>,),
-                    type=<class 'str'>,
-                    data='/temp/attrs/(name|units)',
-                ),
-                Spec(
-                    path=Path('/units/_format_attr'),
-                    name='_format_attr',
-                    tags=(<FormatTag.ATTR: 2>,),
-                    type=typing.Literal['path', 'name', 'tags', 'type', 'data', 'anns', 'meta', 'orig'],
-                    data='data',
-                ),
-                Spec(
-                    path=Path('/units/_format_skipif'),
-                    name='_format_skipif',
-                    tags=(<FormatTag.SKIPIF: 3>,),
-                    type=typing.Any,
-                    data=None,
-                ),
             ])
 
     """
@@ -152,5 +132,10 @@ def format(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 changes = {attr[str].data: string.format(spec.data)}
                 updated = replace(target, **changes)
                 new = new.replace(target, updated)
+
+            if not leave:
+                new.remove(path)
+                new.remove(attr)
+                new.remove(skipif)
 
     return new

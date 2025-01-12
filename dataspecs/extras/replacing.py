@@ -40,11 +40,12 @@ class Replace:
     """Sentinel value for which replacing is skipped."""
 
 
-def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
+def replace(specs: Specs[TSpec], /, leave: bool = False) -> Specs[TSpec]:
     """Replace data spec attributes by replacer specs.
 
     Args:
         specs: Input data specs.
+        leave: Whether to leave the replacer specs.
 
     Returns:
         Data specs whose attributes are replaced.
@@ -108,27 +109,6 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
                     type=<class 'type'>,
                     data=<class 'int'>,
                 ),
-                Spec(
-                    path=Path('/dtype/_replace_path'),
-                    name='_replace_path',
-                    tags=(<ReplaceTag.PATH: 1>,),
-                    type=<class 'str'>,
-                    data='/[a-z]+/0',
-                ),
-                Spec(
-                    path=Path('/dtype/_replace_attr'),
-                    name='_replace_attr',
-                    tags=(<ReplaceTag.ATTR: 2>,),
-                    type=typing.Literal['path', 'name', 'tags', 'type', 'data', 'anns', 'meta', 'orig'],
-                    data='type',
-                ),
-                Spec(
-                    path=Path('/dtype/_replace_skipif'),
-                    name='_replace_skipif',
-                    tags=(<ReplaceTag.SKIPIF: 3>,),
-                    type=typing.Any,
-                    data=None,
-                ),
             ])
 
     """
@@ -150,5 +130,10 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
                 changes = {attr[str].data: spec.data}
                 updated = replace_(target, **changes)
                 new = new.replace(target, updated)
+
+            if not leave:
+                new.remove(path)
+                new.remove(attr)
+                new.remove(skipif)
 
     return new
