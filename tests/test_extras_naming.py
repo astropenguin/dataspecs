@@ -25,4 +25,4 @@ def test_name() -> None:
     named = name(specs)
 
     assert named[0].name == "a!"
-    assert named[2].name == "b!"
+    assert named[1].name == "b!"
