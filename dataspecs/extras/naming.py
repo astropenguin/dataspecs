@@ -60,13 +60,13 @@ def name(specs: Specs[TSpec], /, leave: bool = False) -> Specs[TSpec]:
             Specs([
                 Spec(
                     path=Path('/temp'),
-                    name='Ground temperature',
+                    name='Ground temperature', # <- named
                     tags=(),
                     type=<class 'float'>,
                     data=20.0,
                 ),
                 Spec(
-                    path=Path('/humid'),
+                    path=Path('/humid'), # <- named
                     name='Relative humidity',
                     tags=(),
                     type=<class 'float'>,
