@@ -178,10 +178,7 @@ specs.groupby("tags")
 ### Formatting specifications
 
 ```python
-from enum import auto
-from dataclasses import dataclass
-from dataspecs import TagBase, Format, from_dataclass, format
-from typing import Annotated as Ann
+from dataspecs import Format, format
 
 class Tag(TagBase):
     ATTR = auto()
@@ -211,9 +208,7 @@ Specs([
 ### Naming specifications
 
 ```python
-from dataclasses import dataclass
-from dataspecs import Name, name, from_dataclass
-from typing import Annotated as Ann
+from dataspecs import Name, name
 
 @dataclass
 class Weather:
@@ -232,10 +227,7 @@ Specs([
 ### Replacing specifications
 
 ```python
-from enum import auto
-from dataclasses import dataclass
-from dataspecs import Replace, TagBase, from_dataclass, replace
-from typing import Annotated as Ann
+from dataspecs import Replace, replace
 
 class Tag(TagBase):
     ATTR = auto()
@@ -257,5 +249,23 @@ Specs([
     Spec(path=Path('/humid'), name='humid', tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
     Spec(path=Path('/humid/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'int'>, data=None), # <- replaced
     Spec(path=Path('/dtype'), name='dtype', tags=(), type=<class 'type'>, data=<class 'int'>),
+])
+```
+
+## Specification rules
+
+### First union type as representative type
+
+```python
+@dataclass
+class Weather:
+    temp: list[int | float] | (int | float)
+
+from_dataclass(Weather(0.0))
+```
+```
+Specs([
+    Spec(path=Path('/temp'), name='temp', tags=(), type=list[int | float], data=0.0),
+    Spec(path=Path('/temp/0'), name='0', tags=(), type=<class 'int'>, data=None),
 ])
 ```
