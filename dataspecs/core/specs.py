@@ -35,7 +35,7 @@ from .typing import (
 
 
 # type hints
-SpecAttr = Literal["path", "name", "tags", "type", "data", "anns", "metadata", "origin"]
+SpecAttr = Literal["path", "name", "tags", "type", "data", "anns", "meta", "origin"]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -96,7 +96,7 @@ class Spec(Generic[TAny]):
         type: Type hint of the data spec.
         data: Default or final data of the data spec.
         anns: Type hint annotations of the data spec.
-        metadata: Metadata of the data spec.
+        meta: Metadata of the data spec.
         origin: Origin of the data spec.
 
     """
@@ -119,7 +119,7 @@ class Spec(Generic[TAny]):
     anns: tuple[Any, ...] = field(default_factory=tuple, repr=False)
     """Type hint annotations of the data spec."""
 
-    metadata: dict[str, Any] = field(default_factory=dict, repr=False)
+    meta: dict[str, Any] = field(default_factory=dict, repr=False)
     """Metadata of the data spec."""
 
     origin: Optional[Any] = field(default=None, repr=False)
@@ -164,7 +164,7 @@ class Specs(UserList[TSpec]):
         Args:
             by: Name of the data spec attribute for grouping.
                 Either ``'path'``, ``'name'``, ``'tags'``, ``'type'``, ``'data'``,
-                ``'anns'``, ``'metadata'``, or ``'origin'`` is accepted.
+                ``'anns'``, ``'meta'``, or ``'origin'`` is accepted.
             method: Grouping method.
                 Either ``'equality'`` (or ``'eq'``; hash-based grouping),
                 or ``'identity'`` (or ``'id'``; id-based grouping) is accepted.

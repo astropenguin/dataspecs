@@ -122,7 +122,7 @@ def from_dataclass(
                 factory=factory,
                 path=Path(path) / field.name,
                 data=getattr(obj, field.name, field.default),
-                metadata=dict(field.metadata),
+                meta=dict(field.metadata),
                 origin=obj,
             )
         )
@@ -137,7 +137,7 @@ def from_typehint(
     *,
     path: StrPath = ROOT,
     data: Any = MISSING,
-    metadata: Optional[dict[str, Any]] = None,
+    meta: Optional[dict[str, Any]] = None,
     origin: Optional[Any] = None,
 ) -> Specs[Spec[Any]]: ...
 
@@ -150,7 +150,7 @@ def from_typehint(
     factory: Callable[..., TSpec],
     path: StrPath = ROOT,
     data: Any = MISSING,
-    metadata: Optional[dict[str, Any]] = None,
+    meta: Optional[dict[str, Any]] = None,
     origin: Optional[Any] = None,
 ) -> Specs[TSpec]: ...
 
@@ -162,7 +162,7 @@ def from_typehint(
     factory: Any = Spec,
     path: StrPath = ROOT,
     data: Any = None,
-    metadata: Optional[dict[str, Any]] = None,
+    meta: Optional[dict[str, Any]] = None,
     origin: Optional[Any] = None,
 ) -> Any:
     """Create data specs from a type hint.
@@ -172,7 +172,7 @@ def from_typehint(
         factory: Factory for creating each data spec.
         path: Path of the parent data spec.
         data: Data of the parent data spec.
-        metadata: Metadata of the parent data spec.
+        meta: Metadata of the parent data spec.
         origin: Origin of the parent data spec.
 
     Returns:
@@ -219,7 +219,7 @@ def from_typehint(
             type=get_annotated(first, recursive=True),
             data=data,
             anns=get_annotations(first),
-            metadata={} if metadata is None else dict(metadata),
+            meta={} if meta is None else dict(meta),
             origin=origin,
         )
     )
