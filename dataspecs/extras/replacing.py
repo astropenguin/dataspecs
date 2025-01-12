@@ -75,48 +75,56 @@ def replace(specs: Specs[TSpec], /) -> Specs[TSpec]:
             Specs([
                 Spec(
                     path=Path('/temp'),
+                    name='temp',
                     tags=(<Tag.DATA: 2>,),
                     type=list[float],
                     data=[20.0, 25.0],
                 ),
                 Spec(
                     path=Path('/temp/0'),
+                    name='0',
                     tags=(<Tag.DTYPE: 3>,),
                     type=<class 'int'>, # <- replaced
                     data=None,
                 ),
                 Spec(
                     path=Path('/humid'),
+                    name='humid',
                     tags=(<Tag.DATA: 2>,),
                     type=list[float],
                     data=[50.0, 55.0],
                 ),
                 Spec(
                     path=Path('/humid/0'),
+                    name='0',
                     tags=(<Tag.DTYPE: 3>,),
                     type=<class 'int'>, # <- replaced
                     data=None,
                 ),
                 Spec(
                     path=Path('/dtype'),
+                    name='dtype',
                     tags=(),
                     type=<class 'type'>,
                     data=<class 'int'>,
                 ),
                 Spec(
                     path=Path('/dtype/_replace_path'),
+                    name='_replace_path',
                     tags=(<ReplaceTag.PATH: 1>,),
                     type=<class 'str'>,
                     data='/[a-z]+/0',
                 ),
                 Spec(
                     path=Path('/dtype/_replace_attr'),
+                    name='_replace_attr',
                     tags=(<ReplaceTag.ATTR: 2>,),
                     type=typing.Literal['path', 'name', 'tags', 'type', 'data', 'anns', 'meta', 'orig'],
                     data='type',
                 ),
                 Spec(
                     path=Path('/dtype/_replace_skipif'),
+                    name='_replace_skipif',
                     tags=(<ReplaceTag.SKIPIF: 3>,),
                     type=typing.Any,
                     data=None,
