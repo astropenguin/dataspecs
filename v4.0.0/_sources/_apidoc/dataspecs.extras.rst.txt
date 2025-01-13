@@ -1,0 +1,17 @@
+dataspecs.extras package
+========================
+
+.. automodule:: dataspecs.extras
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 2
+
+   dataspecs.extras.formatting
+   dataspecs.extras.naming
+   dataspecs.extras.replacing

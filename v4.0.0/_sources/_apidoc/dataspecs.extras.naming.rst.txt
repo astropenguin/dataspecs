@@ -1,0 +1,7 @@
+dataspecs.extras.naming module
+==============================
+
+.. automodule:: dataspecs.extras.naming
+   :members:
+   :undoc-members:
+   :show-inheritance:
