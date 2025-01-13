@@ -1,4 +1,4 @@
-__all__ = ["Name", "name"]
+__all__ = ["Name", "NameTag", "name"]
 
 
 # standard library
@@ -15,7 +15,10 @@ from ..core.typing import TagBase
 
 # constants
 class NameTag(TagBase):
+    """Collection of tags for namer specs."""
+
     NAME = auto()
+    """Tag for new name of the data spec to be replaced."""
 
 
 @dataclass(frozen=True)

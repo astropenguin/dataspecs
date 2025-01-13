@@ -1,4 +1,4 @@
-__all__ = ["Format", "format"]
+__all__ = ["Format", "FormatTag", "format"]
 
 
 # standard library
@@ -14,9 +14,16 @@ from ..core.typing import StrPath, TagBase
 
 # constants
 class FormatTag(TagBase):
+    """Collection of tags for formatter specs."""
+
     ATTR = auto()
+    """Tag for name of data spec attribute to be formatted."""
+
     PATH = auto()
+    """Tag for path of data spec(s) to be formatted."""
+
     SKIPIF = auto()
+    """Tag for sentinel value for which formatting is skipped."""
 
 
 @dataclass(frozen=True)

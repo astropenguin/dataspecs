@@ -13,8 +13,11 @@ __all__ = [
     "from_typehint",
     # aliases (extras)
     "Format",
+    "FormatTag",
     "Name",
+    "NameTag",
     "Replace",
+    "ReplaceTag",
     "format",
     "name",
     "replace",
