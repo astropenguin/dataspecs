@@ -16,6 +16,7 @@ from typing import (
     Optional,
     SupportsIndex,
     TypeVar,
+    Union,
     overload,
 )
 
@@ -36,6 +37,7 @@ from .typing import (
 
 # type hints
 SpecAttr = Literal["path", "name", "tags", "type", "data", "anns", "meta", "orig"]
+SpecIndex = Union[None, TagBase, type[Any], StrPath, slice, SupportsIndex]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -194,6 +196,24 @@ class Specs(UserList[TSpec]):
         """Return data specs with old data spec replaced by new one."""
         return type(self)(new if spec == old else spec for spec in self)
 
+    def __call__(self, index: SpecIndex, /) -> Self:
+        """Select data specs by given index.
+
+        Unlike ``__getitem__``, it always returns data specs,
+        even when given index selects a single data spec.
+
+        Args:
+            index: Normal or extended index for the selection of the data specs.
+
+        Returns:
+            Selected data specs by given index.
+
+        """
+        if isinstance(selected := self[index], Spec):
+            return type(self)([selected])
+        else:
+            return selected
+
     @overload
     def __getitem__(self, index: None, /) -> Self: ...
 
@@ -212,10 +232,10 @@ class Specs(UserList[TSpec]):
     @overload
     def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
 
-    def __getitem__(self, index: Any, /) -> Any:
-        """Select data specs with given index.
+    def __getitem__(self, index: SpecIndex, /) -> Union[Self, TSpec]:
+        """Select data specs by given index.
 
-        In addition to a normal index (i.e. an object that has ``__index__`` method),
+        In addition to a normal index (i.e. slice or ``__index__``-implemented object),
         it also accepts the following extended index for the advanced selection:
         (1) a tag to select data specs that contain it,
         (2) a tag type to select data specs that contain its tags,
@@ -227,7 +247,7 @@ class Specs(UserList[TSpec]):
             index: Normal or extended index for the selection of the data specs.
 
         Returns:
-            Selected data specs with given index.
+            Selected data spec(s) by given index.
 
         """
         if is_tag(index):
