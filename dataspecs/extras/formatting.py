@@ -47,7 +47,7 @@ class Format:
     """Sentinel value for which formatting is skipped."""
 
 
-def format(specs: Specs[TSpec], /, leave: bool = False) -> Specs[TSpec]:
+def format(specs: Specs[TSpec], /, *, leave: bool = False) -> Specs[TSpec]:
     """Format data spec attributes by formatter specs.
 
     Args:

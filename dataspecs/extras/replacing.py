@@ -47,7 +47,7 @@ class Replace:
     """Sentinel value for which replacing is skipped."""
 
 
-def replace(specs: Specs[TSpec], /, leave: bool = False) -> Specs[TSpec]:
+def replace(specs: Specs[TSpec], /, *, leave: bool = False) -> Specs[TSpec]:
     """Replace data spec attributes by replacer specs.
 
     Args:
