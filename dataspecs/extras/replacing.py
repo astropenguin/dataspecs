@@ -14,9 +14,16 @@ from ..core.typing import StrPath, TagBase
 
 # constants
 class ReplaceTag(TagBase):
+    """Collection of tags for replacer specs."""
+
     ATTR = auto()
+    """Tag for name of data spec attribute to be replaced."""
+
     PATH = auto()
+    """Tag for path of data spec(s) to be replaced."""
+
     SKIPIF = auto()
+    """Tag for sentinel value for which replacing is skipped."""
 
 
 @dataclass(frozen=True)
