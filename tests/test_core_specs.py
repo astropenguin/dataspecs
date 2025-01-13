@@ -126,15 +126,6 @@ data_specs_replace: TestData = [
 data_specs_call: TestData = [
     (None, specs),
     #
-    (Tag.DATA, [specs[0], specs[3]]),
-    (Tag.NAME, [specs[1], specs[4]]),
-    (Tag.UNITS, [specs[2], specs[5]]),
-    #
-    (Tag, specs[0:6]),
-    #
-    (int, [specs[0], specs[3], specs[6]]),
-    (str, [specs[1], specs[2], specs[4], specs[5]]),
-    #
     ("/.*", specs),
     ("/[^/]*", [specs[0], specs[3], specs[6]]),
     ("/.*/.*", [*specs[1:3], *specs[4:6]]),
@@ -149,6 +140,15 @@ data_specs_call: TestData = [
     ("/c.*", specs[6:7]),
     ("/.*/name", [specs[1], specs[4]]),
     ("/.*/units", [specs[2], specs[5]]),
+    #
+    (Tag.DATA, [specs[0], specs[3]]),
+    (Tag.NAME, [specs[1], specs[4]]),
+    (Tag.UNITS, [specs[2], specs[5]]),
+    #
+    (Tag, specs[0:6]),
+    #
+    (int, [specs[0], specs[3], specs[6]]),
+    (str, [specs[1], specs[2], specs[4], specs[5]]),
     #
     (slice(None, None), specs),
     (slice(0, 2), specs[0:2]),
@@ -159,15 +159,6 @@ data_specs_call: TestData = [
 data_specs_getitem: TestData = [
     (None, specs),
     #
-    (Tag.DATA, [specs[0], specs[3]]),
-    (Tag.NAME, [specs[1], specs[4]]),
-    (Tag.UNITS, [specs[2], specs[5]]),
-    #
-    (Tag, specs[0:6]),
-    #
-    (int, [specs[0], specs[3], specs[6]]),
-    (str, [specs[1], specs[2], specs[4], specs[5]]),
-    #
     ("/.*", specs),
     ("/[^/]*", [specs[0], specs[3], specs[6]]),
     ("/.*/.*", [*specs[1:3], *specs[4:6]]),
@@ -182,6 +173,15 @@ data_specs_getitem: TestData = [
     ("/c.*", specs[6:7]),
     ("/.*/name", [specs[1], specs[4]]),
     ("/.*/units", [specs[2], specs[5]]),
+    #
+    (Tag.DATA, [specs[0], specs[3]]),
+    (Tag.NAME, [specs[1], specs[4]]),
+    (Tag.UNITS, [specs[2], specs[5]]),
+    #
+    (Tag, specs[0:6]),
+    #
+    (int, [specs[0], specs[3], specs[6]]),
+    (str, [specs[1], specs[2], specs[4], specs[5]]),
     #
     (slice(None, None), specs),
     (slice(0, 2), specs[0:2]),
