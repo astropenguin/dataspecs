@@ -1,4 +1,4 @@
-__all__ = ["Name", "name"]
+__all__ = ["Name", "NameTag", "name"]
 
 
 # standard library

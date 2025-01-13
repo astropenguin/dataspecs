@@ -1,4 +1,4 @@
-__all__ = ["Format", "format"]
+__all__ = ["Format", "FormatTag", "format"]
 
 
 # standard library

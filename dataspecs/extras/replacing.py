@@ -1,4 +1,4 @@
-__all__ = ["Replace", "replace"]
+__all__ = ["Replace", "ReplaceTag", "replace"]
 
 
 # standard library
