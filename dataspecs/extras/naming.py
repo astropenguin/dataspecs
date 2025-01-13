@@ -34,7 +34,7 @@ class Name:
     """New name of the data spec to be replaced."""
 
 
-def name(specs: Specs[TSpec], /, leave: bool = False) -> Specs[TSpec]:
+def name(specs: Specs[TSpec], /, *, leave: bool = False) -> Specs[TSpec]:
     """Replace data spec names by corresponding namer specs.
 
     Args:
