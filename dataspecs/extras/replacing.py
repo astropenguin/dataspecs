@@ -8,8 +8,8 @@ from typing import Annotated, Any
 
 
 # dependencies
-from ..core.specs import SpecAttr, Specs, TSpec
-from ..core.typing import StrPath, TagBase
+from ..core.specs import SpecAttr, SpecIndex, Specs, TSpec
+from ..core.typing import TagBase
 
 
 # constants
@@ -19,8 +19,8 @@ class ReplaceTag(TagBase):
     ATTR = auto()
     """Tag for name of data spec attribute to be replaced."""
 
-    PATH = auto()
-    """Tag for path of data spec(s) to be replaced."""
+    INDEX = auto()
+    """Tag for index of data spec(s) to be replaced."""
 
     SKIPIF = auto()
     """Tag for sentinel value for which replacing is skipped."""
@@ -31,14 +31,14 @@ class Replace:
     """Annotation for replacer specs.
 
     Args:
-        _replace_path: Path of data spec(s) to be replaced.
+        _replace_index: Index of data spec(s) to be replaced.
         _replace_attr: Name of data spec attribute to be replaced.
         _replace_skipif: Sentinel value for which replacing is skipped.
 
     """
 
-    _replace_path: Annotated[StrPath, ReplaceTag.PATH]
-    """Path of data spec(s) to be replaced."""
+    _replace_index: Annotated[SpecIndex, ReplaceTag.INDEX]
+    """Index of data spec(s) to be replaced."""
 
     _replace_attr: Annotated[SpecAttr, ReplaceTag.ATTR] = "data"
     """Name of data spec attribute to be replaced."""
@@ -124,7 +124,7 @@ def replace(specs: Specs[TSpec], /, *, leave: bool = False) -> Specs[TSpec]:
     for spec in specs:
         for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
-                (path := options[ReplaceTag.PATH].unique) is None
+                (index := options[ReplaceTag.INDEX].unique) is None
                 or (attr := options[ReplaceTag.ATTR].unique) is None
                 or (skipif := options[ReplaceTag.SKIPIF].unique) is None
             ):
@@ -133,13 +133,12 @@ def replace(specs: Specs[TSpec], /, *, leave: bool = False) -> Specs[TSpec]:
             if spec.data == skipif.data:
                 continue
 
-            for target in new[path[str].data]:
+            for target in new(index.data):
                 changes = {attr[str].data: spec.data}
-                updated = replace_(target, **changes)
-                new = new.replace(target, updated)
+                new = new.replace(target, replace_(target, **changes))
 
             if not leave:
-                new.remove(path)
+                new.remove(index)
                 new.remove(attr)
                 new.remove(skipif)
 

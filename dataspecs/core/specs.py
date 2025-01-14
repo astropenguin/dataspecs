@@ -16,6 +16,7 @@ from typing import (
     Optional,
     SupportsIndex,
     TypeVar,
+    Union,
     overload,
 )
 
@@ -36,6 +37,7 @@ from .typing import (
 
 # type hints
 SpecAttr = Literal["path", "name", "tags", "type", "data", "anns", "meta", "orig"]
+SpecIndex = Union[None, StrPath, TagBase, type[Any], slice, SupportsIndex]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -194,8 +196,29 @@ class Specs(UserList[TSpec]):
         """Return data specs with old data spec replaced by new one."""
         return type(self)(new if spec == old else spec for spec in self)
 
+    def __call__(self, index: SpecIndex, /) -> Self:
+        """Select data specs by given index.
+
+        Unlike ``__getitem__``, it always returns data specs,
+        even when given index selects a single data spec.
+
+        Args:
+            index: Normal or extended index for the selection of the data specs.
+
+        Returns:
+            Selected data specs by given index.
+
+        """
+        if isinstance(selected := self[index], Spec):
+            return type(self)([selected])
+        else:
+            return selected
+
     @overload
     def __getitem__(self, index: None, /) -> Self: ...
+
+    @overload
+    def __getitem__(self, index: StrPath, /) -> Self: ...
 
     @overload
     def __getitem__(self, index: TagBase, /) -> Self: ...
@@ -204,32 +227,35 @@ class Specs(UserList[TSpec]):
     def __getitem__(self, index: type[Any], /) -> Self: ...
 
     @overload
-    def __getitem__(self, index: StrPath, /) -> Self: ...
-
-    @overload
     def __getitem__(self, index: slice, /) -> Self: ...
 
     @overload
     def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
 
-    def __getitem__(self, index: Any, /) -> Any:
-        """Select data specs with given index.
+    def __getitem__(self, index: SpecIndex, /) -> Union[Self, TSpec]:
+        """Select data specs by given index.
 
-        In addition to a normal index (i.e. an object that has ``__index__`` method),
+        In addition to a normal index (i.e. slice or ``__index__``-implemented object),
         it also accepts the following extended index for the advanced selection:
-        (1) a tag to select data specs that contain it,
-        (2) a tag type to select data specs that contain its tags,
-        (3) an any type to select data specs that contain it,
-        (4) a string path to select data specs that match it, or
-        (5) ``None`` to return all data specs (shallow copy).
+        (1) ``None`` to select all data specs (i.e. shallow copy),
+        (2) a string path to select data specs that match it,
+        (3) a tag to select data specs that contain it,
+        (4) a tag type to select data specs that contain its tags, or
+        (5) an any type to select data specs that contain it.
 
         Args:
             index: Normal or extended index for the selection of the data specs.
 
         Returns:
-            Selected data specs with given index.
+            Selected data spec(s) by given index.
 
         """
+        if index is None:
+            return self.copy()  # shallow copy
+
+        if is_strpath(index):
+            return type(self)(spec for spec in self if spec.path.match(index))
+
         if is_tag(index):
             return type(self)(spec for spec in self if (index in spec.tags))
 
@@ -246,11 +272,5 @@ class Specs(UserList[TSpec]):
                 for spec in self
                 if isinstance(spec.type, type) and issubclass(spec.type, index)
             )
-
-        if is_strpath(index):
-            return type(self)(spec for spec in self if spec.path.match(index))
-
-        if index is None:
-            return self.copy()  # shallow copy
 
         return super().__getitem__(index)  # type: ignore

@@ -8,8 +8,8 @@ from typing import Annotated, Any
 
 
 # dependencies
-from ..core.specs import SpecAttr, Specs, TSpec
-from ..core.typing import StrPath, TagBase
+from ..core.specs import SpecAttr, SpecIndex, Specs, TSpec
+from ..core.typing import TagBase
 
 
 # constants
@@ -19,8 +19,8 @@ class FormatTag(TagBase):
     ATTR = auto()
     """Tag for name of data spec attribute to be formatted."""
 
-    PATH = auto()
-    """Tag for path of data spec(s) to be formatted."""
+    INDEX = auto()
+    """Tag for index of data spec(s) to be formatted."""
 
     SKIPIF = auto()
     """Tag for sentinel value for which formatting is skipped."""
@@ -31,14 +31,14 @@ class Format:
     """Annotation for formatter specs.
 
     Args:
-        _format_path: Path of data spec(s) to be formatted.
+        _format_index: Index of data spec(s) to be formatted.
         _format_attr: Name of data spec attribute to be formatted.
         _format_skipif: Sentinel value for which formatting is skipped.
 
     """
 
-    _format_path: Annotated[StrPath, FormatTag.PATH]
-    """Path of data spec(s) to be formatted."""
+    _format_index: Annotated[SpecIndex, FormatTag.INDEX]
+    """Index of data spec(s) to be formatted."""
 
     _format_attr: Annotated[SpecAttr, FormatTag.ATTR] = "data"
     """Name of data spec attribute to be formatted."""
@@ -125,7 +125,7 @@ def format(specs: Specs[TSpec], /, *, leave: bool = False) -> Specs[TSpec]:
     for spec in specs:
         for options in specs[spec.path.children].groupby("orig", method="id"):
             if (
-                (path := options[FormatTag.PATH].unique) is None
+                (index := options[FormatTag.INDEX].unique) is None
                 or (attr := options[FormatTag.ATTR].unique) is None
                 or (skipif := options[FormatTag.SKIPIF].unique) is None
             ):
@@ -134,14 +134,13 @@ def format(specs: Specs[TSpec], /, *, leave: bool = False) -> Specs[TSpec]:
             if spec.data == skipif.data:
                 continue
 
-            for target in new[path[str].data]:
+            for target in new(index.data):
                 string: str = getattr(target, attr[str].data)
                 changes = {attr[str].data: string.format(spec.data)}
-                updated = replace(target, **changes)
-                new = new.replace(target, updated)
+                new = new.replace(target, replace(target, **changes))
 
             if not leave:
-                new.remove(path)
+                new.remove(index)
                 new.remove(attr)
                 new.remove(skipif)
 
