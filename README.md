@@ -83,7 +83,7 @@ class Meta:
 
 @dataclass
 class Weather:
-    temp: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA, Meta("K")]
+    temp: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA, Meta("degC")]
     humid: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA, Meta("%")]
     location: str
 
@@ -94,7 +94,7 @@ print(specs)
 Specs([
     Spec(path=Path('/temp'), name='temp', tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
     Spec(path=Path('/temp/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'),
+    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='degC'),
     Spec(path=Path('/humid'), name='humid', tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
     Spec(path=Path('/humid/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
     Spec(path=Path('/humid/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='%'),
@@ -121,7 +121,7 @@ specs[Tag]
 Specs([
     Spec(path=Path('/temp'), name='temp', tags=(<Tag.DATA: 2>,), type=list[float], data=[20.0, 25.0]),
     Spec(path=Path('/temp/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
-    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'),
+    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='degC'),
     Spec(path=Path('/humid'), name='humid', tags=(<Tag.DATA: 2>,), type=list[float], data=[50.0, 55.0]),
     Spec(path=Path('/humid/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
     Spec(path=Path('/humid/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='%'),
@@ -133,7 +133,7 @@ specs[str]
 ```
 ```
 Specs([
-    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'),
+    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='degC'),
     Spec(path=Path('/humid/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='%'),
     Spec(path=Path('/location'), name='location', tags=(), type=<class 'str'>, data='Tokyo'),
 ])
@@ -144,7 +144,7 @@ specs["/temp/[a-z]+"]
 ```
 ```
 Specs([
-    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'),
+    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='degC'),
 ])
 ```
 
@@ -164,7 +164,7 @@ specs.groupby("tags")
         Spec(path=Path('/humid/0'), name='0', tags=(<Tag.DTYPE: 3>,), type=<class 'float'>, data=None),
     ]),
     Specs([
-        Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'),
+        Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='degC'),
         Spec(path=Path('/humid/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='%'),
     ]),
     Specs([
@@ -191,15 +191,15 @@ class Weather:
     temp_units: Ann[str, Format("/temp/units")]
     humid_units: Ann[str, Format("/humid/units")]
 
-format(from_dataclass(Weather(20.0, 50.0, "K", "%")))
+format(from_dataclass(Weather(20.0, 50.0, "degC", "%")))
 ```
 ```
 Specs([
     Spec(path=Path('/temp'), name='temp', tags=(), type=<class 'float'>, data=20.0),
-    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='K'), # <- data formatted
-    Spec(path=Path('/humid'), name='humid', tags=(), type=<class 'float'>, data=55.0),
+    Spec(path=Path('/temp/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='degC'), # <- data formatted
+    Spec(path=Path('/humid'), name='humid', tags=(), type=<class 'float'>, data=50.0),
     Spec(path=Path('/humid/units'), name='units', tags=(<Tag.ATTR: 1>,), type=<class 'str'>, data='%'), # <- data formatted
-    Spec(path=Path('/temp_units'), name='temp_units', tags=(), type=<class 'str'>, data='K'),
+    Spec(path=Path('/temp_units'), name='temp_units', tags=(), type=<class 'str'>, data='degC'),
     Spec(path=Path('/humid_units'), name='humid_units', tags=(), type=<class 'str'>, data='%'),
 ])
 ```
