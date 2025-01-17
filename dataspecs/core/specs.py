@@ -36,8 +36,25 @@ from .typing import (
 
 
 # type hints
-SpecAttr = Literal["path", "name", "tags", "type", "data", "anns", "meta", "orig"]
-SpecIndex = Union[None, StrPath, TagBase, type[Any], slice, SupportsIndex]
+SpecAttr = Literal[
+    "path",
+    "name",
+    "tags",
+    "type",
+    "data",
+    "anns",
+    "meta",
+    "orig",
+    "none",
+]
+SpecIndex = Union[
+    None,
+    StrPath,
+    TagBase,
+    type[Any],
+    slice,
+    SupportsIndex,
+]
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
@@ -100,11 +117,12 @@ class Spec(Generic[TAny]):
         path: Path of the data spec.
         name: Name of the data spec.
         tags: Tags of the data spec.
-        type: Type hint (unannotated) of the data spec.
-        data: Default or final data of the data spec.
-        anns: Type hint annotations of the data spec.
-        meta: Metadata of the data spec.
+        type: Type hint (unannotated) of the data.
+        data: Data (or default value) of the data spec.
+        anns: Type hint annotations of the data.
+        meta: Any metadata of the data spec.
         orig: Origin of the data spec.
+        none: None (or alternative) for data missing.
 
     """
 
@@ -121,16 +139,24 @@ class Spec(Generic[TAny]):
     """Type hint (unannotated) of the data spec."""
 
     data: TAny
-    """Default or final data of the data spec."""
+    """Data (or default value) of the data spec."""
 
     anns: tuple[Any, ...] = field(default_factory=tuple, repr=False)
     """Type hint annotations of the data spec."""
 
     meta: dict[str, Any] = field(default_factory=dict, repr=False)
-    """Metadata of the data spec."""
+    """Any metadata of the data spec."""
 
     orig: Optional[Any] = field(default=None, repr=False)
     """Origin of the data spec."""
+
+    none: Optional[Any] = field(default=None, repr=False)
+    """None (or alternative) for data missing."""
+
+    @property
+    def is_missing(self) -> bool:
+        """Return whether the data of the data spec is missing."""
+        return self.data == self.none
 
     def __call__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
         """Dynamically cast the data of the data spec."""
@@ -170,8 +196,8 @@ class Specs(UserList[TSpec]):
 
         Args:
             attr: Name of the data spec attribute for grouping.
-                Either ``'path'``, ``'name'``, ``'tags'``, ``'type'``,
-                ``'data'``, ``'anns'``, ``'meta'``, or ``'orig'`` is accepted.
+                Either ``'path'``, ``'name'``, ``'tags'``, ``'type'``, ``'data'``,
+                ``'anns'``, ``'meta'``, ``'orig'``, ``'none'`` is accepted.
             method: Grouping method.
                 Either ``'equality'`` (or ``'eq'``; hash-based grouping),
                 or ``'identity'`` (or ``'id'``; id-based grouping) is accepted.
