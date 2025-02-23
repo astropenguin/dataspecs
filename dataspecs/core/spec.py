@@ -65,7 +65,7 @@ class Name(Attr[Hashable]):
 
 
 class Tag(Attr[str]):
-    """Wrapper for data spec tag."""
+    """Wrapper for data spec tags."""
 
     pass
 
@@ -77,13 +77,13 @@ class Type(Attr[type[Any]]):
 
 
 class Unit(Attr[str]):
-    """Wrapper for data spec unit."""
+    """Wrapper for data spec units."""
 
     pass
 
 
 class Value(Attr[str]):
-    """Wrapper for data spec value."""
+    """Wrapper for data spec values."""
 
     pass
 
@@ -109,7 +109,7 @@ def is_type(obj: Any, /) -> TypeGuard[Type]:
 
 
 def is_unit(obj: Any, /) -> TypeGuard[Unit]:
-    """Check if given object is wrapped unit."""
+    """Check if given object is a wrapped unit."""
     return isinstance(obj, Unit)
 
 
