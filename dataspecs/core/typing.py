@@ -9,14 +9,14 @@ from typing_extensions import get_args, get_origin
 
 
 # type hints
-class DataClassObject(Protocol):
-    """Type hint for any dataclass object."""
+class DataClassInstance(Protocol):
+    """Type hint for any data-class instance."""
 
     __dataclass_fields__: ClassVar[dict[str, Field[Any]]]
 
 
-DataClass = Union[DataClassObject, type[DataClassObject]]
-"""Type hint for any dataclass or dataclass object."""
+DataClass = Union[DataClassInstance, type[DataClassInstance]]
+"""Type hint for any data class or data-class instance."""
 
 
 def get_annotated(obj: Any, /, *, recursive: bool = False) -> Any:
@@ -35,12 +35,12 @@ def get_annotations(obj: Any, /) -> tuple[Any, ...]:
 
 
 def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
-    """Return annotations of dataclasses (objects)."""
+    """Return annotations of data classes or their instances."""
     return tuple(filter(is_dataclass, get_annotations(obj)))
 
 
 def get_first(obj: Any, /) -> Any:
-    """Return the first type if a type hint is a union type."""
+    """Return the first type if given object is a union type."""
     if is_union(annotated := get_annotated(obj)):
         first = get_args(annotated)[0]
     else:
@@ -53,7 +53,7 @@ def get_first(obj: Any, /) -> Any:
 
 
 def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
-    """Return subtypes of a type hint if they exist."""
+    """Return inner type hints if given object is a type hint."""
     if is_literal(annotated := get_annotated(obj)):
         return ()
     else:
@@ -61,17 +61,17 @@ def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
 
 
 def is_annotated(obj: Any, /) -> bool:
-    """Check if a type hint is annotated."""
+    """Check if given object is annotated."""
     return get_origin(obj) is Annotated
 
 
 def is_literal(obj: Any, /) -> bool:
-    """Check if a type hint is a literal type."""
+    """Check if given object is a literal type."""
     return get_origin(obj) is Literal
 
 
 def is_union(obj: Any, /) -> bool:
-    """Check if a type hint is a union type."""
+    """Check if given object is a union type."""
     if (UnionType := getattr(types, "UnionType", None)) is not None:
         # For Python >= 3.10
         return get_origin(obj) is Union or isinstance(obj, UnionType)
