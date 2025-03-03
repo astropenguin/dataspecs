@@ -16,6 +16,7 @@ from .spec import (
     is_id,
     is_name,
     is_tag,
+    is_tags,
     is_type,
     is_unit,
     is_value,
@@ -138,7 +139,7 @@ def from_typehint(
             factory(
                 id=str(path),
                 name=get_name(first, path.name),
-                tags=list(get_tags(first)),
+                tags=set(get_tags(first)),
                 type=get_type(first, get_annotated(first, recursive=True)),
                 unit=get_unit(first),
                 value=get_value(first, value),
@@ -173,8 +174,18 @@ def get_name(obj: Any, default: Hashable, /) -> Hashable:
 
 def get_tags(obj: Any, /) -> Iterator[str]:
     """Return all annotated tags from given type hint."""
+    for tags in filter(is_tags, get_annotations(obj)):
+        yield from tags.wrapped
+
     for tag in filter(is_tag, get_annotations(obj)):
         yield tag.wrapped
+
+    for dataclass in get_dataclasses(obj):
+        if (tags := getattr(dataclass, "tags", None)) is not None:
+            yield from tags
+
+        if (tag := getattr(dataclass, "tag", None)) is not None:
+            yield tag
 
 
 def get_type(obj: Any, default: type[Any], /) -> type[Any]:

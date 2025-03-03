@@ -3,19 +3,19 @@ __all__ = ["Specs"]
 
 # standard library
 from collections import UserList, defaultdict
-from collections.abc import Sequence
 from typing import Any, Hashable, Optional, SupportsIndex, Union, overload
 
 
 # dependencies
 from typing_extensions import Self
 from .spec import (
-    Attr,
     SpecAttr,
     TSpec,
+    Wrapper,
     is_id,
     is_name,
     is_tag,
+    is_tags,
     is_type,
     is_unit,
     is_value,
@@ -24,7 +24,7 @@ from .spec import (
 
 # type hints
 NormalIndex = Union[slice, SupportsIndex]
-SpecsIndex = Union["Attr[Any]", Sequence[NormalIndex], NormalIndex]
+SpecsIndex = Union[Wrapper[Any], NormalIndex]
 
 
 class Specs(UserList[TSpec]):
@@ -59,10 +59,7 @@ class Specs(UserList[TSpec]):
         return type(self)(new if spec == old else spec for spec in self)
 
     @overload
-    def __getitem__(self, index: Attr[Any], /) -> Self: ...
-
-    @overload
-    def __getitem__(self, index: Sequence[NormalIndex], /) -> Self: ...
+    def __getitem__(self, index: Wrapper[Any], /) -> Self: ...
 
     @overload
     def __getitem__(self, index: NormalIndex, /) -> TSpec: ...
@@ -78,6 +75,9 @@ class Specs(UserList[TSpec]):
         if is_tag(index):
             return type(self)(spec for spec in self if index.wrapped in spec.tags)
 
+        if is_tags(index):
+            return type(self)(spec for spec in self if index.wrapped <= spec.tags)
+
         if is_type(index):
             return type(self)(spec for spec in self if index.wrapped == spec.type)
 
@@ -87,7 +87,4 @@ class Specs(UserList[TSpec]):
         if is_value(index):
             return type(self)(spec for spec in self if index.wrapped == spec.value)
 
-        if isinstance(index, Sequence):
-            return type(self)(map(super().__getitem__, index))  # type: ignore
-        else:
-            return super().__getitem__(index)  # type: ignore
+        return super().__getitem__(index)  # type: ignore

@@ -2,12 +2,12 @@ __all__ = [
     # subpackages
     "core",
     # aliases (core)
-    "Attr",
     "ID",
     "Name",
     "Spec",
     "Specs",
     "Tag",
+    "Tags",
     "Type",
     "Unit",
     "Value",
