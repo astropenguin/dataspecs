@@ -2,17 +2,18 @@ __all__ = ["from_dataclass", "from_typehint"]
 
 
 # standard library
-from collections.abc import Hashable, Iterator
-from dataclasses import fields
+from collections.abc import Callable, Iterable, Iterator
+from dataclasses import fields, is_dataclass
 from pathlib import PurePosixPath as Path
-from typing import Any, Optional, overload
+from typing import Any, TypeVar, overload
 
 
 # dependencies
+from typing_extensions import TypeGuard
 from .spec import (
     Spec,
     SpecFactory,
-    TSpec,
+    Wrapper,
     is_id,
     is_name,
     is_tag,
@@ -22,14 +23,12 @@ from .spec import (
     is_value,
 )
 from .specs import Specs
-from .typing import (
-    DataClass,
-    get_annotated,
-    get_annotations,
-    get_dataclasses,
-    get_first,
-    get_subtypes,
-)
+from .typing import DataClass, gen_annotations, gen_subtypes, get_annotated
+
+
+# type hints
+TAny = TypeVar("TAny")
+TSpec = TypeVar("TSpec", bound=Spec[Any])
 
 
 # constants
@@ -131,80 +130,57 @@ def from_typehint(
         Data specs created from the type hint.
 
     """
-    first = get_first(obj)
-    path = Path(id).parent / get_id(first, Path(id).name)
+    annotated = get_annotated(obj)
+    annotations = list(gen_annotations(obj))
+    path = Path(id).parent / get_attr(annotations, is_id, Path(id).name)
 
-    specs = Specs(
-        [
-            factory(
-                id=str(path),
-                name=get_name(first, path.name),
-                tags=set(get_tags(first)),
-                type=get_type(first, get_annotated(first, recursive=True)),
-                unit=get_unit(first),
-                value=get_value(first, value),
-            )
-        ]
-    )
+    specs = [
+        factory(
+            id=str(path),
+            name=get_attr(annotations, is_name, path.name),
+            tags=set(get_tags(annotations)),
+            type=get_attr(annotations, is_type, annotated),
+            unit=get_attr(annotations, is_unit, None),
+            value=get_attr(annotations, is_value, value),
+        )
+    ]
 
-    for n, sub in enumerate(get_subtypes(first)):
+    for n, sub in enumerate(gen_subtypes(obj)):
         specs.extend(from_typehint(sub, id=str(path / str(n)), factory=factory))
 
-    for sub in get_dataclasses(first):
+    for sub in filter(is_dataclass, annotations):
         specs.extend(from_dataclass(sub, id=str(path), factory=factory))
 
-    return specs
+    return Specs(specs)
 
 
-def get_id(obj: Any, default: str, /) -> str:
-    """Return the last-annotated ID from given type hint."""
-    for id in filter(is_id, reversed(get_annotations(obj))):
-        return id.wrapped
+def get_attr(
+    annotations: Iterable[Any],
+    selector: Callable[..., TypeGuard[Wrapper[TAny]]],
+    default: Any,
+    /,
+) -> TAny:
+    """Return a data-spec attribute from given annotations."""
+    if not (attrs := list(filter(selector, annotations))):
+        return default
 
-    return default
+    if len(attrs) == 1:
+        return attrs[0].wrapped
+
+    raise ValueError("Multiple attributes are not allowed.")
 
 
-def get_name(obj: Any, default: Hashable, /) -> Hashable:
-    """Return the last-annotated name from given type hint."""
-    for name in filter(is_name, reversed(get_annotations(obj))):
-        return name.wrapped
-
-    return default
-
-
-def get_tags(obj: Any, /) -> Iterator[str]:
-    """Return all annotated tags from given type hint."""
-    for tags in filter(is_tags, get_annotations(obj)):
+def get_tags(annotations: Iterable[Any], /) -> Iterator[str]:
+    """Return data-spec tags from given annotations."""
+    for tags in filter(is_tags, annotations):
         yield from tags.wrapped
 
-    for tag in filter(is_tag, get_annotations(obj)):
+    for tag in filter(is_tag, annotations):
         yield tag.wrapped
 
-    for dataclass in get_dataclasses(obj):
-        if (tags := getattr(dataclass, "tags", None)) is not None:
+    for sub in filter(is_dataclass, annotations):
+        if (tags := getattr(sub, "tags", None)) is not None:
             yield from tags
 
-        if (tag := getattr(dataclass, "tag", None)) is not None:
+        if (tag := getattr(sub, "tag", None)) is not None:
             yield tag
-
-
-def get_type(obj: Any, default: type[Any], /) -> type[Any]:
-    """Return the last-annotated type from given type hint."""
-    for type in filter(is_type, reversed(get_annotations(obj))):
-        return type.wrapped
-
-    return default
-
-
-def get_unit(obj: Any, /) -> Optional[str]:
-    """Return the last-annotated unit from given type hint."""
-    for unit in filter(is_unit, reversed(get_annotations(obj))):
-        return unit.wrapped
-
-
-def get_value(obj: Any, default: Optional[Any], /) -> Optional[Any]:
-    """Return the last-annotated value from given type hint."""
-    for value in filter(is_value, reversed(get_annotations(obj))):
-        return value.wrapped
-
-    return default

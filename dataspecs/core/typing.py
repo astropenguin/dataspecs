@@ -1,7 +1,8 @@
 # standard library
 import types
-from dataclasses import Field, is_dataclass
-from typing import Annotated, Any, ClassVar, Literal, Protocol, Union
+from dataclasses import Field
+from typing import Annotated, Any, ClassVar, Iterator, Literal, Protocol, Union
+from typing import _strip_annotations  # type: ignore
 
 
 # dependencies
@@ -19,50 +20,43 @@ DataClass = Union[DataClassInstance, type[DataClassInstance]]
 """Type hint for any data class or data-class instance."""
 
 
-def get_annotated(obj: Any, /, *, recursive: bool = False) -> Any:
-    """Return annotated type of a type hint if it exists."""
-    if recursive:
-        from typing import _strip_annotations  # type: ignore
+def gen_annotations(obj: Any, /) -> Iterator[Any]:
+    """Generate annotations if given object is an annotated type."""
+    if is_annotated(obj):
+        annotated, *annotations = get_args(obj)
+        yield from gen_annotations(annotated)
+        yield from annotations
+    elif is_union(obj):
+        for arg in get_args(obj):
+            yield from gen_annotations(arg)
 
-        return _strip_annotations(obj)  # type: ignore
+
+def gen_subtypes(obj: Any, /) -> Iterator[Any]:
+    """Generate subtypes if given object is a generic type."""
+    if is_annotated(obj):
+        yield from gen_subtypes(get_args(obj)[0])
+    elif is_union(obj):
+        for arg in get_args(obj):
+            yield from gen_subtypes(arg)
     else:
-        return get_args(obj)[0] if is_annotated(obj) else obj
+        for arg in get_args(obj):
+            if not (is_ellipsis(arg) or is_literal(arg)):
+                yield arg
 
 
-def get_annotations(obj: Any, /) -> tuple[Any, ...]:
-    """Return annotations of a type hint if they exist."""
-    return get_args(obj)[1:] if is_annotated(obj) else ()
-
-
-def get_dataclasses(obj: Any, /) -> tuple[DataClass, ...]:
-    """Return annotations of data classes or their instances."""
-    return tuple(filter(is_dataclass, get_annotations(obj)))
-
-
-def get_first(obj: Any, /) -> Any:
-    """Return the first type if given object is a union type."""
-    if is_union(annotated := get_annotated(obj)):
-        first = get_args(annotated)[0]
-    else:
-        first = annotated
-
-    for annotation in get_annotations(obj):
-        first = Annotated[first, annotation]
-
-    return first
-
-
-def get_subtypes(obj: Any, /) -> tuple[Any, ...]:
-    """Return inner type hints if given object is a type hint."""
-    if is_literal(annotated := get_annotated(obj)):
-        return ()
-    else:
-        return get_args(annotated)
+def get_annotated(obj: Any, /) -> Any:
+    """Return the bare type if given object is an annotated type."""
+    return _strip_annotations(obj)  # type: ignore
 
 
 def is_annotated(obj: Any, /) -> bool:
-    """Check if given object is annotated."""
+    """Check if given object is an annotated type."""
     return get_origin(obj) is Annotated
+
+
+def is_ellipsis(obj: Any, /) -> bool:
+    """Check if given object is an ellipsis."""
+    return obj is Ellipsis
 
 
 def is_literal(obj: Any, /) -> bool:
