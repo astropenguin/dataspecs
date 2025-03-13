@@ -1,10 +1,10 @@
-__all__ = ["ID", "Name", "Spec", "Tag", "Tags", "Type", "Unit", "Value"]
+__all__ = ["Attr", "ID", "Name", "Spec", "Tag", "Tags", "Type", "Unit", "Value"]
 
 
 # standard library
 from collections.abc import Hashable
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, Literal, Optional, TypeVar
+from typing import Any, Generic, Literal, Optional, TypeVar
 
 
 # dependencies
@@ -13,9 +13,7 @@ from typing_extensions import TypeGuard
 
 # type hints
 TAny = TypeVar("TAny")
-TSpec = TypeVar("TSpec", bound="Spec[Any]")
-SpecAttr = Literal["id", "name", "tags", "type", "unit", "value"]
-SpecFactory = Callable[..., TSpec]
+AttrName = Literal["id", "name", "tags", "type", "unit", "value"]
 
 
 @dataclass(frozen=True)
@@ -41,7 +39,7 @@ class Spec(Generic[TAny]):
     """Data-spec value or its default."""
 
 
-class Wrapper(Generic[TAny]):
+class Attr(Generic[TAny]):
     """Wrapper for data-spec attributes."""
 
     def __init__(self, wrapped: TAny, /) -> None:
@@ -52,43 +50,43 @@ class Wrapper(Generic[TAny]):
         return f"{type(self).__name__}({self.wrapped!r})"
 
 
-class ID(Wrapper[str]):
+class ID(Attr[str]):
     """Wrapper for a data-spec ID."""
 
     pass
 
 
-class Name(Wrapper[Hashable]):
+class Name(Attr[Hashable]):
     """Wrapper for a data-spec name."""
 
     pass
 
 
-class Tag(Wrapper[str]):
+class Tag(Attr[str]):
     """Wrapper for a data-spec tag."""
 
     pass
 
 
-class Tags(Wrapper[set[str]]):
+class Tags(Attr[set[str]]):
     """Wrapper for data-spec tags."""
 
     pass
 
 
-class Type(Wrapper[type[Any]]):
+class Type(Attr[type[Any]]):
     """Wrapper for a data-spec type."""
 
     pass
 
 
-class Unit(Wrapper[str]):
+class Unit(Attr[str]):
     """Wrapper for a data-spec unit."""
 
     pass
 
 
-class Value(Wrapper[str]):
+class Value(Attr[str]):
     """Wrapper for a data-spec value."""
 
     pass

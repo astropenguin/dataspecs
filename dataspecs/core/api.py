@@ -11,9 +11,8 @@ from typing import Any, TypeVar, overload
 # dependencies
 from typing_extensions import TypeGuard
 from .spec import (
+    Attr,
     Spec,
-    SpecFactory,
-    Wrapper,
     is_id,
     is_name,
     is_tag,
@@ -29,6 +28,7 @@ from .typing import DataClass, gen_annotations, gen_subtypes, get_annotated
 # type hints
 TAny = TypeVar("TAny")
 TSpec = TypeVar("TSpec", bound=Spec[Any])
+Factory = Callable[..., TSpec]
 
 
 # constants
@@ -50,7 +50,7 @@ def from_dataclass(
     /,
     *,
     id: str = ROOT,
-    factory: SpecFactory[TSpec],
+    factory: Factory[TSpec],
 ) -> Specs[TSpec]: ...
 
 
@@ -59,7 +59,7 @@ def from_dataclass(
     /,
     *,
     id: str = ROOT,
-    factory: SpecFactory[TSpec] = Spec,
+    factory: Factory[TSpec] = Spec,
 ) -> Specs[Any]:
     """Create data specs from given data class.
 
@@ -105,7 +105,7 @@ def from_typehint(
     *,
     id: str = ROOT,
     value: Any = None,
-    factory: SpecFactory[TSpec],
+    factory: Factory[TSpec],
 ) -> Specs[TSpec]: ...
 
 
@@ -115,7 +115,7 @@ def from_typehint(
     *,
     id: str = ROOT,
     value: Any = None,
-    factory: SpecFactory[TSpec] = Spec,
+    factory: Factory[TSpec] = Spec,
 ) -> Specs[Any]:
     """Create data specs from given type hint.
 
@@ -156,7 +156,7 @@ def from_typehint(
 
 def get_attr(
     annotations: Iterable[Any],
-    selector: Callable[..., TypeGuard[Wrapper[TAny]]],
+    selector: Callable[..., TypeGuard[Attr[TAny]]],
     default: Any,
     /,
 ) -> TAny:

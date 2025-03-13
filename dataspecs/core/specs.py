@@ -3,15 +3,15 @@ __all__ = ["Specs"]
 
 # standard library
 from collections import UserList, defaultdict
-from typing import Any, Hashable, Optional, SupportsIndex, Union, overload
+from typing import Any, Hashable, Optional, SupportsIndex, TypeVar, Union, overload
 
 
 # dependencies
 from typing_extensions import Self
 from .spec import (
-    SpecAttr,
-    TSpec,
-    Wrapper,
+    Attr,
+    AttrName,
+    Spec,
     is_id,
     is_name,
     is_tag,
@@ -21,10 +21,10 @@ from .spec import (
     is_value,
 )
 
-
 # type hints
+TSpec = TypeVar("TSpec", bound=Spec[Any])
 NormalIndex = Union[slice, SupportsIndex]
-SpecsIndex = Union[Wrapper[Any], NormalIndex]
+SpecsIndex = Union[Attr[Any], NormalIndex]
 
 
 class Specs(UserList[TSpec]):
@@ -45,7 +45,7 @@ class Specs(UserList[TSpec]):
         """Return the data spec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
 
-    def groupby(self, attr: SpecAttr, /) -> list[Self]:
+    def groupby(self, attr: AttrName, /) -> list[Self]:
         """Group the data specs by their attributes."""
         groups: defaultdict[Hashable, Self] = defaultdict(type(self))
 
@@ -59,7 +59,7 @@ class Specs(UserList[TSpec]):
         return type(self)(new if spec == old else spec for spec in self)
 
     @overload
-    def __getitem__(self, index: Wrapper[Any], /) -> Self: ...
+    def __getitem__(self, index: Attr[Any], /) -> Self: ...
 
     @overload
     def __getitem__(self, index: NormalIndex, /) -> TSpec: ...
