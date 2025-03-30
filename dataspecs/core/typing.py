@@ -1,8 +1,18 @@
 # standard library
+import builtins
 import types
 from dataclasses import Field
-from typing import Annotated, Any, ClassVar, Iterator, Literal, Protocol, Union
-from typing import _strip_annotations  # type: ignore
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    ClassVar,
+    Iterator,
+    Literal,
+    Protocol,
+    Union,
+    _strip_annotations,  # type: ignore
+)
 
 
 # dependencies
@@ -20,15 +30,20 @@ DataClass = Union[DataClassInstance, type[DataClassInstance]]
 """Type hint for any data class or data-class instance."""
 
 
-def gen_annotations(obj: Any, /) -> Iterator[Any]:
+def gen_annotations(
+    obj: Any,
+    /,
+    *,
+    filter: Callable[[Any], bool] = lambda obj: True,
+) -> Iterator[Any]:
     """Generate annotations if given object is an annotated type."""
     if is_annotated(obj):
         annotated, *annotations = get_args(obj)
-        yield from gen_annotations(annotated)
-        yield from annotations
+        yield from gen_annotations(annotated, filter=filter)
+        yield from builtins.filter(filter, annotations)
     elif is_union(obj):
         for arg in get_args(obj):
-            yield from gen_annotations(arg)
+            yield from gen_annotations(arg, filter=filter)
 
 
 def gen_subtypes(obj: Any, /) -> Iterator[Any]:
@@ -38,10 +53,8 @@ def gen_subtypes(obj: Any, /) -> Iterator[Any]:
     elif is_union(obj):
         for arg in get_args(obj):
             yield from gen_subtypes(arg)
-    else:
-        for arg in get_args(obj):
-            if not (is_ellipsis(arg) or is_literal(arg)):
-                yield arg
+    elif not is_literal(obj):
+        yield from get_args(obj)
 
 
 def get_annotated(obj: Any, /) -> Any:
@@ -52,11 +65,6 @@ def get_annotated(obj: Any, /) -> Any:
 def is_annotated(obj: Any, /) -> bool:
     """Check if given object is an annotated type."""
     return get_origin(obj) is Annotated
-
-
-def is_ellipsis(obj: Any, /) -> bool:
-    """Check if given object is an ellipsis."""
-    return obj is Ellipsis
 
 
 def is_literal(obj: Any, /) -> bool:

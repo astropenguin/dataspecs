@@ -15,7 +15,6 @@ from .spec import (
     is_id,
     is_name,
     is_tag,
-    is_tags,
     is_type,
     is_unit,
     is_value,
@@ -23,8 +22,7 @@ from .spec import (
 
 # type hints
 TSpec = TypeVar("TSpec", bound=Spec[Any])
-NormalIndex = Union[slice, SupportsIndex]
-SpecsIndex = Union[Attr[Any], NormalIndex]
+SpecsIndex = Union[Attr[Any], slice, SupportsIndex]
 
 
 class Specs(UserList[TSpec]):
@@ -62,29 +60,29 @@ class Specs(UserList[TSpec]):
     def __getitem__(self, index: Attr[Any], /) -> Self: ...
 
     @overload
-    def __getitem__(self, index: NormalIndex, /) -> TSpec: ...
+    def __getitem__(self, index: slice, /) -> Self: ...
+
+    @overload
+    def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
 
     def __getitem__(self, index: SpecsIndex, /) -> Union[Self, TSpec]:
         """Select the data specs by given index or wrapped attribute."""
         if is_id(index):
-            return type(self)(spec for spec in self if index.wrapped == spec.id)
+            return type(self)(spec for spec in self if index.attr == spec.id)
 
         if is_name(index):
-            return type(self)(spec for spec in self if index.wrapped == spec.name)
+            return type(self)(spec for spec in self if index.attr == spec.name)
 
         if is_tag(index):
-            return type(self)(spec for spec in self if index.wrapped in spec.tags)
-
-        if is_tags(index):
-            return type(self)(spec for spec in self if index.wrapped <= spec.tags)
+            return type(self)(spec for spec in self if index.attr in spec.tags)
 
         if is_type(index):
-            return type(self)(spec for spec in self if index.wrapped == spec.type)
+            return type(self)(spec for spec in self if index.attr == spec.type)
 
         if is_unit(index):
-            return type(self)(spec for spec in self if index.wrapped == spec.unit)
+            return type(self)(spec for spec in self if index.attr == spec.unit)
 
         if is_value(index):
-            return type(self)(spec for spec in self if index.wrapped == spec.value)
+            return type(self)(spec for spec in self if index.attr == spec.value)
 
         return super().__getitem__(index)  # type: ignore

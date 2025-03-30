@@ -8,7 +8,6 @@ __all__ = [
     "Spec",
     "Specs",
     "Tag",
-    "Tags",
     "Type",
     "Unit",
     "Value",

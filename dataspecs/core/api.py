@@ -2,10 +2,11 @@ __all__ = ["from_dataclass", "from_typehint"]
 
 
 # standard library
-from collections.abc import Callable, Iterable, Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import fields, is_dataclass
+from os import PathLike
 from pathlib import PurePosixPath as Path
-from typing import Any, TypeVar, overload
+from typing import Any, TypeVar, Union, overload
 
 
 # dependencies
@@ -13,10 +14,10 @@ from typing_extensions import TypeGuard
 from .spec import (
     Attr,
     Spec,
+    is_attr,
     is_id,
     is_name,
     is_tag,
-    is_tags,
     is_type,
     is_unit,
     is_value,
@@ -27,8 +28,11 @@ from .typing import DataClass, gen_annotations, gen_subtypes, get_annotated
 
 # type hints
 TAny = TypeVar("TAny")
+TAttr = TypeVar("TAttr", bound=Attr[Any])
 TSpec = TypeVar("TSpec", bound=Spec[Any])
 Factory = Callable[..., TSpec]
+Filter = Callable[[Any], TypeGuard[Attr[TAny]]]
+StrPath = Union[PathLike[str], str]
 
 
 # constants
@@ -40,7 +44,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: str = ROOT,
+    id: StrPath = ROOT,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -49,7 +53,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: str = ROOT,
+    id: StrPath = ROOT,
     factory: Factory[TSpec],
 ) -> Specs[TSpec]: ...
 
@@ -58,7 +62,7 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: str = ROOT,
+    id: StrPath = ROOT,
     factory: Factory[TSpec] = Spec,
 ) -> Specs[Any]:
     """Create data specs from given data class.
@@ -73,13 +77,14 @@ def from_dataclass(
         Data specs created from the data class.
 
     """
+    id = Path(id)
     specs: Specs[Any] = Specs()
 
     for field in fields(obj):
         specs.extend(
             from_typehint(
                 field.type,
-                id=str(Path(id) / field.name),
+                id=id / field.name,
                 value=getattr(obj, field.name, field.default),
                 factory=factory,
             )
@@ -93,7 +98,7 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    id: str = ROOT,
+    id: StrPath = ROOT,
     value: Any = None,
 ) -> Specs[Spec[Any]]: ...
 
@@ -103,7 +108,7 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    id: str = ROOT,
+    id: StrPath = ROOT,
     value: Any = None,
     factory: Factory[TSpec],
 ) -> Specs[TSpec]: ...
@@ -113,7 +118,7 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    id: str = ROOT,
+    id: StrPath = ROOT,
     value: Any = None,
     factory: Factory[TSpec] = Spec,
 ) -> Specs[Any]:
@@ -130,57 +135,54 @@ def from_typehint(
         Data specs created from the type hint.
 
     """
-    annotated = get_annotated(obj)
-    annotations = list(gen_annotations(obj))
-    path = Path(id).parent / get_attr(annotations, is_id, Path(id).name)
+    id = Path(id)
+    specs: Specs[Any] = Specs()
 
-    specs = [
-        factory(
-            id=str(path),
-            name=get_attr(annotations, is_name, path.name),
-            tags=set(get_tags(annotations)),
-            type=get_attr(annotations, is_type, annotated),
-            unit=get_attr(annotations, is_unit, None),
-            value=get_attr(annotations, is_value, value),
-        )
-    ]
+    main = factory(
+        id=str(id := id.parent / single(obj, id.name, filter=is_id)),
+        name=single(obj, id.name, filter=is_name),
+        tags=multiple(obj, filter=is_tag),
+        type=single(obj, get_annotated(obj), filter=is_type),
+        unit=single(obj, None, filter=is_unit),
+        value=single(obj, value, filter=is_value),
+    )
+
+    if is_attr(main.value):
+        return specs
+    else:
+        specs.append(main)
 
     for n, sub in enumerate(gen_subtypes(obj)):
-        specs.extend(from_typehint(sub, id=str(path / str(n)), factory=factory))
+        specs.extend(from_typehint(sub, id=id / str(n), factory=factory))
 
-    for sub in filter(is_dataclass, annotations):
-        specs.extend(from_dataclass(sub, id=str(path), factory=factory))
+    for sub in gen_annotations(obj, filter=is_dataclass):
+        specs.extend(from_dataclass(sub, id=id, factory=factory))
 
-    return Specs(specs)
-
-
-def get_attr(
-    annotations: Iterable[Any],
-    selector: Callable[..., TypeGuard[Attr[TAny]]],
-    default: Any,
-    /,
-) -> TAny:
-    """Return a data-spec attribute from given annotations."""
-    if not (attrs := list(filter(selector, annotations))):
-        return default
-
-    if len(attrs) == 1:
-        return attrs[0].wrapped
-
-    raise ValueError("Multiple attributes are not allowed.")
+    return specs
 
 
-def get_tags(annotations: Iterable[Any], /) -> Iterator[str]:
-    """Return data-spec tags from given annotations."""
-    for tags in filter(is_tags, annotations):
-        yield from tags.wrapped
+def gen_attrs(obj: Any, /, *, filter: Filter[TAny] = is_attr) -> Iterator[TAny]:
+    """Generate data-spec attributes from given object."""
+    if is_dataclass(obj):
+        for name in obj.__annotations__:
+            if filter(annotation := getattr(obj, name)):
+                yield annotation.attr
+    else:
+        for annotation in gen_annotations(obj, filter=filter):
+            yield annotation.attr
 
-    for tag in filter(is_tag, annotations):
-        yield tag.wrapped
+        for annotation in gen_annotations(obj, filter=is_dataclass):
+            yield from gen_attrs(annotation, filter=filter)
 
-    for sub in filter(is_dataclass, annotations):
-        if (tags := getattr(sub, "tags", None)) is not None:
-            yield from tags
 
-        if (tag := getattr(sub, "tag", None)) is not None:
-            yield tag
+def multiple(obj: Any, /, *, filter: Filter[TAny] = is_attr) -> frozenset[TAny]:
+    """Return multiple data-spec attributes from given object."""
+    return frozenset(gen_attrs(obj, filter=filter))
+
+
+def single(obj: Any, default: Any, /, *, filter: Filter[TAny] = is_attr) -> TAny:
+    """Return single data-spec attribute from given object."""
+    if len(attrs := list(gen_attrs(obj, filter=filter))) >= 2:
+        raise ValueError("Multiple data-spec attributes are not allowed.")
+    else:
+        return default if not attrs else attrs[0]
