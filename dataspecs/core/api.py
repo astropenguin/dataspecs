@@ -18,7 +18,6 @@ from .typing import DataClass, gen_annotations, gen_subtypes, get_annotated
 
 # type hints
 TAny = TypeVar("TAny")
-TAttr = TypeVar("TAttr", bound=Attr[Any])
 TSpec = TypeVar("TSpec", bound=Spec[Any])
 Factory = Callable[..., TSpec]
 Filter = Callable[[Any], TypeGuard[Attr[TAny]]]
@@ -69,6 +68,9 @@ def from_dataclass(
     """
     id = Path(id)
     specs: Specs[Any] = Specs()
+
+    if is_attr(obj):
+        return specs
 
     for field in fields(obj):
         specs.extend(

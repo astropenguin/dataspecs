@@ -68,14 +68,13 @@ class Spec(Generic[TAny]):
         return Unit(self.unit)
 
 
+@dataclass(frozen=True)
 class Attr(Generic[TAny]):
     """Wrapper for dataspec attributes."""
 
-    def __init__(self, attr: TAny, /) -> None:
-        self.attr = attr
+    attr: TAny
 
     def __repr__(self) -> str:
-        """Return string of <class name>(<wrapped value>)."""
         return f"{type(self).__name__}({self.attr!r})"
 
 
