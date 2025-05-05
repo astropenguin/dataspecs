@@ -11,17 +11,7 @@ from typing import Any, TypeVar, Union, overload
 
 # dependencies
 from typing_extensions import TypeGuard
-from .spec import (
-    Attr,
-    Spec,
-    is_attr,
-    is_id,
-    is_name,
-    is_tag,
-    is_type,
-    is_unit,
-    is_value,
-)
+from .spec import Attr, Spec, is_attr, is_data, is_id, is_name, is_tag, is_type, is_unit
 from .specs import Specs
 from .typing import DataClass, gen_annotations, gen_subtypes, get_annotated
 
@@ -65,16 +55,16 @@ def from_dataclass(
     id: StrPath = ROOT,
     factory: Factory[TSpec] = Spec,
 ) -> Specs[Any]:
-    """Create data specs from given data class.
+    """Create dataspecs from given data class.
 
     Args:
         obj: Data class (class or instance) to be parsed.
-        id: Parent data spec ID.
-        factory: Class or function for creating each data spec.
+        id: Parent dataspec ID.
+        factory: Class or function for creating each dataspec.
             It must have the same arguments as the Spec class.
 
     Returns:
-        Data specs created from the data class.
+        Dataspecs created from the data class.
 
     """
     id = Path(id)
@@ -85,7 +75,7 @@ def from_dataclass(
             from_typehint(
                 field.type,
                 id=id / field.name,
-                value=getattr(obj, field.name, field.default),
+                data=getattr(obj, field.name, field.default),
                 factory=factory,
             )
         )
@@ -98,8 +88,8 @@ def from_typehint(
     obj: Any,
     /,
     *,
+    data: Any = None,
     id: StrPath = ROOT,
-    value: Any = None,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -108,9 +98,9 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    id: StrPath = ROOT,
-    value: Any = None,
+    data: Any = None,
     factory: Factory[TSpec],
+    id: StrPath = ROOT,
 ) -> Specs[TSpec]: ...
 
 
@@ -118,39 +108,39 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    id: StrPath = ROOT,
-    value: Any = None,
+    data: Any = None,
     factory: Factory[TSpec] = Spec,
+    id: StrPath = ROOT,
 ) -> Specs[Any]:
-    """Create data specs from given type hint.
+    """Create dataspecs from given type hint.
 
     Args:
         obj: Type or type hint to be parsed.
-        id: Parent data spec ID.
-        value: Parent data spec value.
-        factory: Class or function for creating each data spec.
+        data: Parent dataspec data.
+        id: Parent dataspec ID.
+        factory: Class or function for creating each dataspec.
             It must have the same arguments as the Spec class.
 
     Returns:
-        Data specs created from the type hint.
+        Dataspecs created from the type hint.
 
     """
     id = Path(id)
     specs: Specs[Any] = Specs()
 
-    main = factory(
-        id=str(id := id.parent / single(obj, id.name, filter=is_id)),
-        name=single(obj, id.name, filter=is_name),
-        tags=multiple(obj, filter=is_tag),
-        type=single(obj, get_annotated(obj), filter=is_type),
-        unit=single(obj, None, filter=is_unit),
-        value=single(obj, value, filter=is_value),
-    )
-
-    if is_attr(main.value):
+    if is_attr(data := single(obj, data, filter=is_data)):
         return specs
-    else:
-        specs.append(main)
+
+    specs.append(
+        factory(
+            data=data,
+            id=str(id := id.parent / single(obj, id.name, filter=is_id)),
+            name=single(obj, id.name, filter=is_name),
+            tags=multiple(obj, filter=is_tag),
+            type=single(obj, get_annotated(obj), filter=is_type),
+            unit=single(obj, None, filter=is_unit),
+        )
+    )
 
     for n, sub in enumerate(gen_subtypes(obj)):
         specs.extend(from_typehint(sub, id=id / str(n), factory=factory))
@@ -162,7 +152,7 @@ def from_typehint(
 
 
 def gen_attrs(obj: Any, /, *, filter: Filter[TAny] = is_attr) -> Iterator[TAny]:
-    """Generate data-spec attributes from given object."""
+    """Generate dataspec attributes from given object."""
     if is_dataclass(obj):
         for name in obj.__annotations__:
             if filter(annotation := getattr(obj, name)):
@@ -176,13 +166,13 @@ def gen_attrs(obj: Any, /, *, filter: Filter[TAny] = is_attr) -> Iterator[TAny]:
 
 
 def multiple(obj: Any, /, *, filter: Filter[TAny] = is_attr) -> frozenset[TAny]:
-    """Return multiple data-spec attributes from given object."""
+    """Return multiple dataspec attributes from given object."""
     return frozenset(gen_attrs(obj, filter=filter))
 
 
 def single(obj: Any, default: Any, /, *, filter: Filter[TAny] = is_attr) -> TAny:
-    """Return single data-spec attribute from given object."""
+    """Return single dataspec attribute from given object."""
     if len(attrs := list(gen_attrs(obj, filter=filter))) >= 2:
-        raise ValueError("Multiple data-spec attributes are not allowed.")
+        raise ValueError("Multiple dataspec attributes are not allowed.")
     else:
         return default if not attrs else attrs[0]

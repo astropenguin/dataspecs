@@ -1,10 +1,10 @@
-__all__ = ["Attr", "ID", "Name", "Spec", "Tag", "Type", "Unit", "Value"]
+__all__ = ["Attr", "Data", "ID", "Name", "Spec", "Tag", "Type", "Unit"]
 
 
 # standard library
 from collections.abc import Hashable
-from dataclasses import dataclass
-from typing import Any, Generic, Literal, Optional, TypeVar
+from dataclasses import dataclass, field
+from typing import Any, Generic, Optional, TypeVar
 
 
 # dependencies
@@ -13,64 +13,63 @@ from typing_extensions import TypeGuard
 
 # type hints
 TAny = TypeVar("TAny")
-AttrName = Literal["id", "name", "tags", "type", "unit", "value"]
 
 
 @dataclass(frozen=True)
 class Spec(Generic[TAny]):
-    """Data specification (data spec)."""
+    """Data specification (dataspec)."""
+
+    data: TAny = field(repr=False)
+    """Dataspec data."""
 
     id: str
-    """Data-spec ID."""
+    """Dataspec ID."""
 
     name: Hashable
-    """Data-spec name."""
+    """Dataspec name."""
 
     tags: frozenset[str]
-    """Data-spec tags."""
+    """Dataspec tags."""
 
     type: Any
-    """Type of the data-spec value."""
+    """Type of the dataspec data."""
 
     unit: Optional[str]
-    """Unit of the data-spec value."""
+    """Unit of the dataspec data."""
 
-    value: Optional[TAny]
-    """Data-spec value or its default."""
+    @property
+    def data_(self) -> "Data":
+        """Wrapped dataspec data."""
+        return Data(self.data)
 
     @property
     def id_(self) -> "ID":
-        """Wrapped data-spec ID."""
+        """Wrapped dataspec ID."""
         return ID(self.id)
 
     @property
     def name_(self) -> "Name":
-        """Wrapped data-spec name."""
+        """Wrapped dataspec name."""
         return Name(self.name)
 
     @property
-    def tags_(self) -> set["Tag"]:
-        """Wrapped data-spec tags."""
-        return set(Tag(tag) for tag in self.tags)
+    def tags_(self) -> frozenset["Tag"]:
+        """Wrapped dataspec tags."""
+        return frozenset(Tag(tag) for tag in self.tags)
 
     @property
     def type_(self) -> "Type":
-        """Wrapped type of the data-spec value."""
+        """Wrapped type of the dataspec data."""
         return Type(self.type)
 
     @property
     def unit_(self) -> "Unit":
-        """Wrapped unit of the data-spec value."""
+        """Wrapped unit of the dataspec data."""
         return Unit(self.unit)
-
-    @property
-    def value_(self) -> "Value":
-        """Wrapped data-spec value or its default."""
-        return Value(self.value)
 
 
 class Attr(Generic[TAny]):
-    """Wrapper for data-spec attributes."""
+    """Wrapper for dataspec attributes."""
 
     def __init__(self, attr: TAny, /) -> None:
         self.attr = attr
@@ -80,72 +79,72 @@ class Attr(Generic[TAny]):
         return f"{type(self).__name__}({self.attr!r})"
 
 
+class Data(Attr[Any]):
+    """Wrapper for a dataspec data."""
+
+    pass
+
+
 class ID(Attr[str]):
-    """Wrapper for a data-spec ID."""
+    """Wrapper for a dataspec ID."""
 
     pass
 
 
 class Name(Attr[Hashable]):
-    """Wrapper for a data-spec name."""
+    """Wrapper for a dataspec name."""
 
     pass
 
 
 class Tag(Attr[str]):
-    """Wrapper for a data-spec tag."""
+    """Wrapper for a dataspec tag."""
 
     pass
 
 
 class Type(Attr[Any]):
-    """Wrapper for a data-spec type."""
+    """Wrapper for a dataspec type."""
 
     pass
 
 
 class Unit(Attr[Optional[str]]):
-    """Wrapper for a data-spec unit."""
-
-    pass
-
-
-class Value(Attr[Optional[Any]]):
-    """Wrapper for a data-spec value."""
+    """Wrapper for a dataspec unit."""
 
     pass
 
 
 def is_attr(obj: Any, /) -> TypeGuard[Attr[Any]]:
-    """Check if given object is a wrapped data-spec attribute."""
+    """Check if given object is a wrapped dataspec attribute."""
     return isinstance(obj, Attr)
 
 
+def is_data(obj: Any, /) -> TypeGuard[Data]:
+    """Check if given object is a wrapped dataspec data."""
+    return isinstance(obj, Data)
+
+
 def is_id(obj: Any, /) -> TypeGuard[ID]:
-    """Check if given object is a wrapped data-spec ID."""
+    """Check if given object is a wrapped dataspec ID."""
     return isinstance(obj, ID)
 
 
 def is_name(obj: Any, /) -> TypeGuard[Name]:
-    """Check if given object is a wrapped data-spec name."""
+    """Check if given object is a wrapped dataspec name."""
     return isinstance(obj, Name)
 
 
 def is_tag(obj: Any, /) -> TypeGuard[Tag]:
-    """Check if given object is a wrapped data-spec tag."""
+    """Check if given object is a wrapped dataspec tag."""
     return isinstance(obj, Tag)
 
 
 def is_type(obj: Any, /) -> TypeGuard[Type]:
-    """Check if given object is a wrapped data-spec type."""
+    """Check if given object is a wrapped dataspec type."""
     return isinstance(obj, Type)
 
 
 def is_unit(obj: Any, /) -> TypeGuard[Unit]:
-    """Check if given object is a wrapped data-spec unit."""
+    """Check if given object is a wrapped dataspec unit."""
     return isinstance(obj, Unit)
-
-
-def is_value(obj: Any, /) -> TypeGuard[Value]:
-    """Check if given object is a wrapped data-spec value."""
-    return isinstance(obj, Value)

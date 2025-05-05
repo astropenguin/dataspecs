@@ -1,8 +1,7 @@
 __all__ = [
-    # subpackages
     "core",
-    # aliases (core)
     "Attr",
+    "Data",
     "ID",
     "Name",
     "Spec",
@@ -10,18 +9,14 @@ __all__ = [
     "Tag",
     "Type",
     "Unit",
-    "Value",
     "from_dataclass",
     "from_typehint",
 ]
 __version__ = "5.0.0"
 
 
-# subpackages
+# dependencies
 from . import core
-
-
-# aliases (core)
 from .core.api import *
 from .core.spec import *
 from .core.specs import *

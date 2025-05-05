@@ -1,7 +1,7 @@
 __all__ = ["api", "spec", "specs", "typing"]
 
 
-# submodules
+# dependencies
 from . import api
 from . import spec
 from . import specs
