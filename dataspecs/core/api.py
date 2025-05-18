@@ -2,16 +2,14 @@ __all__ = ["from_dataclass", "from_typehint"]
 
 
 # standard library
-from collections.abc import Callable, Iterator
-from dataclasses import fields, is_dataclass
-from os import PathLike
-from pathlib import PurePosixPath as Path
+from collections.abc import Callable
+from dataclasses import MISSING, fields, is_dataclass
+from pathlib import PurePosixPath
 from typing import Any, TypeVar, Union, overload
 
 
 # dependencies
-from typing_extensions import TypeGuard
-from .spec import Attr, Spec, is_attr, is_data, is_id, is_name, is_tag, is_type, is_unit
+from .spec import ID, Name, Spec, Specifier, Tag, Type, Unit
 from .specs import Specs
 from .typing import DataClass, gen_annotations, gen_subtypes, get_annotated
 
@@ -19,13 +17,10 @@ from .typing import DataClass, gen_annotations, gen_subtypes, get_annotated
 # type hints
 TAny = TypeVar("TAny")
 TSpec = TypeVar("TSpec", bound=Spec[Any])
-Factory = Callable[..., TSpec]
-Filter = Callable[[Any], TypeGuard[Attr[TAny]]]
-StrPath = Union[PathLike[str], str]
 
 
 # constants
-ROOT = "/"
+ROOT = PurePosixPath("/")
 
 
 @overload
@@ -33,7 +28,8 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: StrPath = ROOT,
+    id: PurePosixPath = ROOT,
+    merge: bool = True,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -42,8 +38,9 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: StrPath = ROOT,
-    factory: Factory[TSpec],
+    id: PurePosixPath = ROOT,
+    factory: Callable[..., TSpec],
+    merge: bool = True,
 ) -> Specs[TSpec]: ...
 
 
@@ -51,8 +48,9 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    id: StrPath = ROOT,
-    factory: Factory[TSpec] = Spec,
+    id: PurePosixPath = ROOT,
+    factory: Callable[..., TSpec] = Spec,
+    merge: bool = True,
 ) -> Specs[Any]:
     """Create dataspecs from given data class.
 
@@ -66,23 +64,23 @@ def from_dataclass(
         Dataspecs created from the data class.
 
     """
-    id = Path(id)
-    specs: Specs[Any] = Specs()
+    specs = Specs[Any]()
 
-    if is_attr(obj):
+    if Specifier.istype(obj):
         return specs
 
     for field in fields(obj):
         specs.extend(
             from_typehint(
                 field.type,
-                id=id / field.name,
                 data=getattr(obj, field.name, field.default),
+                id=id / field.name,
                 factory=factory,
+                merge=False,
             )
         )
 
-    return specs
+    return specs.merge() if merge else specs
 
 
 @overload
@@ -91,7 +89,8 @@ def from_typehint(
     /,
     *,
     data: Any = None,
-    id: StrPath = ROOT,
+    id: PurePosixPath = ROOT,
+    merge: bool = True,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -101,8 +100,9 @@ def from_typehint(
     /,
     *,
     data: Any = None,
-    factory: Factory[TSpec],
-    id: StrPath = ROOT,
+    id: PurePosixPath = ROOT,
+    factory: Callable[..., TSpec],
+    merge: bool = True,
 ) -> Specs[TSpec]: ...
 
 
@@ -111,8 +111,9 @@ def from_typehint(
     /,
     *,
     data: Any = None,
-    factory: Factory[TSpec] = Spec,
-    id: StrPath = ROOT,
+    id: PurePosixPath = ROOT,
+    factory: Callable[..., TSpec] = Spec,
+    merge: bool = True,
 ) -> Specs[Any]:
     """Create dataspecs from given type hint.
 
@@ -127,54 +128,78 @@ def from_typehint(
         Dataspecs created from the type hint.
 
     """
-    id = Path(id)
-    specs: Specs[Any] = Specs()
-
-    if is_attr(data := single(obj, data, filter=is_data)):
-        return specs
-
-    specs.append(
-        factory(
-            data=data,
-            id=str(id := id.parent / single(obj, id.name, filter=is_id)),
-            name=single(obj, id.name, filter=is_name),
-            tags=multiple(obj, filter=is_tag),
-            type=single(obj, get_annotated(obj), filter=is_type),
-            unit=single(obj, None, filter=is_unit),
-        )
+    specs = Specs[Any](
+        [
+            factory(
+                data=data,
+                id=(id := id.parent / find(obj, ID, id.name)),
+                name=find(obj, Name, id.name),
+                tags=find(obj, Tag),
+                type=find(obj, Type, get_annotated(obj)),
+                unit=find(obj, Unit, None),
+            )
+        ]
     )
 
+    if Specifier.istype(data):
+        return specs
+
     for n, sub in enumerate(gen_subtypes(obj)):
-        specs.extend(from_typehint(sub, id=id / str(n), factory=factory))
+        specs.extend(
+            from_typehint(
+                sub,
+                id=id / str(n),
+                factory=factory,
+                merge=False,
+            )
+        )
 
     for sub in gen_annotations(obj, filter=is_dataclass):
-        specs.extend(from_dataclass(sub, id=id, factory=factory))
+        specs.extend(
+            from_dataclass(
+                sub,
+                id=id,
+                factory=factory,
+                merge=False,
+            )
+        )
 
-    return specs
-
-
-def gen_attrs(obj: Any, /, *, filter: Filter[TAny] = is_attr) -> Iterator[TAny]:
-    """Generate dataspec attributes from given object."""
-    if is_dataclass(obj):
-        for name in obj.__annotations__:
-            if filter(annotation := getattr(obj, name)):
-                yield annotation.attr
-    else:
-        for annotation in gen_annotations(obj, filter=filter):
-            yield annotation.attr
-
-        for annotation in gen_annotations(obj, filter=is_dataclass):
-            yield from gen_attrs(annotation, filter=filter)
+    return specs.merge() if merge else specs
 
 
-def multiple(obj: Any, /, *, filter: Filter[TAny] = is_attr) -> frozenset[TAny]:
-    """Return multiple dataspec attributes from given object."""
-    return frozenset(gen_attrs(obj, filter=filter))
+@overload
+def find(
+    obj: Any,
+    of: type[Specifier[TAny]],
+    /,
+) -> frozenset[TAny]: ...
 
 
-def single(obj: Any, default: Any, /, *, filter: Filter[TAny] = is_attr) -> TAny:
-    """Return single dataspec attribute from given object."""
-    if len(attrs := list(gen_attrs(obj, filter=filter))) >= 2:
-        raise ValueError("Multiple dataspec attributes are not allowed.")
-    else:
-        return default if not attrs else attrs[0]
+@overload
+def find(
+    obj: Any,
+    of: type[Specifier[TAny]],
+    default: Any,
+    /,
+) -> TAny: ...
+
+
+def find(
+    obj: Any,
+    of: type[Specifier[TAny]],
+    default: Any = MISSING,
+    /,
+) -> Union[frozenset[TAny], TAny]:
+    """Find"""
+    anns = list(gen_annotations(obj, filter=of.istype))
+
+    if default is MISSING:
+        return frozenset(ann.value for ann in anns)
+
+    if len(anns) == 0:
+        return default
+
+    if len(anns) == 1:
+        return anns[0].value
+
+    raise ValueError("Multiple items are not allowed with default.")

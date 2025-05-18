@@ -1,29 +1,20 @@
-__all__ = ["Specs"]
+__all__ = ["Of", "Specs"]
 
 
 # standard library
 from collections import UserList, defaultdict
-from typing import (
-    Any,
-    Hashable,
-    Literal,
-    Optional,
-    SupportsIndex,
-    TypeVar,
-    Union,
-    overload,
-)
+from collections.abc import Hashable
+from dataclasses import dataclass
+from typing import Any, Literal, Optional, SupportsIndex, TypeVar, Union, overload
 
 
 # dependencies
 from typing_extensions import Self
-from .spec import Attr, Spec, is_data, is_id, is_name, is_tag, is_type, is_unit
+from .spec import Data, Spec, Specifier
 
 
 # type hints
 TSpec = TypeVar("TSpec", bound=Spec[Any])
-AttrName = Literal["data", "id", "name", "tags", "type", "unit"]
-SpecsIndex = Union[Attr[Any], slice, SupportsIndex]
 
 
 class Specs(UserList[TSpec]):
@@ -44,21 +35,42 @@ class Specs(UserList[TSpec]):
         """Return the dataspec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
 
-    def groupby(self, attr: AttrName, /) -> list[Self]:
+    def groupby(
+        self,
+        name: Literal["data", "id", "name", "tags", "type", "unit"],
+        /,
+    ) -> list[Self]:
         """Group the dataspecs by their attributes."""
         groups: defaultdict[Hashable, Self] = defaultdict(type(self))
 
         for spec in self:
-            groups[getattr(spec, attr)].append(spec)
+            groups[getattr(spec, name)].append(spec)
 
         return list(groups.values())
+
+    def merge(self) -> Self:
+        """Merge the dataspecs with the same ID."""
+        merged = type(self)()
+
+        for group in self.groupby("id"):
+            specifiers = group[Data(Of(Specifier))]
+
+            if (main := (group - specifiers).unique) is None:
+                raise ValueError("")
+
+            for specifier in specifiers:
+                main = main << specifier.data
+
+            merged.append(main)
+
+        return merged
 
     def replace(self, old: TSpec, new: TSpec, /) -> Self:
         """Return dataspecs with old dataspec replaced by new one."""
         return type(self)(new if spec == old else spec for spec in self)
 
     @overload
-    def __getitem__(self, index: Attr[Any], /) -> Self: ...
+    def __getitem__(self, index: Specifier[Any], /) -> Self: ...
 
     @overload
     def __getitem__(self, index: slice, /) -> Self: ...
@@ -66,24 +78,30 @@ class Specs(UserList[TSpec]):
     @overload
     def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
 
-    def __getitem__(self, index: SpecsIndex, /) -> Union[Self, TSpec]:
+    def __getitem__(
+        self,
+        index: Union[Specifier[Any], slice, SupportsIndex],
+        /,
+    ) -> Union[Self, TSpec]:
         """Select the dataspecs by given index or wrapped attribute."""
-        if is_data(index):
-            return type(self)(spec for spec in self if index.attr == spec.data)
+        if Specifier.istype(index):
+            return type(self)(spec for spec in self if index @ spec)
+        else:
+            return super().__getitem__(index)  # type: ignore
 
-        if is_id(index):
-            return type(self)(spec for spec in self if index.attr == spec.id)
+    def __sub__(self, other: Self, /) -> Self:
+        """Return the dataspecs with given ones removed."""
+        return type(self)(spec for spec in self if spec not in other)
 
-        if is_name(index):
-            return type(self)(spec for spec in self if index.attr == spec.name)
 
-        if is_tag(index):
-            return type(self)(spec for spec in self if index.attr in spec.tags)
+@dataclass(frozen=True)
+class Of:
+    """"""
 
-        if is_type(index):
-            return type(self)(spec for spec in self if index.attr == spec.type)
+    type: Any
 
-        if is_unit(index):
-            return type(self)(spec for spec in self if index.attr == spec.unit)
-
-        return super().__getitem__(index)  # type: ignore
+    def __eq__(self, other: Any, /) -> bool:
+        if isinstance(other, type):
+            return issubclass(other, self.type)
+        else:
+            return isinstance(other, self.type)

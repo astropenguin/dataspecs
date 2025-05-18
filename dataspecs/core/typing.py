@@ -4,18 +4,10 @@ __all__ = []
 # standard library
 import builtins
 import types
+from collections.abc import Callable, Iterator
 from dataclasses import Field
-from typing import (
-    Annotated,
-    Any,
-    Callable,
-    ClassVar,
-    Iterator,
-    Literal,
-    Protocol,
-    Union,
-    _strip_annotations,  # type: ignore
-)
+from typing import Annotated, Any, ClassVar, Literal, Protocol, Union
+from typing import _strip_annotations  # type: ignore
 
 
 # dependencies

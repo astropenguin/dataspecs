@@ -1,18 +1,24 @@
-__all__ = ["Attr", "Data", "ID", "Name", "Spec", "Tag", "Type", "Unit"]
+__all__ = ["Data", "ID", "Name", "Spec", "Tag", "Type", "Unit"]
 
 
 # standard library
+from abc import ABC, abstractmethod
 from collections.abc import Hashable
-from dataclasses import dataclass, field
-from typing import Any, Generic, Optional, TypeVar
+from dataclasses import dataclass, field, replace
+from os import PathLike, fspath
+from os.path import normpath
+from pathlib import PurePosixPath
+from re import fullmatch
+from typing import Any, Generic, Optional, TypeVar, Union
 
 
 # dependencies
-from typing_extensions import TypeGuard
+from typing_extensions import Self, TypeGuard
 
 
 # type hints
 TAny = TypeVar("TAny")
+TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
 @dataclass(frozen=True)
@@ -22,19 +28,19 @@ class Spec(Generic[TAny]):
     data: TAny = field(repr=False)
     """Dataspec data."""
 
-    id: str
+    id: PurePosixPath
     """Dataspec ID."""
 
-    name: Hashable
+    name: Hashable = None
     """Dataspec name."""
 
-    tags: frozenset[str]
+    tags: frozenset[str] = frozenset()
     """Dataspec tags."""
 
-    type: Any
+    type: Any = Any
     """Type of the dataspec data."""
 
-    unit: Optional[str]
+    unit: Optional[str] = None
     """Unit of the dataspec data."""
 
     @property
@@ -67,83 +73,97 @@ class Spec(Generic[TAny]):
         """Wrapped unit of the dataspec data."""
         return Unit(self.unit)
 
+    def __post_init__(self) -> None:
+        super().__setattr__("id", PurePosixPath(normpath(self.id)))
+
 
 @dataclass(frozen=True)
-class Attr(Generic[TAny]):
-    """Wrapper for dataspec attributes."""
+class Specifier(ABC, Generic[TAny]):
+    """Specifier for dataspec's attributes."""
 
-    attr: TAny
+    value: TAny
+
+    @classmethod
+    def istype(cls, obj: Any, /) -> TypeGuard[Self]:
+        """Check if given object is an instance of it."""
+        return isinstance(obj, cls)
+
+    @abstractmethod
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if its value is in given dataspec."""
+        pass
+
+    @abstractmethod
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set its value to given dataspec's attribute."""
+        pass
+
+    def __rlshift__(self, spec: TSpec, /) -> TSpec:
+        """Set its value to given dataspec's attribute."""
+        return self >> spec
 
     def __repr__(self) -> str:
-        return f"{type(self).__name__}({self.attr!r})"
+        return f"{type(self).__name__}({self.value!r})"
 
 
-class Data(Attr[Any]):
-    """Wrapper for a dataspec data."""
+class Data(Specifier[Any]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set its value to given dataspecs' data."""
+        return replace(spec, data=self.value)
 
-    pass
-
-
-class ID(Attr[str]):
-    """Wrapper for a dataspec ID."""
-
-    pass
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if its value is in given dataspec."""
+        return self.value == spec.data
 
 
-class Name(Attr[Hashable]):
-    """Wrapper for a dataspec name."""
+class ID(Specifier[PurePosixPath]):
+    def __init__(self, value: Union[PathLike[str], str], /) -> None:
+        object.__setattr__(self, "value", PurePosixPath(value))
 
-    pass
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set its value to given dataspecs' ID."""
+        return replace(spec, id=self.value)
 
-
-class Tag(Attr[str]):
-    """Wrapper for a dataspec tag."""
-
-    pass
-
-
-class Type(Attr[Any]):
-    """Wrapper for a dataspec type."""
-
-    pass
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if its value is in given dataspec."""
+        return bool(fullmatch(fspath(self.value), fspath(spec.id)))
 
 
-class Unit(Attr[Optional[str]]):
-    """Wrapper for a dataspec unit."""
+class Name(Specifier[Hashable]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set its value to given dataspecs' name."""
+        return replace(spec, name=self.value)
 
-    pass
-
-
-def is_attr(obj: Any, /) -> TypeGuard[Attr[Any]]:
-    """Check if given object is a wrapped dataspec attribute."""
-    return isinstance(obj, Attr)
-
-
-def is_data(obj: Any, /) -> TypeGuard[Data]:
-    """Check if given object is a wrapped dataspec data."""
-    return isinstance(obj, Data)
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if its value is in given dataspec."""
+        return self.value == spec.name
 
 
-def is_id(obj: Any, /) -> TypeGuard[ID]:
-    """Check if given object is a wrapped dataspec ID."""
-    return isinstance(obj, ID)
+class Tag(Specifier[str]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Add its value to given dataspecs' tags."""
+        return replace(spec, tags=(spec.tags | {self.value}))
+
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if its value is in given dataspec."""
+        return self.value in spec.tags
 
 
-def is_name(obj: Any, /) -> TypeGuard[Name]:
-    """Check if given object is a wrapped dataspec name."""
-    return isinstance(obj, Name)
+class Type(Specifier[Any]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set its value to given dataspecs' type."""
+        return replace(spec, type=self.value)
+
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if its value is in given dataspec."""
+        return self.value == spec.type
 
 
-def is_tag(obj: Any, /) -> TypeGuard[Tag]:
-    """Check if given object is a wrapped dataspec tag."""
-    return isinstance(obj, Tag)
+class Unit(Specifier[Optional[str]]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set its value to given dataspecs' unit."""
+        return replace(spec, unit=self.value)
 
-
-def is_type(obj: Any, /) -> TypeGuard[Type]:
-    """Check if given object is a wrapped dataspec type."""
-    return isinstance(obj, Type)
-
-
-def is_unit(obj: Any, /) -> TypeGuard[Unit]:
-    """Check if given object is a wrapped dataspec unit."""
-    return isinstance(obj, Unit)
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if its value is in given dataspec."""
+        return self.value == spec.unit
