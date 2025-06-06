@@ -4,8 +4,8 @@ from typing import Any, Optional
 
 
 # dependencies
-from dataspecs.core.specs import Path, SpecAttr, Spec, Specs
-from dataspecs.core.typing import TagBase
+from dataspecs.specs import Path, SpecAttr, Spec, Specs
+from dataspecs.typing import TagBase
 from pytest import mark, raises
 
 

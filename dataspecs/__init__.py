@@ -1,19 +1,23 @@
 __all__ = [
-    "core",
     "ROOT",
     "Path",
     "Spec",
     "Specs",
     "StrPath",
     "TagBase",
+    "api",
     "from_dataclass",
     "from_typehint",
+    "specs",
+    "typing",
 ]
 __version__ = "5.0.0"
 
 
 # dependencies
-from . import core
-from .core.api import *
-from .core.specs import *
-from .core.typing import *
+from . import api
+from . import specs
+from . import typing
+from .api import *
+from .specs import *
+from .typing import *
