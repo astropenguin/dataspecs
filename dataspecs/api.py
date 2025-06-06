@@ -2,22 +2,20 @@ __all__ = ["from_dataclass", "from_typehint"]
 
 
 # standard library
-from dataclasses import MISSING, fields
-from typing import Any, Callable, Optional, overload
+from collections.abc import Callable
+from dataclasses import MISSING, fields, is_dataclass
+from pathlib import PurePosixPath as Path
+from typing import Any, TypeVar, Union, overload
 
 
 # dependencies
-from .specs import ROOT, Path, Spec, Specs, TSpec
-from .typing import (
-    DataClass,
-    StrPath,
-    get_annotated,
-    get_annotations,
-    get_dataclasses,
-    get_first,
-    get_subtypes,
-    get_tags,
-)
+from .specs import ROOT, ID, Data, Name, Spec, Specs, Specifier, Tag, Type
+from .typing import DataClass, StrPath, gen_annotations, gen_subtypes, get_annotated
+
+
+# type hints
+TAny = TypeVar("TAny")
+TSpec = TypeVar("TSpec", bound=Spec[Any])
 
 
 @overload
@@ -25,7 +23,8 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    path: StrPath = ROOT,
+    id: StrPath = ROOT,
+    merge: bool = True,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -34,8 +33,9 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
+    id: StrPath = ROOT,
+    merge: bool = True,
     factory: Callable[..., TSpec],
-    path: StrPath = ROOT,
 ) -> Specs[TSpec]: ...
 
 
@@ -43,91 +43,41 @@ def from_dataclass(
     obj: DataClass,
     /,
     *,
-    factory: Any = Spec,
-    path: StrPath = ROOT,
-) -> Any:
-    """Create data specs from a dataclass (object).
+    id: StrPath = ROOT,
+    merge: bool = True,
+    factory: Callable[..., TSpec] = Spec,
+) -> Specs[Any]:
+    """Create dataspecs from given data class.
 
     Args:
-        obj: Dataclass (object) to be parsed.
-        factory: Factory for creating each data spec.
-        path: Path of the parent data spec.
+        obj: Data class (class or instance) to be parsed.
+        id: Parent ID of the dataspecs.
+        merge: Whether to merge the dataspecs of the same ID
+            into single dataspec at the end of the creation.
+        factory: Class or function for creating each dataspec.
+            It must have the same arguments of the ``Spec`` class.
 
     Returns:
-        Data specs created from the dataclass (object).
-
-    Examples:
-        ::
-
-            from enum import auto
-            from dataclasses import dataclass
-            from dataspecs import TagBase, from_dataclass
-            from typing import Annotated as Ann
-
-            class Tag(TagBase):
-                ATTR = auto()
-                DATA = auto()
-                DTYPE = auto()
-
-            @dataclass
-            class Weather:
-                temp: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA]
-                humid: Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA]
-                location: Ann[str, Tag.ATTR]
-
-            from_dataclass(Weather([20.0, 25.0], [50.0, 55.0], "Tokyo"))
-
-        ::
-
-            Specs([
-                Spec(
-                    path=Path('/temp'),
-                    tags=(<Tag.DATA: 2>,),
-                    type=list[float],
-                    data=[20.0, 25.0],
-                ),
-                Spec(
-                    path=Path('/temp/0'),
-                    tags=(<Tag.DTYPE: 3>,),
-                    type=<class 'float'>,
-                    data=None,
-                ),
-                Spec(
-                    path=Path('/humid'),
-                    tags=(<Tag.DATA: 2>,),
-                    type=list[float],
-                    data=[50.0, 55.0],
-                ),
-                Spec(
-                    path=Path('/humid/0'),
-                    tags=(<Tag.DTYPE: 3>,),
-                    type=<class 'float'>,
-                    data=None,
-                ),
-                Spec(
-                    path=Path('/location'),
-                    tags=(<Tag.ATTR: 1>,),
-                    type=<class 'str'>,
-                    data='Tokyo',
-                ),
-            ])
+        Dataspecs created from the data class.
 
     """
-    specs: Specs[Any] = Specs()
+    specs = Specs[Any]()
+
+    if Specifier.istype(obj):
+        return specs
 
     for field in fields(obj):
         specs.extend(
             from_typehint(
                 field.type,
-                factory=factory,
-                path=Path(path) / field.name,
                 data=getattr(obj, field.name, field.default),
-                meta=dict(field.metadata),
-                orig=obj,
+                id=Path(id) / field.name,
+                factory=factory,
+                merge=False,
             )
         )
 
-    return specs
+    return specs.merge() if merge else specs
 
 
 @overload
@@ -135,10 +85,9 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    path: StrPath = ROOT,
-    data: Any = MISSING,
-    meta: Optional[dict[str, Any]] = None,
-    orig: Optional[Any] = None,
+    data: Any = None,
+    id: StrPath = ROOT,
+    merge: bool = True,
 ) -> Specs[Spec[Any]]: ...
 
 
@@ -147,11 +96,10 @@ def from_typehint(
     obj: Any,
     /,
     *,
+    data: Any = None,
+    id: StrPath = ROOT,
+    merge: bool = True,
     factory: Callable[..., TSpec],
-    path: StrPath = ROOT,
-    data: Any = MISSING,
-    meta: Optional[dict[str, Any]] = None,
-    orig: Optional[Any] = None,
 ) -> Specs[TSpec]: ...
 
 
@@ -159,88 +107,98 @@ def from_typehint(
     obj: Any,
     /,
     *,
-    factory: Any = Spec,
-    path: StrPath = ROOT,
     data: Any = None,
-    meta: Optional[dict[str, Any]] = None,
-    orig: Optional[Any] = None,
-) -> Any:
-    """Create data specs from a type hint.
+    id: StrPath = ROOT,
+    merge: bool = True,
+    factory: Callable[..., TSpec] = Spec,
+) -> Specs[Any]:
+    """Create dataspecs from given type hint.
 
     Args:
-        obj: Type hint to be parsed.
-        factory: Factory for creating each data spec.
-        path: Path of the parent data spec.
-        data: Data of the parent data spec.
-        meta: Metadata of the parent data spec.
-        orig: Origin of the parent data spec.
+        obj: Type or type hint to be parsed.
+        data: Parent data of the dataspecs.
+        id: Parent ID of the dataspecs.
+        merge: Whether to merge the dataspecs of the same ID
+            into single dataspec at the end of the creation.
+        factory: Class or function for creating each dataspec.
+            It must have the same arguments of the ``Spec`` class.
 
     Returns:
-        Data specs created from the type hint.
-
-    Examples:
-        ::
-
-            from enum import auto
-            from dataspecs import TagBase, from_typehint
-            from typing import Annotated as Ann
-
-            class Tag(TagBase):
-                DATA = auto()
-                DTYPE = auto()
-
-            from_typehint(Ann[list[Ann[float, Tag.DTYPE]], Tag.DATA])
-
-        ::
-
-            Specs([
-                Spec(
-                    path=Path('/'),
-                    tags=(<Tag.DATA: 1>,),
-                    type=list[float],
-                    data=None,
-                ),
-                Spec(
-                    path=Path('/0'),
-                    tags=(<Tag.DTYPE: 2>,),
-                    type=<class 'float'>,
-                    data=None,
-                ),
-            ])
+        Dataspecs created from the type hint.
 
     """
-    specs: Specs[Any] = Specs()
-
-    specs.append(
-        factory(
-            path=(path := Path(path)),
-            name=path.name,
-            tags=get_tags(first := get_first(obj)),
-            type=get_annotated(first, recursive=True),
-            data=data,
-            anns=get_annotations(first),
-            meta={} if meta is None else dict(meta),
-            orig=orig,
-        )
+    id = Path(id)
+    specs = Specs[Any](
+        [
+            factory(
+                data=find(obj, Data, data),
+                id=(id := id.parent / find(obj, ID, id.name)),
+                name=find(obj, Name, id.name),
+                tags=find(obj, Tag),
+                type=find(obj, Type, get_annotated(obj)),
+            )
+        ]
     )
 
-    for index, subtype in enumerate(get_subtypes(first)):
+    if Specifier.istype(data):
+        return specs
+
+    for n, sub in enumerate(gen_subtypes(obj)):
         specs.extend(
             from_typehint(
-                subtype,
+                sub,
+                id=id / str(n),
                 factory=factory,
-                path=path / str(index),
-                orig=obj,
+                merge=False,
             )
         )
 
-    for sub_dataclass in get_dataclasses(first):
+    for sub in gen_annotations(obj, filter=is_dataclass):
         specs.extend(
             from_dataclass(
-                sub_dataclass,
+                sub,
+                id=id,
                 factory=factory,
-                path=path,
+                merge=False,
             )
         )
 
-    return specs
+    return specs.merge() if merge else specs
+
+
+@overload
+def find(
+    obj: Any,
+    of: type[Specifier[TAny]],
+    /,
+) -> frozenset[TAny]: ...
+
+
+@overload
+def find(
+    obj: Any,
+    of: type[Specifier[TAny]],
+    default: Any,
+    /,
+) -> TAny: ...
+
+
+def find(
+    obj: Any,
+    of: type[Specifier[TAny]],
+    default: Any = MISSING,
+    /,
+) -> Union[frozenset[TAny], TAny]:
+    """Find specifier(s) of given type and return value(s)."""
+    anns = list(gen_annotations(obj, filter=of.istype))
+
+    if default is MISSING:
+        return frozenset(ann.value for ann in anns)
+
+    if len(anns) == 0:
+        return default
+
+    if len(anns) == 1:
+        return anns[0].value
+
+    raise ValueError("Multiple items are not allowed with default.")

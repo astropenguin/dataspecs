@@ -1,185 +1,133 @@
 # standard library
 from dataclasses import dataclass
-from enum import auto
-from typing import Annotated as Ann, Any, TypeVar, Union
+from pathlib import PurePosixPath as Path
+from typing import Annotated as Ann, TypeVar
 
 
 # dependencies
-from dataspecs.api import from_dataclass
-from dataspecs.specs import Path, Spec, Specs
-from dataspecs.typing import TagBase
+from dataspecs import ID, Data, Name, Spec, Specs, Tag, from_dataclass
 
 
 # type hints
-class Tag(TagBase):
-    ATTR = auto()
-    DATA = auto()
-    DTYPE = auto()
-    NAME = auto()
-    UNITS = auto()
-
-
 T = TypeVar("T")
-Attr = Ann[T, Tag.ATTR]
-Data = Ann[list[Ann[T, Tag.DTYPE]], Tag.DATA]
+Dtype = Ann[T, ID("dtype"), Tag("dtype")]
 
 
-# test datasets
-@dataclass(frozen=True)
-class Quantity:
-    name: Ann[str, Tag.NAME]
-    units: Ann[str, Tag.UNITS]
-
-
-@dataclass(frozen=True)
-class Weather:
-    temp: Union[Ann[Data[float], Quantity("Temperature", "K")], float] = 0.0
-    humid: Union[Ann[Data[float], Quantity("Humidity", "%")], float] = 0.0
-    lon: Ann[Attr[float], Quantity("Longitude", "deg")] = 0.0
-    lat: Ann[Attr[float], Quantity("Latitude", "deg")] = 0.0
-    memo: str = "Observed in Tokyo"
-
-
-specs: Specs[Spec[Any]] = Specs(
+# constants
+SPECS = Specs(
     [
         Spec(
-            path=Path("/temp"),
-            name="temp",
-            tags=(Tag.DATA,),
+            data=[20.0, 25.0],
+            id=Path("/temp"),
+            name="Temperature",
+            tags=frozenset({"data"}),
             type=list[float],
-            data=[10, 20],
-            anns=(Tag.DATA, Quantity("Temperature", "K")),
-            orig=Weather([10, 20], [30, 40]),
         ),
         Spec(
-            path=Path("/temp/0"),
-            name="0",
-            tags=(Tag.DTYPE,),
-            type=float,
             data=None,
-            anns=(Tag.DTYPE,),
-            orig=Union[Ann[Data[float], Quantity("Temperature", "K")], float],
+            id=Path("/temp/dtype"),
+            name="dtype",
+            tags=frozenset({"dtype"}),
+            type=float,
         ),
         Spec(
-            path=Path("/temp/name"),
-            name="name",
-            tags=(Tag.NAME,),
-            type=str,
-            data="Temperature",
-            anns=(Tag.NAME,),
-            orig=Quantity("Temperature", "K"),
-        ),
-        Spec(
-            path=Path("/temp/units"),
+            data="deg C",
+            id=Path("/temp/units"),
             name="units",
-            tags=(Tag.UNITS,),
+            tags=frozenset({"attr"}),
             type=str,
-            data="K",
-            anns=(Tag.UNITS,),
-            orig=Quantity("Temperature", "K"),
         ),
         Spec(
-            path=Path("/humid"),
-            name="humid",
-            tags=(Tag.DATA,),
+            data="Air temperature measured at 1.5 m above the ground.",
+            id=Path("/temp/long_name"),
+            name="long_name",
+            tags=frozenset({"attr"}),
+            type=str,
+        ),
+        Spec(
+            data=[3.0, 6.0],
+            id=Path("/wind"),
+            name="Wind speed",
+            tags=frozenset({"data"}),
             type=list[float],
-            data=[30, 40],
-            anns=(Tag.DATA, Quantity("Humidity", "%")),
-            orig=Weather([10, 20], [30, 40]),
         ),
         Spec(
-            path=Path("/humid/0"),
-            name="0",
-            tags=(Tag.DTYPE,),
-            type=float,
             data=None,
-            anns=(Tag.DTYPE,),
-            orig=Union[Ann[Data[float], Quantity("Humidity", "%")], float],
-        ),
-        Spec(
-            path=Path("/humid/name"),
-            name="name",
-            tags=(Tag.NAME,),
-            type=str,
-            data="Humidity",
-            anns=(Tag.NAME,),
-            orig=Quantity("Humidity", "%"),
-        ),
-        Spec(
-            path=Path("/humid/units"),
-            name="units",
-            tags=(Tag.UNITS,),
-            type=str,
-            data="%",
-            anns=(Tag.UNITS,),
-            orig=Quantity("Humidity", "%"),
-        ),
-        Spec(
-            path=Path("/lon"),
-            name="lon",
-            tags=(Tag.ATTR,),
+            id=Path("/wind/dtype"),
+            name="dtype",
+            tags=frozenset({"dtype"}),
             type=float,
-            data=0.0,
-            anns=(Tag.ATTR, Quantity("Longitude", "deg")),
-            orig=Weather([10, 20], [30, 40]),
         ),
         Spec(
-            path=Path("/lon/name"),
-            name="name",
-            tags=(Tag.NAME,),
-            type=str,
-            data="Longitude",
-            anns=(Tag.NAME,),
-            orig=Quantity("Longitude", "deg"),
-        ),
-        Spec(
-            path=Path("/lon/units"),
+            data="m/s",
+            id=Path("/wind/units"),
             name="units",
-            tags=(Tag.UNITS,),
+            tags=frozenset({"attr"}),
             type=str,
-            data="deg",
-            anns=(Tag.UNITS,),
-            orig=Quantity("Longitude", "deg"),
         ),
         Spec(
-            path=Path("/lat"),
-            name="lat",
-            tags=(Tag.ATTR,),
-            type=float,
-            data=0.0,
-            anns=(Tag.ATTR, Quantity("Latitude", "deg")),
-            orig=Weather([10, 20], [30, 40]),
-        ),
-        Spec(
-            path=Path("/lat/name"),
-            name="name",
-            tags=(Tag.NAME,),
+            data="Wind speed measured at 1.5 m above the ground.",
+            id=Path("/wind/long_name"),
+            name="long_name",
+            tags=frozenset({"attr"}),
             type=str,
-            data="Latitude",
-            anns=(Tag.NAME,),
-            orig=Quantity("Latitude", "deg"),
         ),
         Spec(
-            path=Path("/lat/units"),
+            data="Tokyo",
+            id=Path("/site"),
+            name="Observation site",
+            tags=frozenset({"attr"}),
+            type=str,
+        ),
+        Spec(
+            data=Data("K"),
+            id=Path("/temp/units"),
             name="units",
-            tags=(Tag.UNITS,),
-            type=str,
-            data="deg",
-            anns=(Tag.UNITS,),
-            orig=Quantity("Latitude", "deg"),
+            tags=frozenset(),
+            type=Data,
         ),
         Spec(
-            path=Path("/memo"),
-            name="memo",
-            tags=(),
-            type=str,
-            data="Observed in Tokyo",
-            anns=(),
-            orig=Weather([10, 20], [30, 40]),
+            data=Data("km/h"),
+            id=Path("/wind/units"),
+            name="units",
+            tags=frozenset(),
+            type=Data,
         ),
     ]
 )
 
 
+@dataclass
+class Meta:
+    units: Ann[str, Tag("attr")]
+    long_name: Ann[str, Tag("attr")]
+
+
+@dataclass
+class Weather:
+    temp: Ann[
+        list[Dtype[float]],
+        Name("Temperature"),
+        Tag("data"),
+        Meta("deg C", "Air temperature measured at 1.5 m above the ground."),
+    ]
+    wind: Ann[
+        list[Dtype[float]],
+        Name("Wind speed"),
+        Tag("data"),
+        Meta("m/s", "Wind speed measured at 1.5 m above the ground."),
+    ]
+    site: Ann[str, Name("Observation site"), Tag("attr")]
+    temp_units: Ann[Data, ID("/temp/units")] = Data("deg C")
+    wind_units: Ann[Data, ID("/wind/units")] = Data("m/s")
+
+
 def test_from_dataclass() -> None:
-    assert from_dataclass(Weather([10, 20], [30, 40])) == specs
+    obj = Weather([20.0, 25.0], [3.0, 6.0], "Tokyo", Data("K"), Data("km/h"))
+    assert from_dataclass(obj, merge=False) == SPECS
+
+
+def test_from_dataclass_merge() -> None:
+    obj = Weather([20.0, 25.0], [3.0, 6.0], "Tokyo", Data("K"), Data("km/h"))
+    assert from_dataclass(obj, merge=True)[2] == (Data("K") >> SPECS[2])
+    assert from_dataclass(obj, merge=True)[6] == (Data("km/h") >> SPECS[6])
