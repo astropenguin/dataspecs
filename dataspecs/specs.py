@@ -1,17 +1,18 @@
-__all__ = ["ROOT", "Path", "Spec", "Specs"]
+__all__ = ["ID", "ROOT", "Data", "Name", "Spec", "Specs", "Tag", "Type"]
 
 
 # standard library
+from abc import ABC, abstractmethod
 from collections import UserList, defaultdict
+from collections.abc import Hashable
 from dataclasses import dataclass, field, replace
 from os import fspath
-from pathlib import PurePosixPath
-from re import escape, fullmatch
+from os.path import normpath
+from pathlib import PurePosixPath as Path
+from re import fullmatch
 from typing import (
     Any,
-    Callable,
     Generic,
-    Hashable,
     Literal,
     Optional,
     SupportsIndex,
@@ -22,235 +23,93 @@ from typing import (
 
 
 # dependencies
-from typing_extensions import Self
-from .typing import (
-    StrPath,
-    TAny,
-    UAny,
-    TagBase,
-    is_anytype,
-    is_strpath,
-    is_tag,
-    is_tagtype,
-)
+from typing_extensions import Self, TypeGuard
+from .typing import StrPath
 
 
 # type hints
-SpecAttr = Literal[
-    "path",
-    "name",
-    "tags",
-    "type",
-    "data",
-    "anns",
-    "meta",
-    "orig",
-    "none",
-]
-SpecIndex = Union[
-    None,
-    StrPath,
-    TagBase,
-    type[Any],
-    slice,
-    SupportsIndex,
-]
+TAny = TypeVar("TAny")
 TSpec = TypeVar("TSpec", bound="Spec[Any]")
 
 
 # constants
-ROOT_STR = "/"
-
-
-class Path(PurePosixPath):
-    """Path for data specs.
-
-    It is based on ``PurePosixPath``, however,
-    the differences are a path must start with the root (``/``)
-    and the ``match`` method full-matches a regular expression.
-
-    Args:
-        *segments: Segments to create a path.
-
-    Raises:
-        ValueError: Raised if it does not start with the root.
-
-    """
-
-    # Implementation of __new__ is essential because
-    # PurePosixPath does not implement __init__ in Python < 3.12.
-    def __new__(cls, *segments: StrPath) -> Self:
-        if PurePosixPath(*segments).root != ROOT_STR:
-            raise ValueError("Path must start with the root (/).")
-
-        return super().__new__(cls, *segments)
-
-    @property
-    def children(self) -> Self:
-        """Return the regular expression that matches the child paths."""
-        return self.regex / "[^/]+"
-
-    @property
-    def descendants(self) -> Self:
-        """Return the regular expression that matches the descendant paths."""
-        return self.regex / ".+"
-
-    @property
-    def regex(self) -> Self:
-        """Return the regular expression that matches the path itself."""
-        return type(self)(escape(fspath(self)))
-
-    def match(self, pattern: StrPath, /) -> bool:
-        """Check if the path full-matches a regular expression."""
-        return bool(fullmatch(fspath(pattern), fspath(self)))
-
-
-ROOT = Path(ROOT_STR)
-"""Root path."""
+ROOT = Path("/")
 
 
 @dataclass(frozen=True)
 class Spec(Generic[TAny]):
-    """Data specification (data spec).
+    """Data specification (dataspec)."""
 
-    Args:
-        path: Path of the data spec.
-        name: Name of the data spec.
-        tags: Tags of the data spec.
-        type: Type hint (unannotated) of the data.
-        data: Data (or default value) of the data spec.
-        anns: Type hint annotations of the data.
-        meta: Any metadata of the data spec.
-        orig: Origin of the data spec.
-        none: None (or alternative) for data missing.
+    data: TAny = field(repr=False)
+    """Data object of the dataspec."""
 
-    """
+    id: Path = ROOT
+    """POSIX path-like ID of the dataspec."""
 
-    path: Path
-    """Path of the data spec."""
+    name: Hashable = None
+    """Hashable name of the dataspec."""
 
-    name: Hashable
-    """Name of the data spec."""
+    tags: frozenset[str] = frozenset()
+    """Multiple string tags of the dataspec."""
 
-    tags: tuple[TagBase, ...]
-    """Tags of the data spec."""
+    type: Any = Any
+    """Data type of the dataspec."""
 
-    type: Any
-    """Type hint (unannotated) of the data spec."""
-
-    data: TAny
-    """Data (or default value) of the data spec."""
-
-    anns: tuple[Any, ...] = field(default_factory=tuple, repr=False)
-    """Type hint annotations of the data spec."""
-
-    meta: dict[str, Any] = field(default_factory=dict, repr=False)
-    """Any metadata of the data spec."""
-
-    orig: Optional[Any] = field(default=None, repr=False)
-    """Origin of the data spec."""
-
-    none: Optional[Any] = field(default=None, repr=False)
-    """None (or alternative) for data missing."""
-
-    @property
-    def is_missing(self) -> bool:
-        """Return whether the data of the data spec is missing."""
-        return self.data == self.none
-
-    def __call__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
-        """Dynamically cast the data of the data spec."""
-        return replace(self, type=type, data=type(self.data))  # type: ignore
-
-    def __getitem__(self, type: Callable[..., UAny], /) -> "Spec[UAny]":
-        """Statically cast the data of the data spec."""
-        return self  # type: ignore
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "id", Path(normpath(self.id)))
+        object.__setattr__(self, "tags", frozenset(self.tags))
 
 
 class Specs(UserList[TSpec]):
-    """Data specifications (data specs)."""
+    """List of data specifications (dataspecs)."""
 
     @property
     def first(self) -> Optional[TSpec]:
-        """Return the first data spec if it exists (``None`` otherwise)."""
+        """Return the first dataspec if it exists (``None`` otherwise)."""
         return self[0] if len(self) else None
 
     @property
     def last(self) -> Optional[TSpec]:
-        """Return the last data spec if it exists (``None`` otherwise)."""
+        """Return the last dataspec if it exists (``None`` otherwise)."""
         return self[-1] if len(self) else None
 
     @property
     def unique(self) -> Optional[TSpec]:
-        """Return the data spec if it is unique (``None`` otherwise)."""
+        """Return the dataspec if it is unique (``None`` otherwise)."""
         return self[0] if len(self) == 1 else None
 
     def groupby(
         self,
-        attr: SpecAttr,
+        name: Literal["data", "id", "name", "tags", "type"],
         /,
-        *,
-        method: Literal["eq", "equality", "id", "identity"] = "equality",
     ) -> list[Self]:
-        """Group the data specs by their attributes.
-
-        Args:
-            attr: Name of the data spec attribute for grouping.
-                Either ``'path'``, ``'name'``, ``'tags'``, ``'type'``, ``'data'``,
-                ``'anns'``, ``'meta'``, ``'orig'``, ``'none'`` is accepted.
-            method: Grouping method.
-                Either ``'equality'`` (or ``'eq'``; hash-based grouping),
-                or ``'identity'`` (or ``'id'``; id-based grouping) is accepted.
-
-        Returns:
-            List of data specs grouped by the selected data spec attribute.
-
-        """
+        """Group the dataspecs by their attributes."""
         groups: defaultdict[Hashable, Self] = defaultdict(type(self))
 
         for spec in self:
-            if method == "eq" or method == "equality":
-                groups[getattr(spec, attr)].append(spec)
-            elif method == "id" or method == "identity":
-                groups[id(getattr(spec, attr))].append(spec)
-            else:
-                raise ValueError("Method must be either equality or identity.")
+            groups[getattr(spec, name)].append(spec)
 
         return list(groups.values())
 
-    def replace(self, old: TSpec, new: TSpec, /) -> Self:
-        """Return data specs with old data spec replaced by new one."""
-        return type(self)(new if spec == old else spec for spec in self)
+    def merge(self) -> Self:
+        """Merge the dataspecs of the same ID into single dataspec."""
+        merged = type(self)()
 
-    def __call__(self, index: SpecIndex, /) -> Self:
-        """Select data specs by given index.
+        for group in self.groupby("id"):
+            specifiers = group[Data(Specifier, type=True)]
 
-        Unlike ``__getitem__``, it always returns data specs,
-        even when given index selects a single data spec.
+            if (main := (group - specifiers).unique) is None:
+                raise ValueError("Cannot identify main dataspec to merge.")
 
-        Args:
-            index: Normal or extended index for the selection of the data specs.
+            for specifier in specifiers:
+                main = main << specifier.data
 
-        Returns:
-            Selected data specs by given index.
+            merged.append(main)
 
-        """
-        if isinstance(selected := self[index], Spec):
-            return type(self)([selected])
-        else:
-            return selected
+        return merged
 
     @overload
-    def __getitem__(self, index: None, /) -> Self: ...
-
-    @overload
-    def __getitem__(self, index: StrPath, /) -> Self: ...
-
-    @overload
-    def __getitem__(self, index: TagBase, /) -> Self: ...
-
-    @overload
-    def __getitem__(self, index: type[Any], /) -> Self: ...
+    def __getitem__(self, index: "Specifier[Any]", /) -> Self: ...
 
     @overload
     def __getitem__(self, index: slice, /) -> Self: ...
@@ -258,45 +117,157 @@ class Specs(UserList[TSpec]):
     @overload
     def __getitem__(self, index: SupportsIndex, /) -> TSpec: ...
 
-    def __getitem__(self, index: SpecIndex, /) -> Union[Self, TSpec]:
-        """Select data specs by given index.
+    def __getitem__(
+        self,
+        index: Union["Specifier[Any]", slice, SupportsIndex],
+        /,
+    ) -> Union[Self, TSpec]:
+        """Select the dataspecs by given index or specifier."""
+        if Specifier.istype(index):
+            return type(self)(spec for spec in self if index @ spec)
+        else:
+            return super().__getitem__(index)  # type: ignore
 
-        In addition to a normal index (i.e. slice or ``__index__``-implemented object),
-        it also accepts the following extended index for the advanced selection:
-        (1) ``None`` to select all data specs (i.e. shallow copy),
-        (2) a string path to select data specs that match it,
-        (3) a tag to select data specs that contain it,
-        (4) a tag type to select data specs that contain its tags, or
-        (5) an any type to select data specs that contain it.
+    def __sub__(self, other: Self, /) -> Self:
+        """Return the dataspecs with given ones removed."""
+        return type(self)(spec for spec in self if spec not in other)
 
-        Args:
-            index: Normal or extended index for the selection of the data specs.
 
-        Returns:
-            Selected data spec(s) by given index.
+@dataclass(frozen=True)
+class Specifier(ABC, Generic[TAny]):
+    """Specifier for dataspec's attributes."""
 
-        """
-        if index is None:
-            return self.copy()  # shallow copy
+    value: TAny
+    """Value to be set to or compared with dataspec's attributes."""
 
-        if is_strpath(index):
-            return type(self)(spec for spec in self if spec.path.match(index))
+    regex: bool = False
+    """Whether to compare the value by regular expression."""
 
-        if is_tag(index):
-            return type(self)(spec for spec in self if (index in spec.tags))
+    type: bool = False
+    """Whether to compare the value by type inheritance."""
 
-        if is_tagtype(index):
-            return type(self)(
-                spec
-                for spec in self
-                if any(isinstance(tag, index) for tag in spec.tags)
+    @classmethod
+    def istype(cls, obj: Any, /) -> TypeGuard[Self]:
+        """Check if given object is an instance of the specifier."""
+        return isinstance(obj, cls)
+
+    @abstractmethod
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if the value is equal to given dataspec's attribute."""
+        pass
+
+    @abstractmethod
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set the value to given dataspec's attribute."""
+        pass
+
+    def __rlshift__(self, spec: TSpec, /) -> TSpec:
+        """Set the value to given dataspec's attribute."""
+        return self.__rshift__(spec)
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}({self.value!r})"
+
+    def __post_init__(self) -> None:
+        if self.regex and self.type:
+            raise ValueError("Regex and type cannot be True together.")
+
+
+class Data(Specifier[Any]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set the value to given dataspec's data."""
+        return replace(spec, data=self.value)
+
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if the value is equal to given dataspec's data."""
+        if self.regex:
+            return (
+                isinstance(self.value, str)
+                and isinstance(spec.data, str)
+                and bool(fullmatch(self.value, spec.data))
             )
 
-        if is_anytype(index):
-            return type(self)(
-                spec
-                for spec in self
-                if isinstance(spec.type, type) and issubclass(spec.type, index)
+        if self.type:
+            return (
+                isinstance(self.value, type)
+                and isinstance(spec.data, object)
+                and isinstance(spec.data, self.value)
             )
 
-        return super().__getitem__(index)  # type: ignore
+        return self.value == spec.data
+
+
+class ID(Specifier[StrPath]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set the value to given dataspec's ID."""
+        return replace(spec, id=Path(self.value))
+
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if the value is equal to given dataspec's ID."""
+        if self.regex:
+            return bool(fullmatch(fspath(self.value), fspath(spec.id)))
+
+        if self.type:
+            raise ValueError("Type comparison is not supported.")
+
+        return fspath(self.value) == fspath(spec.id)
+
+
+class Name(Specifier[Hashable]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set the value to given dataspec's name."""
+        return replace(spec, name=self.value)
+
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if the value is equal to given dataspec's name."""
+        if self.regex:
+            return (
+                isinstance(self.value, str)
+                and isinstance(spec.name, str)
+                and bool(fullmatch(self.value, spec.name))
+            )
+
+        if self.type:
+            return (
+                isinstance(self.value, type)
+                and isinstance(spec.name, object)
+                and isinstance(spec.name, self.value)
+            )
+
+        return self.value == spec.name
+
+
+class Tag(Specifier[str]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Add the value to given dataspec's tags."""
+        return replace(spec, tags=(spec.tags | {self.value}))
+
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if the value is contained in given dataspec's tag."""
+        if self.regex:
+            return any(fullmatch(self.value, tag) for tag in spec.tags)
+
+        if self.type:
+            raise ValueError("Type comparison is not supported.")
+
+        return self.value in spec.tags
+
+
+class Type(Specifier[Any]):
+    def __rshift__(self, spec: TSpec, /) -> TSpec:
+        """Set the value to given dataspec's type."""
+        return replace(spec, type=self.value)
+
+    def __matmul__(self, spec: Spec[Any], /) -> bool:
+        """Check if the value is equal to given dataspec's type."""
+        if self.regex:
+            raise ValueError("Regex comparison is not supported.")
+
+        if self.type:
+            return (
+                isinstance(self.value, type)
+                and isinstance(spec.type, type)
+                and issubclass(spec.type, self.value)
+            )
+
+        return self.value == spec.type
