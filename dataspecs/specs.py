@@ -98,7 +98,10 @@ class Specs(UserList[TSpec]):
         for group in self.groupby("id"):
             specifiers = group[Data(Specifier, type=True)]
 
-            if (main := (group - specifiers).unique) is None:
+            if (remainder := group - specifiers).first is None:
+                continue
+
+            if (main := remainder.unique) is None:
                 raise ValueError("Cannot identify main dataspec to merge.")
 
             for specifier in specifiers:
