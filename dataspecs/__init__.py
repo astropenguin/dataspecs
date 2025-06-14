@@ -1,42 +1,25 @@
 __all__ = [
-    # subpackages
-    "core",
-    "extras",
-    # aliases (core)
+    "ID",
     "ROOT",
-    "Path",
+    "Data",
+    "Name",
     "Spec",
     "Specs",
-    "StrPath",
-    "TagBase",
+    "Tag",
+    "Type",
+    "api",
     "from_dataclass",
     "from_typehint",
-    # aliases (extras)
-    "Format",
-    "FormatTag",
-    "Name",
-    "NameTag",
-    "Replace",
-    "ReplaceTag",
-    "format",
-    "name",
-    "replace",
+    "specs",
+    "typing",
 ]
 __version__ = "5.0.0"
 
 
-# subpackages
-from . import core
-from . import extras
-
-
-# aliases (core)
-from .core.api import *
-from .core.specs import *
-from .core.typing import *
-
-
-# aliases (extras)
-from .extras.formatting import *
-from .extras.naming import *
-from .extras.replacing import *
+# dependencies
+from . import api
+from . import specs
+from . import typing
+from .api import *
+from .specs import *
+from .typing import *

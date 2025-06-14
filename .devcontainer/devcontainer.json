@@ -12,10 +12,10 @@
         "vscode": {
             "extensions": [
                 "ms-python.black-formatter",
-                "streetsidesoftware.code-spell-checker",
-                "tamasfe.even-better-toml"
+                "ms-python.python"
             ],
             "settings": {
+                "python.analysis.autoImportCompletions": true,
                 "python.languageServer": "Pylance",
                 "[python]": {
                     "editor.defaultFormatter": "ms-python.black-formatter",
